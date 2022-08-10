@@ -7,14 +7,22 @@ import {
 	Grid,
 	FormControl,
 	Box,
-	Typography
+	Typography,
+	InputLabel,
+	Select,
+	MenuItem
 } from '@mui/material';
 
 export default function AddUnitForm(props) {
-	const [formValues, setFormValues] = useState({
-    WPID: '',
-    unitName: '',
-	});
+	let defaultValues = {
+		firstName: '',
+		middleName: '',
+    LastNameName: '',
+		technicianEmail: '',
+		technicianRank: '',
+		technicianRole: ''
+	}
+	const [formValues, setFormValues] = useState(defaultValues);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -30,22 +38,26 @@ export default function AddUnitForm(props) {
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
-		setFormValues([]);
+		setFormValues(defaultValues);
+		await axios.post(
+			`${process.env.REACT_APP_DATABASE}/technician`,
+			formValues,
+			);
 
 	};
   
 	return (
 		<Box>
 			<Paper>
-				<Typography>Add Vent</Typography>
+				<Typography>Add Tech</Typography>
 				<Grid>
 					<form onSubmit={onSubmit}>
             <Grid>
                 <FormControl fullWidth>
                   <TextField
-                    name='WPID'
+                    name='firstName'
                     id='outlined-multiline-static'
-                    label='WPID'
+                    label='First Name'
                     rows={1}
                     onChange={handleChange}
                   />
@@ -54,13 +66,64 @@ export default function AddUnitForm(props) {
             <Grid>
               <FormControl fullWidth>
                 <TextField
-                  name='unitName'
+                  name='middleName'
                   id='outlined-multiline-static'
-                  label='Unit Name'
+                  label='Middle Name'
                   rows={1}
                   onChange={handleChange}
                 />
               </FormControl>
+						</Grid>
+						<Grid>
+              <FormControl fullWidth>
+                <TextField
+                  name='lastName'
+                  id='outlined-multiline-static'
+                  label='Last Name'
+                  rows={1}
+                  onChange={handleChange}
+                />
+              </FormControl>
+						</Grid>
+						<Grid>
+              <FormControl fullWidth>
+                <TextField
+                  name='technicianEmail'
+                  id='outlined-multiline-static'
+                  label='Email'
+                  rows={1}
+                  onChange={handleChange}
+                />
+              </FormControl>
+						</Grid>
+						<Grid>
+              <FormControl fullWidth>
+                <TextField
+                  name='technicianRank'
+                  id='outlined-multiline-static'
+                  label='Rank'
+                  rows={1}
+                  onChange={handleChange}
+                />
+              </FormControl>
+						</Grid>
+            <Grid>
+                <Grid item>
+                  <FormControl fullWidth>
+                    <InputLabel id='demo-simple-select-label'>
+                      Role
+                    </InputLabel>
+                    <Select
+                      name='technicianRole'
+                      value={formValues.technicianRole}
+                      onChange={handleChange}
+                    >
+                      <MenuItem value={'Admin'}>Admin</MenuItem>
+                      <MenuItem value={'Program Manager'}>Program Manager</MenuItem>
+                      <MenuItem value={'Technician'}>Technician</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
 						</Grid>
             <Grid>
 							<Button type='submit' color='success' variant='contained'>

@@ -32,7 +32,6 @@ export default function AddUnitForm(props) {
   };
 
 	const handleSubmit = async (e) => {
-		console.log('hello')
 		e.preventDefault();
 		await axios.post(
 			`${process.env.REACT_APP_DATABASE}/unit`,
