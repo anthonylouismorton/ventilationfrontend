@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {
 	TextField,
 	Button,
@@ -41,6 +38,10 @@ export default function AddVentForm(props) {
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
+    await axios.post(
+			`${process.env.REACT_APP_DATABASE}/vent`,
+			formValues,
+			);
 		setFormValues([]);
 
 	};
