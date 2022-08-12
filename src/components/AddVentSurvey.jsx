@@ -15,9 +15,9 @@ import {
   IconButton
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 export default function AddVentSurveyForm(props) {
-  let [ventFlows, setVentFlows] = useState(0);
   let [ventFlowMeasurements, setVentFlowMeasurements] = useState([''])
   const [formValues, setFormValues] = useState({
     equipmentId: '',
@@ -36,18 +36,28 @@ export default function AddVentSurveyForm(props) {
       [name]: value,
     });
   };
-  const handleVentMeasurements = (e) => {
-    const measurement = e.target.value;
-    setFormValues(parseInt(measurement));
+  const handleVentMeasurements = (index, e) => {
+    let value = e.target.value
+    let newVentFlowMeasurements = ventFlowMeasurements;
+    newVentFlowMeasurements[index] = parseInt(value)
+    console.log(newVentFlowMeasurements)
+    setVentFlowMeasurements([...newVentFlowMeasurements]);
   };
 
-  const handleNewVentFlow =() => {
-    let newVentFlowMeasurements = ventFlowMeasurements
-    newVentFlowMeasurements.push('')
-    let newFlows = ventFlows + 1
-    setVentFlows(newFlows)
-    setVentFlowMeasurements(newVentFlowMeasurements)
-  }
+  const handleNewVentFlow = () => {
+    let newVentFlowMeasurements = ventFlowMeasurements;
+    newVentFlowMeasurements.push('');
+    console.log(newVentFlowMeasurements)
+    setVentFlowMeasurements([...newVentFlowMeasurements]);
+  };
+
+  const handleRemoveVentFlow = (flow) => {
+    console.log(flow)
+    let newVentFlowMeasurements = ventFlowMeasurements;
+    newVentFlowMeasurements.splice(flow, 1);
+    console.log(newVentFlowMeasurements)
+    setVentFlowMeasurements([...newVentFlowMeasurements]);
+  };
 
   const handleCancel = () => {
     setFormValues([]);
@@ -60,9 +70,16 @@ export default function AddVentSurveyForm(props) {
 			formValues,
 			);
     setFormValues([]);
-
   };
-  console.log(ventFlowMeasurements)
+  useEffect(() => {
+    // first
+  
+    // return () => {
+    //   second
+    // }
+  }, [])
+  
+  console.log(ventFlowMeasurements[0])
   return (
     <Box>
       <Paper>
@@ -100,32 +117,44 @@ export default function AddVentSurveyForm(props) {
                 </FormControl>
               </Grid>
               <Typography>Vent Measurements</Typography>
-              <Grid item>
-                <FormControl>
-                  <TextField
-                    name='ventFlow'
-                    id='outlined-multiline-static'
-                    label='Vent Flow Measurement 1'
-                    rows={1}
-                    onChange={handleVentMeasurements}
-                  />
-                </FormControl>
+              {ventFlowMeasurements.map((flow,index) => 
+              <Grid>
+                <TextField
+                name='ventFlow'
+                id='outlined-multiline-static'
+                label={`Vent Flow Measurement ${index+1}`}
+                value={ventFlowMeasurements[index]}
+                rows={1}
+                onChange={(e)=> handleVentMeasurements(index, e)}
+                />
+                {index === 0 ?
                 <Tooltip title="Add Measurement">
                   <IconButton onClick={handleNewVentFlow}>
                     <AddIcon />
                   </IconButton>
                 </Tooltip>
+                :
+                <Tooltip title="Remove Measurement">
+                  <IconButton onClick={()=> handleRemoveVentFlow(index)}>
+                    <RemoveCircleOutlineIcon />
+                  </IconButton>
+                </Tooltip>
+                }
               </Grid>
-              {ventFlowMeasurements.map((flow,index) => 
-                <TextField
-                name='ventFlow'
-                id='outlined-multiline-static'
-                label={`Vent Flow Measurement ${index+2}`}
-                rows={1}
-                onChange={handleVentMeasurements}
-              />
               )}
             </Grid>
+            <Grid item>
+                <FormControl fullWidth>
+                  <TextField
+                    name='averageVentFlow'
+                    disabled
+                    id='outlined-multiline-static'
+                    label='Average Vent Flow (fpm)'
+                    value={ventFlowMeasurements}
+                    rows={1}
+                  />
+                </FormControl>
+              </Grid>
             <Grid item>
               <Button type='submit' color='success' variant='contained'>
                 Submit
