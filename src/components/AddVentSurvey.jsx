@@ -18,7 +18,12 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 export default function AddVentSurveyForm(props) {
-  let [ventFlowMeasurements, setVentFlowMeasurements] = useState([''])
+  let [ventFlowMeasurements, setVentFlowMeasurements] = useState(['']);
+  let [averageVentFlow, setAverageVentFlow] = useState('');
+  let [roomVolume, setRoomVolume] = useState('');
+  let [ventMeasurements, setVentMeasurements] = useState(['']);
+  let [airChanges, setAirChanges] = useState('');
+  let [roomDimensions, setRoomDimensions] = useState(['','','']);
   const [formValues, setFormValues] = useState({
     equipmentId: '',
     expirationDate: '',
@@ -40,8 +45,9 @@ export default function AddVentSurveyForm(props) {
     let value = e.target.value
     let newVentFlowMeasurements = ventFlowMeasurements;
     newVentFlowMeasurements[index] = parseInt(value)
-    console.log(newVentFlowMeasurements)
+    const sum = newVentFlowMeasurements.reduce((prev, current) => prev + current);
     setVentFlowMeasurements([...newVentFlowMeasurements]);
+    setAverageVentFlow(Math.round(sum/newVentFlowMeasurements.length));
   };
 
   const handleNewVentFlow = () => {
@@ -52,12 +58,44 @@ export default function AddVentSurveyForm(props) {
   };
 
   const handleRemoveVentFlow = (flow) => {
-    console.log(flow)
     let newVentFlowMeasurements = ventFlowMeasurements;
     newVentFlowMeasurements.splice(flow, 1);
-    console.log(newVentFlowMeasurements)
+    const sum = newVentFlowMeasurements.reduce((prev, current) => prev + current);
     setVentFlowMeasurements([...newVentFlowMeasurements]);
+    setAverageVentFlow(Math.round(sum/newVentFlowMeasurements.length));
   };
+  const handleRoomDimensions = (e) => {
+    const { name, value } = e.target;
+    if(name === 'roomHeight'){
+      let newRoomDimensions = roomDimensions;
+      newRoomDimensions[0] = parseInt(value);
+      setRoomDimensions([...newRoomDimensions])
+      if(roomDimensions.every(e => typeof e === 'number')){
+        let volume = newRoomDimensions.reduce((prev, current) => prev * current)
+        setRoomVolume(volume)
+      }
+    }
+    else if(name === 'roomWidth'){
+      let newRoomDimensions = roomDimensions;
+      newRoomDimensions[1] = parseInt(value);
+      setRoomDimensions([...newRoomDimensions])
+      if(roomDimensions.every(e => typeof e === 'number')){
+        let volume = newRoomDimensions.reduce((prev, current) => prev * current)
+        setRoomVolume(volume)
+      }
+    }
+    else if(name === 'roomLength'){
+      let newRoomDimensions = roomDimensions;
+      newRoomDimensions[2] = parseInt(value);
+      setRoomDimensions([...newRoomDimensions])
+      console.log(newRoomDimensions.every(e => e === true))
+      if(roomDimensions.every(e => typeof e === 'number')){
+        let volume = newRoomDimensions.reduce((prev, current) => prev * current)
+        setRoomVolume(volume)
+      }
+    }
+
+  }
 
   const handleCancel = () => {
     setFormValues([]);
@@ -71,15 +109,7 @@ export default function AddVentSurveyForm(props) {
 			);
     setFormValues([]);
   };
-  useEffect(() => {
-    // first
-  
-    // return () => {
-    //   second
-    // }
-  }, [])
-  
-  console.log(ventFlowMeasurements[0])
+  console.log(roomDimensions)
   return (
     <Box>
       <Paper>
@@ -118,11 +148,11 @@ export default function AddVentSurveyForm(props) {
               </Grid>
               <Typography>Vent Measurements</Typography>
               {ventFlowMeasurements.map((flow,index) => 
-              <Grid>
+              <Grid key ={index}>
                 <TextField
                 name='ventFlow'
                 id='outlined-multiline-static'
-                label={`Vent Flow Measurement ${index+1}`}
+                label={`Vent Flow Measurement ${index+1} (fpm)`}
                 value={ventFlowMeasurements[index]}
                 rows={1}
                 onChange={(e)=> handleVentMeasurements(index, e)}
@@ -140,21 +170,68 @@ export default function AddVentSurveyForm(props) {
                   </IconButton>
                 </Tooltip>
                 }
-              </Grid>
+                </Grid>
               )}
             </Grid>
             <Grid item>
-                <FormControl fullWidth>
+                <FormControl>
                   <TextField
                     name='averageVentFlow'
                     disabled
                     id='outlined-multiline-static'
                     label='Average Vent Flow (fpm)'
-                    value={ventFlowMeasurements}
+                    value={averageVentFlow}
                     rows={1}
                   />
                 </FormControl>
-              </Grid>
+            </Grid>
+              <Typography>Room Dimensions</Typography>
+                <TextField
+                name='roomHeight'
+                id='outlined-multiline-static'
+                label={`Height (in.)`}
+                value={roomDimensions[0]}
+                rows={1}
+                onChange={handleRoomDimensions}
+                />
+                <TextField
+                name='roomWidth'
+                id='outlined-multiline-static'
+                label={`Width (in.)`}
+                value={roomDimensions[1]}
+                rows={1}
+                onChange={handleRoomDimensions}
+                />
+                <TextField
+                name='roomLength'
+                id='outlined-multiline-static'
+                label={`Length (in.)`}
+                value={roomDimensions[2]}
+                rows={1}
+                onChange={handleRoomDimensions}
+                />
+                <FormControl>
+                  <TextField
+                    name='roomVolume'
+                    disabled
+                    id='outlined-multiline-static'
+                    label='room Volume (cu in)'
+                    value={roomVolume}
+                    rows={1}
+                  />
+                </FormControl>
+            <Grid item>
+            </Grid>
+              <Typography>Air Changes Per Hour</Typography>
+                <FormControl>
+                  <TextField
+                    name='airChanges'
+                    disabled
+                    id='outlined-multiline-static'
+                    value={roomVolume}
+                    rows={1}
+                  />
+                </FormControl>
             <Grid item>
               <Button type='submit' color='success' variant='contained'>
                 Submit

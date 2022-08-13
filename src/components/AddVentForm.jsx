@@ -21,7 +21,8 @@ export default function AddVentForm(props) {
     serialNumber: '',
 		installDate: new Date().toISOString().split('T')[0],
     unitId: '',
-    surveyFrequency: ''
+    surveyFrequency: '',
+    ventShape: ''
 	});
 
 	const handleChange = (e) => {
@@ -104,6 +105,20 @@ export default function AddVentForm(props) {
                     id='outlined-multiline-static'
                     label='Start Date'
                     defaultValue={formValues.installDate}
+                    rows={1}
+                    onChange={handleChange}
+                  />
+                </FormControl>
+							</Grid>
+						</Grid>
+            <Grid>
+							<Grid item>
+                <FormControl fullWidth>
+                  <TextField
+                    name='ventShape'
+                    id='outlined-multiline-static'
+                    label='Vent Shape'
+                    defaultValue={formValues.ventShape}
                     rows={1}
                     onChange={handleChange}
                   />
