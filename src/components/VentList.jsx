@@ -197,7 +197,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       )}
         <Tooltip title="Add New Vent">
-          <IconButton>
+          <IconButton onClick={props.handleNewVent}>
             <AddIcon />
           </IconButton>
         </Tooltip>
@@ -263,6 +263,13 @@ export default function VentList(props) {
     props.setSelectedEmployee(row)
 
   };
+  const handleNewVent = () => {
+    props.setShow({
+      ...props.show,
+      ventList: false,
+      addVent: true 
+    })
+  }
 
   const handleDeleteClick = async (id) => {
 
@@ -303,7 +310,7 @@ export default function VentList(props) {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected.length} handleNewVent={handleNewVent}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}

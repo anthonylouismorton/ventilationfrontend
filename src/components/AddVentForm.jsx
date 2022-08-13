@@ -11,42 +11,78 @@ import {
   Select,
   MenuItem,
   InputLabel,
+  Tooltip,
+  IconButton
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function AddVentForm(props) {
-	const [formValues, setFormValues] = useState({
+  const defaultFormValues = {
     description: '',
     manufacturer: '',
     model: '',
     serialNumber: '',
-		installDate: new Date().toISOString().split('T')[0],
+		startDate: new Date().toISOString().split('T')[0],
     unitId: '',
+    unitName: '',
     surveyFrequency: '',
     ventShape: ''
-	});
+  }
+	const [formValues, setFormValues] = useState(defaultFormValues);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-		setFormValues({
-			...formValues,
-			[name]: value,
-		});
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
 	};
+  const handleUnit = (unit) => {
+    setFormValues({
+      ...formValues,
+      unitId: unit.unitId,
+      unitName: `${unit.WPID} ${unit.unitName}`
+    });
+  }
+
 
 	const handleCancel = () => {
-		setFormValues([]);
+		setFormValues(defaultFormValues);
+    props.setShow({
+      ...props.show,
+      ventList: true,
+      addVent: false
+    })
   };
 
 	const onSubmit = async (e) => {
+    console.log(formValues)
 		e.preventDefault();
     await axios.post(
-			`${process.env.REACT_APP_DATABASE}/vent`,
-			formValues,
-			);
-		setFormValues([]);
-
+      `${process.env.REACT_APP_DATABASE}/vent`,
+      formValues,
+      );
+      // setFormValues(defaultFormValues);
+      // props.setShow({
+      //   ...props.show,
+      //   ventList: true,
+      //   addVent: false
+      // })
 	};
 
+  const getUnits = async () => {
+    let unitList = await axios.get(
+			`${process.env.REACT_APP_DATABASE}/unit`,
+			formValues,
+			);
+		props.setUnits(unitList.data);
+  }
+  const handleOpen = () => props.setOpen({...props.open, addUnitModal: true });
+
+  useEffect(()=> {
+    getUnits();
+  },[]);
+  console.log(props.units)
 	return (
 		<Box>
 			<Paper>
@@ -54,7 +90,7 @@ export default function AddVentForm(props) {
 				<Grid>
 					<form onSubmit={onSubmit}>
             <Grid>
-                <FormControl fullWidth>
+                <FormControl>
                   <TextField
                     name='manufacturer'
                     id='outlined-multiline-static'
@@ -63,7 +99,7 @@ export default function AddVentForm(props) {
                     onChange={handleChange}
                   />
                 </FormControl>
-                <FormControl fullWidth>
+                <FormControl>
                   <TextField
                     name='model'
                     id='outlined-multiline-static'
@@ -73,7 +109,7 @@ export default function AddVentForm(props) {
                   />
                 </FormControl>
               <Grid item>
-                <FormControl fullWidth>
+                <FormControl>
                   <TextField
                     name='description'
                     id='outlined-multiline-static'
@@ -86,7 +122,7 @@ export default function AddVentForm(props) {
 						</Grid>
 						<Grid>
 							<Grid item>
-                <FormControl fullWidth>
+                <FormControl>
                   <TextField
                     name='serialNumber'
                     id='outlined-multiline-static'
@@ -99,26 +135,12 @@ export default function AddVentForm(props) {
 						</Grid>
             <Grid>
 							<Grid item>
-                <FormControl fullWidth>
+                <FormControl>
                   <TextField
-                    name='installDate'
+                    name='startDate'
                     id='outlined-multiline-static'
                     label='Start Date'
-                    defaultValue={formValues.installDate}
-                    rows={1}
-                    onChange={handleChange}
-                  />
-                </FormControl>
-							</Grid>
-						</Grid>
-            <Grid>
-							<Grid item>
-                <FormControl fullWidth>
-                  <TextField
-                    name='ventShape'
-                    id='outlined-multiline-static'
-                    label='Vent Shape'
-                    defaultValue={formValues.ventShape}
+                    defaultValue={formValues.startDate}
                     rows={1}
                     onChange={handleChange}
                   />
@@ -127,7 +149,24 @@ export default function AddVentForm(props) {
 						</Grid>
             <Grid>
                 <Grid item>
-                  <FormControl fullWidth>
+                  <FormControl>
+                    <InputLabel id='demo-simple-select-label'>
+                      Vent Shape
+                    </InputLabel>
+                    <Select
+                      name='ventShape'
+                      value={formValues.ventShape}
+                      onChange={handleChange}
+                    >
+                      <MenuItem value={'Circular'}>Circular</MenuItem>
+                      <MenuItem value={'Square'}>Square</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+						</Grid>
+            <Grid>
+                <Grid item>
+                  <FormControl>
                     <InputLabel id='demo-simple-select-label'>
                       Frequency
                     </InputLabel>
@@ -145,15 +184,19 @@ export default function AddVentForm(props) {
 						</Grid>
             <Grid>
 							<Grid item>
-                <FormControl fullWidth>
-                  <TextField
-                    name='unitId'
-                    id='outlined-multiline-static'
-                    label='unitId'
-                    rows={1}
-                    onChange={handleChange}
-                  />
-                </FormControl>
+                    <Select
+                      name='unitName'
+                      value={formValues.unitName}
+                    >
+                      {props.units.map((unit) =>(
+                        <MenuItem key={unit.unitId} onClick={() => handleUnit(unit)} value={`${unit.WPID} ${unit.unitName}`}>{`${unit.WPID} ${unit.unitName}`}</MenuItem>
+                      ))}
+                    </Select>
+                <Tooltip title="Add New Unit">
+                  <IconButton onClick={handleOpen}>
+                    <AddIcon />
+                  </IconButton>
+                </Tooltip>
 							</Grid>
 						</Grid>
 						<Grid item>
