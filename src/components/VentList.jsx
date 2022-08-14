@@ -94,12 +94,18 @@ const headCells = [
     numeric: true,
     disablePadding: false,
     label: 'Assigned Technician',
-  }
+  },
+  {
+    id: 'surveyFrequency',
+    numeric: true,
+    disablePadding: false,
+    label: 'Frequency',
+  },
 
 ];
 
 function EnhancedTableHead(props) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
+  const { order, orderBy, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
     console.log('yo')
@@ -138,7 +144,6 @@ function EnhancedTableHead(props) {
 EnhancedTableHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
@@ -198,51 +203,32 @@ export default function VentList(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
-
+  console.log(props)
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-
-    setSelected(newSelected);
+  const handleClick = (vent) => {
+    props.setSelectedVent(vent);
+    props.setShow({
+      ...props.show,
+      ventList: false,
+      addVent: false,
+      buttons: false,
+      ventInfo: true 
+    });
   };
 
-  const handleDeleteWarning = (id) => {
-    setShowDeleteWarning([!showDeleteWarning, id])
-
-  };
-
-  const handleEdit = (row) => {
-    props.setHideEmployeeEdit(false)
-    props.setSelectedEmployee(row)
-
-  };
   const handleNewVent = () => {
     props.setShow({
       ...props.show,
       ventList: false,
       addVent: true,
       buttons: false 
-    })
-  }
+    });
+  };
   const handleTechSelect = async (tech, vent) => {
     console.log(vent)
     let updatedVent = {...vent, technicianId: tech.technicianId}
@@ -319,6 +305,7 @@ export default function VentList(props) {
                       tabIndex={-1}
                       key={row.ventId}
                       selected={isItemSelected}
+                      onClick={() => handleClick(row)}
                     >
                       <TableCell align="center">{row.unitId}</TableCell>
                       <TableCell align="center">{row.description}</TableCell>
@@ -343,8 +330,8 @@ export default function VentList(props) {
                           </Select>
                         </FormControl>
                       </TableCell>
-                      
                       }
+                      <TableCell align="center">{row.surveyFrequency}</TableCell>
                     </TableRow>
                   );
                 })}
