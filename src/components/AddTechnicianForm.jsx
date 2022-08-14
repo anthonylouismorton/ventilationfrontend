@@ -33,17 +33,30 @@ export default function AddUnitForm(props) {
 	};
 
 	const handleCancel = () => {
-		setFormValues([]);
+		setFormValues({...defaultValues});
+    props.setShow({...props.show, addTechnician: false, buttons: true, ventList: true})
   };
-
-	const onSubmit = async (e) => {
-		e.preventDefault();
-		setFormValues(defaultValues);
+  const handleAdd = async () => {
+    setFormValues({...defaultValues});
 		await axios.post(
 			`${process.env.REACT_APP_DATABASE}/technician`,
 			formValues,
 			);
+    props.setShow({...props.show, addTechnician: false, buttons: true, ventList: true})
+    let technicianList = 	await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
+    props.setTechnicians(technicianList.data)
+  }
 
+	const onSubmit = async (e) => {
+		e.preventDefault();
+		await axios.post(
+      `${process.env.REACT_APP_DATABASE}/technician`,
+			formValues,
+			);
+      props.setShow({...props.show, addTechnician: false, buttons: true, ventList: true})
+      setFormValues({...defaultValues});
+      let technicianList = 	await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
+      props.setTechnicians(technicianList.data)
 	};
   
 	return (
@@ -128,6 +141,9 @@ export default function AddUnitForm(props) {
             <Grid>
 							<Button type='submit' color='success' variant='contained'>
 								Submit
+							</Button>
+              <Button onClick={handleAdd} variant='contained'>
+								Add
 							</Button>
 							<Button onClick={handleCancel} color='error' variant='contained'>
 								Cancel

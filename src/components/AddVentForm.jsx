@@ -26,7 +26,7 @@ export default function AddVentForm(props) {
     unitId: '',
     unitName: '',
     surveyFrequency: '',
-    ventShape: ''
+    ventShape: 'Square'
   }
 	const [formValues, setFormValues] = useState(defaultFormValues);
 
@@ -51,7 +51,8 @@ export default function AddVentForm(props) {
     props.setShow({
       ...props.show,
       ventList: true,
-      addVent: false
+      addVent: false,
+      buttons: true
     })
   };
 
@@ -59,15 +60,16 @@ export default function AddVentForm(props) {
     console.log(formValues)
 		e.preventDefault();
     await axios.post(
-      `${process.env.REACT_APP_DATABASE}/vent`,
+      `${process.env.REACT_APP_DATABASE}/vents`,
       formValues,
       );
-      // setFormValues(defaultFormValues);
-      // props.setShow({
-      //   ...props.show,
-      //   ventList: true,
-      //   addVent: false
-      // })
+      setFormValues(defaultFormValues);
+      props.setShow({
+        ...props.show,
+        ventList: true,
+        addVent: false,
+        buttons: true
+      })
 	};
 
   const getUnits = async () => {
@@ -82,7 +84,7 @@ export default function AddVentForm(props) {
   useEffect(()=> {
     getUnits();
   },[]);
-  console.log(props.units)
+  console.log(formValues)
 	return (
 		<Box>
 			<Paper>

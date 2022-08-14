@@ -13,6 +13,9 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
@@ -88,22 +91,10 @@ const headCells = [
   },
   {
     id: 'technician',
-    numeric: false,
+    numeric: true,
     disablePadding: false,
     label: 'Assigned Technician',
-  },
-  {
-    id: 'edit',
-    numeric: true,
-    disablePadding: false,
-    label: '',
-  },
-  {
-    id: 'delete',
-    numeric: true,
-    disablePadding: false,
-    label: '',
-  },
+  }
 
 ];
 
@@ -111,27 +102,17 @@ function EnhancedTableHead(props) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
+    console.log('yo')
     onRequestSort(event, property);
   };
 
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
-          />
-        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align='left'
+            align='center'
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -224,15 +205,6 @@ export default function VentList(props) {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
@@ -267,16 +239,20 @@ export default function VentList(props) {
     props.setShow({
       ...props.show,
       ventList: false,
-      addVent: true 
+      addVent: true,
+      buttons: false 
     })
+  }
+  const handleTechSelect = async (tech, vent) => {
+    console.log(vent)
+    let updatedVent = {...vent, technicianId: tech.technicianId}
+    await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
+    getVentsAndTechs();
   }
 
   const handleDeleteClick = async (id) => {
-
     await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
     setShowDeleteWarning(!showDeleteWarning, null)
-
-
   }
 
   const handleChangePage = (event, newPage) => {
@@ -298,15 +274,17 @@ export default function VentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  // const getAllEmployees = async () =>{
-  //   let employees = await axios.get(`${process.env.REACT_APP_DATABASE}/employee`)
-  //   setRows(employees.data)
-  // };
+  const getVentsAndTechs = async () =>{
+    let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/vents`)
+    setRows(ventList.data)
+    let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
+    props.setTechnicians(techList.data)
+  };
   
-  // useEffect(()=> {
-  //   getAllEmployees();
-  // }, []);
-
+  useEffect(()=> {
+    getVentsAndTechs();
+  }, []);
+  console.log(rows)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -321,7 +299,6 @@ export default function VentList(props) {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
             />
@@ -331,7 +308,7 @@ export default function VentList(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.employeeID);
+                  const isItemSelected = isSelected(row.ventId);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -340,37 +317,34 @@ export default function VentList(props) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.employeeID}
+                      key={row.ventId}
                       selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          onClick={(event) => handleClick(event, row.employeeID)}
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId,
-                          }}
-                        />
+                      <TableCell align="center">{row.unitId}</TableCell>
+                      <TableCell align="center">{row.description}</TableCell>
+                      <TableCell align="center">{row.manufacturer}</TableCell>
+                      <TableCell align="center">{row.model}</TableCell>
+                      <TableCell align="center">{row.serialNumber}</TableCell>
+                      {row.technicianId?
+                      <TableCell align="center">{row.technicianId}</TableCell>
+                      : props.technicians.length === 0 ?
+                      <TableCell align="center">No Techs On File</TableCell>
+                      :
+                      <TableCell align="center">
+                        <FormControl fullWidth>
+                          <Select
+                          value={props.technicians[0].lastname ? props.technicians[0].lastname: ''}
+                          defaultValue={`${props.technicians[0].lastname}`}
+                          >
+                            {props.technicians.map((tech) => (
+                            <MenuItem key={tech.technicianId} onClick={() => handleTechSelect(tech,row)} value={`${tech.lastName}, ${tech.firstName}`}>{`${tech.lastName}, ${tech.firstName}`}</MenuItem>
+                            ))}
+
+                          </Select>
+                        </FormControl>
                       </TableCell>
-                      <TableCell align="left">{row.firstName}</TableCell>
-                      <TableCell align="left">{row.middleName}</TableCell>
-                      <TableCell align="left">{row.lastName}</TableCell>
-                      <TableCell align="left">{row.employeeEmail}</TableCell>
-                      <TableCell align="left">{row.employeePhoneNumber}</TableCell>
-                      <TableCell align="left">{row.companyName}</TableCell>
-                      <TableCell align="left"><EditIcon onClick={() => handleEdit(row)}/></TableCell>
-                      <TableCell align="left">
-                        {showDeleteWarning[0] === false && showDeleteWarning[1] === row.employeeID ?
-                        <>
-                        <span>Are you sure?</span>
-                        <Button variant="contained" color="success" onClick={() => handleDeleteClick(row.employeeID)}> Yes </Button>
-                        <Button variant="contained"  color="error" onClick={handleDeleteWarning}>No</Button>
-                        </>
-                        :
-                        <DeleteIcon onClick={() => handleDeleteWarning(row.employeeID)}/>
-                        }
-                      </TableCell>
+                      
+                      }
                     </TableRow>
                   );
                 })}
