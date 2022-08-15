@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -16,8 +17,14 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
+import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
@@ -82,12 +89,12 @@ const headCells = [
     disablePadding: false,
     label: 'Serial Number',
   },
-  // {
-  //   id: 'technician',
-  //   numeric: true,
-  //   disablePadding: false,
-  //   label: 'Assigned Technician',
-  // },
+  {
+    id: 'technician',
+    numeric: true,
+    disablePadding: false,
+    label: 'Assigned Technician',
+  },
   {
     id: 'surveyFrequency',
     numeric: true,
@@ -222,12 +229,12 @@ export default function VentList(props) {
       buttons: false 
     });
   };
-  // const handleTechSelect = async (tech, vent) => {
-  //   console.log(vent)
-  //   let updatedVent = {...vent, technicianId: tech.technicianId}
-  //   await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
-  //   getVentsAndTechs();
-  // }
+  const handleTechSelect = async (tech, vent) => {
+    console.log(vent)
+    let updatedVent = {...vent, technicianId: tech.technicianId}
+    await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
+    getVentsAndTechs();
+  }
 
   const handleDeleteClick = async (id) => {
     await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
@@ -253,15 +260,13 @@ export default function VentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  const getVentsAndTechs = async () =>{
-    let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/vents`)
-    setRows(ventList.data)
-    let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
-    props.setTechnicians(techList.data)
+  const getVentSurveys = async () =>{
+    let ventSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVentSurvey/${props.selectedVent.unitId}`)
+    setRows([...ventSurveys.data])
   };
   
   useEffect(()=> {
-    getVentsAndTechs();
+    getVentSurveys();
   }, []);
   console.log(rows)
   return (
@@ -305,7 +310,7 @@ export default function VentList(props) {
                       <TableCell align="center">{row.manufacturer}</TableCell>
                       <TableCell align="center">{row.model}</TableCell>
                       <TableCell align="center">{row.serialNumber}</TableCell>
-                      {/* {row.technicianId?
+                      {row.technicianId?
                       <TableCell align="center">{row.technicianId}</TableCell>
                       : props.technicians.length === 0 ?
                       <TableCell align="center">No Techs On File</TableCell>
@@ -323,7 +328,7 @@ export default function VentList(props) {
                           </Select>
                         </FormControl>
                       </TableCell>
-                      } */}
+                      }
                       <TableCell align="center">{row.surveyFrequency}</TableCell>
                     </TableRow>
                   );

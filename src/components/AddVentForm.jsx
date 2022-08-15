@@ -88,7 +88,7 @@ export default function AddVentForm(props) {
 	return (
 		<Box>
 			<Paper>
-				<Typography>Add Vent</Typography>
+				<Typography>New Vent</Typography>
 				<Grid>
 					<form onSubmit={onSubmit}>
             <Grid>

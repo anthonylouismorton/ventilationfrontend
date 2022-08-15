@@ -32,10 +32,17 @@ export default function VentInfo(props) {
       buttons: true
     })
   };
+  const handleNewSurvey = () =>{
+    props.setShow({
+      ...props.show,
+      ventInfo: false,
+      addVentSurvey: true
+    });
+  };
   const handleUpdate = async () => {
     let ventUpdate = await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${props.selectedVent.ventId}`, props.selectedVent);
     console.log(ventUpdate)
-  }
+  };
 
 	return (
 		<Box>
@@ -110,7 +117,7 @@ export default function VentInfo(props) {
                   <MenuItem value={'Square'}>Square</MenuItem>
                 </Select>
               </FormControl>
-              <FormControl>
+              {/* <FormControl>
                 <InputLabel id='demo-simple-select-label'>
                   Assigned Technician
                 </InputLabel>
@@ -123,7 +130,7 @@ export default function VentInfo(props) {
                   <MenuItem key={tech.technicianId} value={tech.technicianId}>{tech.technicianId}</MenuItem>
                   ))}
                 </Select>
-              </FormControl>
+              </FormControl> */}
               <FormControl>
                 <TextField
                   name='startDate'
@@ -151,6 +158,9 @@ export default function VentInfo(props) {
 							</Button>
 							<Button onClick={handleBack} variant='contained'>
 								Back
+							</Button>
+              <Button onClick={handleNewSurvey} variant='contained'>
+								New Survey
 							</Button>
             </Grid>
 					</form>

@@ -21,10 +21,11 @@ export default function AddVentSurveyForm(props) {
   let [ventFlowMeasurements, setVentFlowMeasurements] = useState(['']);
   let [averageVentFlow, setAverageVentFlow] = useState('');
   let [roomVolume, setRoomVolume] = useState('');
-  let [ventMeasurements, setVentMeasurements] = useState(['']);
   let [airChanges, setAirChanges] = useState('');
   let [roomDimensions, setRoomDimensions] = useState(['','','']);
-  const [formValues, setFormValues] = useState({
+  let [ventDimensions, setVentDimensions] = useState(['','']);
+  let [ventArea, setVentArea] = useState('');
+  const defaultFormValues = {
     equipmentId: '',
     expirationDate: '',
     roomDimensions: '',
@@ -32,7 +33,8 @@ export default function AddVentSurveyForm(props) {
     ventDimensions: '',
     ventId: '',
     ventReadings: ''
-  });
+  }
+  const [formValues, setFormValues] = useState(defaultFormValues);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,36 +71,69 @@ export default function AddVentSurveyForm(props) {
     if(name === 'roomHeight'){
       let newRoomDimensions = roomDimensions;
       newRoomDimensions[0] = parseInt(value);
-      setRoomDimensions([...newRoomDimensions])
+      setRoomDimensions([...newRoomDimensions]);
       if(roomDimensions.every(e => typeof e === 'number')){
-        let volume = newRoomDimensions.reduce((prev, current) => prev * current)
-        setRoomVolume(volume)
-      }
+        let volume = newRoomDimensions.reduce((prev, current) => prev * current);
+        let sqFtVolume = Math.round(volume/1728)
+        setRoomVolume(sqFtVolume);
+      };
     }
     else if(name === 'roomWidth'){
       let newRoomDimensions = roomDimensions;
       newRoomDimensions[1] = parseInt(value);
-      setRoomDimensions([...newRoomDimensions])
+      setRoomDimensions([...newRoomDimensions]);
       if(roomDimensions.every(e => typeof e === 'number')){
-        let volume = newRoomDimensions.reduce((prev, current) => prev * current)
-        setRoomVolume(volume)
-      }
+        let volume = newRoomDimensions.reduce((prev, current) => prev * current);
+        let sqFtVolume = Math.round(volume/1728)
+        setRoomVolume(sqFtVolume);
+      };
     }
     else if(name === 'roomLength'){
       let newRoomDimensions = roomDimensions;
       newRoomDimensions[2] = parseInt(value);
-      setRoomDimensions([...newRoomDimensions])
+      setRoomDimensions([...newRoomDimensions]);
       console.log(newRoomDimensions.every(e => e === true))
       if(roomDimensions.every(e => typeof e === 'number')){
         let volume = newRoomDimensions.reduce((prev, current) => prev * current)
-        setRoomVolume(volume)
-      }
+        let sqFtVolume = Math.round(volume/1728)
+        setRoomVolume(sqFtVolume);
+      };
+    };
+    
+  };
+  const handleVentArea = (e) => {
+    if(!e.target.value){
+      console.log('in here')
+      setVentDimensions([0,0])
+      setVentArea(0)
     }
-
+    else if(props.selectedVent.ventShape === 'Circular'){
+      const diameter = e.target.value;
+      let newVentDimensions = ventDimensions
+      newVentDimensions[0] = parseInt(diameter)
+      setVentDimensions([...newVentDimensions])
+      let area = diameter/2 * diameter/2 * Math.PI /144;
+      let areaRounded = Math.round((area + Number.EPSILON) * 100) / 100;
+      setVentArea(areaRounded);
+    }
+  };
+  const handleAirChanges = () => {
+    if(roomDimensions.every(e => typeof e === 'number') && props.selectedVent.ventShape === 'Circular' && typeof ventDimensions[0] === 'number' && averageVentFlow){
+      console.log(averageVentFlow, ventArea, roomVolume);
+      let ventCuFtPerHour = averageVentFlow * ventArea * 60
+      let airChangesPerHour = ventCuFtPerHour /roomVolume;
+      let roundedAirChanges = Math.round((airChangesPerHour + Number.EPSILON) * 10) / 10;
+      setAirChanges(roundedAirChanges);
+    }
   }
 
   const handleCancel = () => {
-    setFormValues([]);
+    setFormValues(defaultFormValues);
+    props.setShow({
+      ...props.show,
+      ventInfo: true,
+      addVentSurvey: false
+    })
   };
 
   const onSubmit = async (e) => {
@@ -107,13 +142,18 @@ export default function AddVentSurveyForm(props) {
 			`${process.env.REACT_APP_DATABASE}/ventSurvey`,
 			formValues,
 			);
-    setFormValues([]);
+    setFormValues(defaultFormValues);
+    props.setShow({
+      ...props.show,
+      ventInfo: true,
+      addVentSurvey: false
+    })
   };
-  console.log(roomDimensions)
+
   return (
     <Box>
       <Paper>
-        <Typography>Add Vent</Typography>
+        <Typography>New Vent Survey</Typography>
         <Grid>
           <form onSubmit={onSubmit}>
             <Grid>
@@ -131,6 +171,7 @@ export default function AddVentSurveyForm(props) {
                   name='surveyDate'
                   id='outlined-multiline-static'
                   label='Survey Date'
+                  value={formValues.surveyDate}
                   rows={1}
                   onChange={handleChange}
                 />
@@ -146,7 +187,7 @@ export default function AddVentSurveyForm(props) {
                   />
                 </FormControl>
               </Grid>
-              <Typography>Vent Measurements</Typography>
+              <Typography>Vent Flows</Typography>
               {ventFlowMeasurements.map((flow,index) => 
               <Grid key ={index}>
                 <TextField
@@ -174,16 +215,16 @@ export default function AddVentSurveyForm(props) {
               )}
             </Grid>
             <Grid item>
-                <FormControl>
-                  <TextField
-                    name='averageVentFlow'
-                    disabled
-                    id='outlined-multiline-static'
-                    label='Average Vent Flow (fpm)'
-                    value={averageVentFlow}
-                    rows={1}
-                  />
-                </FormControl>
+              <FormControl>
+                <TextField
+                  name='averageVentFlow'
+                  disabled
+                  id='outlined-multiline-static'
+                  label='Average Vent Flow (fpm)'
+                  value={averageVentFlow}
+                  rows={1}
+                />
+              </FormControl>
             </Grid>
               <Typography>Room Dimensions</Typography>
                 <TextField
@@ -215,12 +256,54 @@ export default function AddVentSurveyForm(props) {
                     name='roomVolume'
                     disabled
                     id='outlined-multiline-static'
-                    label='room Volume (cu in)'
+                    label='room Volume (cu ft)'
                     value={roomVolume}
                     rows={1}
                   />
                 </FormControl>
             <Grid item>
+            <Typography>Vent Dimensions</Typography>
+              {props.selectedVent.ventShape === 'Circular' ?
+              <Grid>
+                <TextField
+                name='diameter'
+                id='outlined-multiline-static'
+                label={`Diameter (in.)`}
+                value={ventDimensions[0]}
+                rows={1}
+                onChange={handleVentArea}
+                />
+              </Grid>
+              :
+              <Grid>
+                <TextField
+                name='ventWidth'
+                id='outlined-multiline-static'
+                label={`Width (in.)`}
+                value={ventDimensions[0]}
+                rows={1}
+                onChange={handleRoomDimensions}
+                />
+                <TextField
+                name='ventLength'
+                id='outlined-multiline-static'
+                label={`Length (in.)`}
+                value={roomDimensions[1]}
+                rows={1}
+                onChange={handleRoomDimensions}
+                />
+              </Grid>
+              }
+                <FormControl>
+                  <TextField
+                    name='ventArea'
+                    disabled
+                    id='outlined-multiline-static'
+                    label='Vent Area (cu ft)'
+                    value={ventArea}
+                    rows={1}
+                  />
+                </FormControl>
             </Grid>
               <Typography>Air Changes Per Hour</Typography>
                 <FormControl>
@@ -228,10 +311,11 @@ export default function AddVentSurveyForm(props) {
                     name='airChanges'
                     disabled
                     id='outlined-multiline-static'
-                    value={roomVolume}
+                    value={airChanges}
                     rows={1}
                   />
                 </FormControl>
+                <Button onClick={handleAirChanges} variant="contained">Calculate</Button>
             <Grid item>
               <Button type='submit' color='success' variant='contained'>
                 Submit
