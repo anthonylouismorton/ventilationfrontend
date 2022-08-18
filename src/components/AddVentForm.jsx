@@ -84,7 +84,7 @@ export default function AddVentForm(props) {
   useEffect(()=> {
     getUnits();
   },[]);
-  console.log(formValues)
+
 	return (
 		<Box>
 			<Paper>
