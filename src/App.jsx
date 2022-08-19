@@ -9,10 +9,11 @@ import Button from '@mui/material/Button';
 import VentInfo from './components/VentInfo';
 import NavBar from './components/NavBar';
 import EquipmentList from './components/EquipmentList';
+import AddEquipmentForm from './components/AddEquipmentForm';
 
 function App() {
-  const defaultShow = {'ventList': false, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'buttons': false, 'ventInfo': false, 'equipment': false }
-  const [show, setShow] = useState({'ventList': true, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'buttons': true, 'ventInfo': false, 'equipment': false });
+  const defaultShow = {'ventList': false, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'buttons': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false }
+  const [show, setShow] = useState({'ventList': true, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'buttons': true, 'ventInfo': false, 'equipment': false, 'addEquipment': false });
   const [open, setOpen] = useState({'addUnitModal': false, 'addTechnician': false});
   const [units, setUnits] = useState([]);
   const [technicians, setTechnicians] = useState([]);
@@ -42,7 +43,10 @@ function App() {
       <VentInfo selectedVent={selectedVent} setSelectedVent={setSelectedVent} technicians={technicians} show={show} setShow={setShow}/>
       }
       {show.equipment &&
-      <EquipmentList/>
+      <EquipmentList setShow={setShow} show={show}/>
+      }
+      {show.addEquipment &&
+      <AddEquipmentForm/>
       }
     </div>
   );

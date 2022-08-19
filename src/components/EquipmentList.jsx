@@ -170,7 +170,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       )}
         <Tooltip title="Add New Vent">
-          <IconButton onClick={props.handleNewVent}>
+          <IconButton onClick={props.handleNewEquipment}>
             <AddIcon />
           </IconButton>
         </Tooltip>
@@ -208,12 +208,10 @@ export default function VentList(props) {
     });
   };
 
-  const handleNewVent = () => {
+  const handleNewEquipment = () => {
     props.setShow({
       ...props.show,
-      ventList: false,
-      addVent: true,
-      buttons: false 
+      addEquipment: true,
     });
   };
 
@@ -253,7 +251,7 @@ export default function VentList(props) {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleNewVent={handleNewVent}/>
+        <EnhancedTableToolbar numSelected={selected.length} handleNewEquipment={handleNewEquipment}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
