@@ -178,7 +178,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Vents
+          Vent Surveys
         </Typography>
       )}
         <Tooltip title="Add New Vent">
@@ -194,7 +194,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function VentList(props) {
+export default function VentSurveyList(props) {
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
@@ -228,12 +228,6 @@ export default function VentList(props) {
       buttons: false 
     });
   };
-  // const handleTechSelect = async (tech, vent) => {
-  //   console.log(vent)
-  //   let updatedVent = {...vent, technicianId: tech.technicianId}
-  //   await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
-  //   getVentsAndTechs();
-  // }
 
   const handleDeleteClick = async (id) => {
     await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
@@ -259,17 +253,15 @@ export default function VentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  const getVentsAndTechs = async () =>{
-    let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/vents`)
-    setRows(ventList.data)
-    let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
-    props.setTechnicians(techList.data)
+  const getVentSurveys = async () =>{
+    let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/vent/ventSurvey/${props.selectedVent}`)
+    setRows(ventSurveyList.data)
   };
   
   useEffect(()=> {
-    getVentsAndTechs();
+    getVentSurveys();
   }, []);
-  console.log(rows)
+  console.log(props)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -305,11 +297,11 @@ export default function VentList(props) {
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
                     >
-                      <TableCell align="center">{row.unitId}</TableCell>
+                      {/* <TableCell align="center">{row.unitId}</TableCell>
                       <TableCell align="center">{row.description}</TableCell>
                       <TableCell align="center">{row.manufacturer}</TableCell>
                       <TableCell align="center">{row.model}</TableCell>
-                      <TableCell align="center">{row.serialNumber}</TableCell>
+                      <TableCell align="center">{row.serialNumber}</TableCell> */}
                       {/* {row.technicianId?
                       <TableCell align="center">{row.technicianId}</TableCell>
                       : props.technicians.length === 0 ?

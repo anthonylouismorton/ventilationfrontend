@@ -33,6 +33,15 @@ const NavBar = (props) => {
     if(page === 'Equipment'){
       props.setShow({...props.defaultShow, equipment: true})
     }
+    else if(page === 'Vents'){
+      props.setShow({...props.defaultShow, ventList: true})
+    }
+    else if(page === 'Technicians'){
+      props.setShow({...props.defaultShow, ventList: true})
+    }
+    else if(page === 'Surveys'){
+      props.setShow({...props.defaultShow, ventList: true})
+    }
   };
 
   const handleCloseUserMenu = () => {

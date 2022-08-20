@@ -10,6 +10,7 @@ import VentInfo from './components/VentInfo';
 import NavBar from './components/NavBar';
 import EquipmentList from './components/EquipmentList';
 import AddEquipmentForm from './components/AddEquipmentForm';
+import VentSurveyList from './components/VentSurveyList';
 
 function App() {
   const defaultShow = {'ventList': false, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'buttons': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false }
@@ -18,8 +19,9 @@ function App() {
   const [units, setUnits] = useState([]);
   const [technicians, setTechnicians] = useState([]);
   const [selectedVent, setSelectedVent] = useState([]);
+  const [equipment, setEquipment] = useState([]);
   const handleShowTech = () => setShow({...show, addTechnician: true, buttons: false, ventList: false});
-  console.log(show)
+
   return (
     <div className="App">
       <NavBar setShow={setShow} show={show} defaultShow={defaultShow}/>
@@ -30,7 +32,7 @@ function App() {
       <AddTechnicianForm setShow={setShow} show={show} setTechnicians={setTechnicians}/>
       }
       {show.addVentSurvey &&
-      <AddVentSurvey selectedVent={selectedVent} show={show} setShow={setShow}/>
+      <AddVentSurvey selectedVent={selectedVent} show={show} setShow={setShow} equipment={equipment} setEquipment={setEquipment}/>
       }
       <AddUnitForm open={open} setOpen={setOpen} units={units} setUnits={setUnits}/>
       {show.addVent &&
@@ -40,13 +42,16 @@ function App() {
       <Button onClick={handleShowTech} variant='contained'>Add Tech</Button>
       }
       {show.ventInfo &&
+      <>
       <VentInfo selectedVent={selectedVent} setSelectedVent={setSelectedVent} technicians={technicians} show={show} setShow={setShow}/>
+      <VentSurveyList selectedVent={selectedVent}/>
+      </>
       }
       {show.equipment &&
       <EquipmentList setShow={setShow} show={show}/>
       }
       {show.addEquipment &&
-      <AddEquipmentForm/>
+      <AddEquipmentForm setEquipment={setEquipment} equipment={equipment} setShow={setShow} show={show}/>
       }
     </div>
   );

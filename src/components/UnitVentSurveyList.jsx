@@ -293,7 +293,6 @@ export default function VentList(props) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.ventId);
-                  const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow

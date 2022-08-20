@@ -26,7 +26,8 @@ export default function AddVentForm(props) {
     unitId: '',
     unitName: '',
     surveyFrequency: '',
-    ventShape: 'Square'
+    ventShape: 'Square',
+    type: ''
   }
 	const [formValues, setFormValues] = useState(defaultFormValues);
 
@@ -57,19 +58,18 @@ export default function AddVentForm(props) {
   };
 
 	const onSubmit = async (e) => {
-    console.log(formValues)
 		e.preventDefault();
-    await axios.post(
+    console.log(await axios.post(
       `${process.env.REACT_APP_DATABASE}/vents`,
       formValues,
-      );
+      ))
       setFormValues(defaultFormValues);
       props.setShow({
         ...props.show,
         ventList: true,
         addVent: false,
         buttons: true
-      })
+      });
 	};
 
   const getUnits = async () => {
@@ -84,7 +84,6 @@ export default function AddVentForm(props) {
   useEffect(()=> {
     getUnits();
   },[]);
-
 	return (
 		<Box>
 			<Paper>
@@ -183,6 +182,26 @@ export default function AddVentForm(props) {
                     </Select>
                   </FormControl>
                 </Grid>
+						</Grid>
+            <Grid>
+              <Grid item>
+                <FormControl>
+                  <InputLabel id='demo-simple-select-label'>
+                    Type
+                  </InputLabel>
+                  <Select
+                    name='type'
+                    value={formValues.type}
+                    placeholder={'Select Vent Type'}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={'Fume Hood'}>Fume Hood</MenuItem>
+                    <MenuItem value={'Paint Booth'}>Paint Booth</MenuItem>
+                    <MenuItem value={'Battery Room'}>Battery Room</MenuItem>
+                    <MenuItem value={'Welding Hood'}>Welding Hood</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
 						</Grid>
             <Grid>
 							<Grid item>

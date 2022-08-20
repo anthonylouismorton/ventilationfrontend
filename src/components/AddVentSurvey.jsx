@@ -27,29 +27,44 @@ export default function AddVentSurveyForm(props) {
   let [ventArea, setVentArea] = useState('');
   const defaultFormValues = {
     equipmentId: '',
+    equipment: '',
     expirationDate: '',
     roomDimensions: '',
     surveyDate: new Date().toISOString().split('T')[0],
     ventDimensions: '',
     ventId: '',
-    ventReadings: ''
+    ventReadings: '',
+    pass: '',
+    technicianId: ''
   }
   const [formValues, setFormValues] = useState(defaultFormValues);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormValues({
       ...formValues,
       [name]: value,
     });
   };
+
+  const handleEquipmentSelect = (equipment) => {
+    setFormValues({
+      ...formValues,
+      equipmentId: equipment.equipmentId,
+      equipment: `${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`
+    })
+  }
+  //This is for the actul vent flow and not the dimensions of the vent
   const handleVentMeasurements = (index, e) => {
     let value = e.target.value
     let newVentFlowMeasurements = ventFlowMeasurements;
     newVentFlowMeasurements[index] = parseInt(value)
     const sum = newVentFlowMeasurements.reduce((prev, current) => prev + current);
+    let average = Math.round(sum/newVentFlowMeasurements.length)
+    passCheck(newVentFlowMeasurements,average)
     setVentFlowMeasurements([...newVentFlowMeasurements]);
-    setAverageVentFlow(Math.round(sum/newVentFlowMeasurements.length));
+    setAverageVentFlow(average);
   };
 
   const handleNewVentFlow = () => {
@@ -124,6 +139,24 @@ export default function AddVentSurveyForm(props) {
       let airChangesPerHour = ventCuFtPerHour /roomVolume;
       let roundedAirChanges = Math.round((airChangesPerHour + Number.EPSILON) * 10) / 10;
       setAirChanges(roundedAirChanges);
+    };
+  };
+  
+  const passCheck = (flows, average) => {
+    console.log('in here')
+    let lowFlows = []
+    let failFlow = flows.every(el => el < 75)
+    for(let i = 0; flows.length > i; i++){
+      if(flows[i] < 100){
+        lowFlows.push(flows[i])
+      }
+    }
+    console.log(lowFlows.length)
+    if(lowFlows.length < 2 && average > 99 && failFlow === false){
+      setFormValues({...formValues, pass: true})
+    }
+    else{
+      setFormValues({...formValues, pass: false})
     }
   }
 
@@ -133,10 +166,11 @@ export default function AddVentSurveyForm(props) {
       ...props.show,
       ventInfo: true,
       addVentSurvey: false
-    })
+    });
   };
 
   const onSubmit = async (e) => {
+    // new Date().toISOString().split('T')[0]
     e.preventDefault();
 		await axios.post(
 			`${process.env.REACT_APP_DATABASE}/ventSurvey`,
@@ -149,7 +183,20 @@ export default function AddVentSurveyForm(props) {
       addVentSurvey: false
     })
   };
-
+  const getEquipment = async () =>{
+    let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
+    props.setEquipment(equipmentList.data)
+    let surveyDate = new Date();
+    if(props.selectedVent.surveyFrequency === 'Quarterly'){
+      setFormValues({...formValues, expirationDate: new Date(surveyDate.setMonth(surveyDate.getMonth()+8)).toISOString().split('T')[0]})
+    }
+  };
+  
+  useEffect(()=> {
+    getEquipment();
+  }, []);
+  console.log(formValues)
+  console.log(props.selectedVent)
   return (
     <Box>
       <Paper>
@@ -157,14 +204,19 @@ export default function AddVentSurveyForm(props) {
         <Grid>
           <form onSubmit={onSubmit}>
             <Grid>
-              <FormControl fullWidth>
-                <TextField
-                  name='equipmentId'
-                  id='outlined-multiline-static'
-                  label='Survey Equipment'
-                  rows={1}
-                  onChange={handleChange}
-                />
+                <FormControl>
+                <InputLabel id='demo-simple-select-label'>
+                  Equipment
+                </InputLabel>
+                <Select
+                  name='equipment'
+                  value={formValues.equipment}
+                  placeholder={'Select Vent Type'}
+                  >
+                {props.equipment.map((equipment) => (
+                  <MenuItem onClick={()=> handleEquipmentSelect(equipment)} key={equipment.equipmentId} value={`${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}>{`${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}</MenuItem>
+                ))}
+                </Select>
               </FormControl>
               <FormControl fullWidth>
                 <TextField
@@ -182,6 +234,7 @@ export default function AddVentSurveyForm(props) {
                     name='expirationDate'
                     id='outlined-multiline-static'
                     label='Expiration Date'
+                    value={formValues.expirationDate}
                     rows={1}
                     onChange={handleChange}
                   />
@@ -218,7 +271,6 @@ export default function AddVentSurveyForm(props) {
               <FormControl>
                 <TextField
                   name='averageVentFlow'
-                  disabled
                   id='outlined-multiline-static'
                   label='Average Vent Flow (fpm)'
                   value={averageVentFlow}
@@ -226,6 +278,8 @@ export default function AddVentSurveyForm(props) {
                 />
               </FormControl>
             </Grid>
+            {props.selectedVent.type === 'Battery Room' &&
+            <Grid>
               <Typography>Room Dimensions</Typography>
                 <TextField
                 name='roomHeight'
@@ -254,12 +308,11 @@ export default function AddVentSurveyForm(props) {
                 <FormControl>
                   <TextField
                     name='roomVolume'
-                    disabled
                     id='outlined-multiline-static'
                     label='room Volume (cu ft)'
                     value={roomVolume}
                     rows={1}
-                  />
+                    />
                 </FormControl>
             <Grid item>
             <Typography>Vent Dimensions</Typography>
@@ -297,25 +350,36 @@ export default function AddVentSurveyForm(props) {
                 <FormControl>
                   <TextField
                     name='ventArea'
-                    disabled
                     id='outlined-multiline-static'
                     label='Vent Area (cu ft)'
                     value={ventArea}
                     rows={1}
-                  />
+                    />
                 </FormControl>
             </Grid>
               <Typography>Air Changes Per Hour</Typography>
                 <FormControl>
                   <TextField
                     name='airChanges'
-                    disabled
                     id='outlined-multiline-static'
                     value={airChanges}
                     rows={1}
-                  />
+                    />
                 </FormControl>
                 <Button onClick={handleAirChanges} variant="contained">Calculate</Button>
+            </Grid>
+            }
+            <Grid item>
+              <FormControl>
+                <TextField
+                  name='pass'
+                  id='outlined-multiline-static'
+                  label={'Pass/Fail'}
+                  value={formValues.pass}
+                  rows={1}
+                />
+              </FormControl>
+            </Grid>
             <Grid item>
               <Button type='submit' color='success' variant='contained'>
                 Submit

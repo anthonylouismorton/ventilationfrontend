@@ -47,7 +47,7 @@ export default function VentInfo(props) {
 	return (
 		<Box>
 			<Paper>
-				<Typography>Add Vent</Typography>
+				<Typography>{`${props.selectedVent.description} Vent Info`}</Typography>
 					<form>
             <Grid>
               <FormControl>
@@ -90,6 +90,22 @@ export default function VentInfo(props) {
                   onChange={handleChange}
                 />
               </FormControl>
+                <FormControl>
+                  <InputLabel id='demo-simple-select-label'>
+                    Type
+                  </InputLabel>
+                  <Select
+                    name='type'
+                    value={props.selectedVent.type}
+                    placeholder={'Select Vent Type'}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={'Fume Hood'}>Fume Hood</MenuItem>
+                    <MenuItem value={'Paint Booth'}>Paint Booth</MenuItem>
+                    <MenuItem value={'Battery Room'}>Battery Room</MenuItem>
+                    <MenuItem value={'Welding Hood'}>Welding Hood</MenuItem>
+                  </Select>
+                </FormControl>
               <FormControl>
                 <InputLabel id='demo-simple-select-label'>
                   Frequency
@@ -161,6 +177,9 @@ export default function VentInfo(props) {
 							</Button>
               <Button onClick={handleNewSurvey} variant='contained'>
 								New Survey
+							</Button>
+              <Button onClick={handleNewSurvey} variant='contained'>
+								Create Survey
 							</Button>
             </Grid>
 					</form>

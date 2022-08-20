@@ -182,7 +182,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function VentList(props) {
+export default function EquipmentList(props) {
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
@@ -241,7 +241,7 @@ export default function VentList(props) {
   
   const getEquipment = async () =>{
     let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
-    console.log(equipmentList)
+    setRows(equipmentList.data)
   };
   
   useEffect(()=> {
@@ -271,8 +271,7 @@ export default function VentList(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.ventId);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+                  const isItemSelected = isSelected(row.equipmentId);
 
                   return (
                     <TableRow
@@ -280,16 +279,16 @@ export default function VentList(props) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.ventId}
+                      key={row.equipmentId}
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
                     >
-                      <TableCell align="center">{row.unitId}</TableCell>
                       <TableCell align="center">{row.description}</TableCell>
                       <TableCell align="center">{row.manufacturer}</TableCell>
                       <TableCell align="center">{row.model}</TableCell>
                       <TableCell align="center">{row.serialNumber}</TableCell>
-                      <TableCell align="center">{row.surveyFrequency}</TableCell>
+                      <TableCell align="center">{row.calibrationDate}</TableCell>
+                      <TableCell align="center">{row.calibrationExpiration}</TableCell>
                     </TableRow>
                   );
                 })}
