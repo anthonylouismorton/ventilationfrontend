@@ -37,10 +37,10 @@ const NavBar = (props) => {
       props.setShow({...props.defaultShow, ventList: true})
     }
     else if(page === 'Technicians'){
-      props.setShow({...props.defaultShow, ventList: true})
+      props.setShow({...props.defaultShow, technicianList: true})
     }
     else if(page === 'Surveys'){
-      props.setShow({...props.defaultShow, ventList: true})
+      props.setShow({...props.defaultShow, ventSurveyList: true})
     }
   };
 

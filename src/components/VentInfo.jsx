@@ -39,6 +39,13 @@ export default function VentInfo(props) {
       addVentSurvey: true
     });
   };
+  const handleAssignSurvey = () =>{
+    props.setShow({
+      ...props.show,
+      ventInfo: false,
+      assignSurvey: true
+    });
+  };
   const handleUpdate = async () => {
     let ventUpdate = await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${props.selectedVent.ventId}`, props.selectedVent);
     console.log(ventUpdate)
@@ -178,8 +185,8 @@ export default function VentInfo(props) {
               <Button onClick={handleNewSurvey} variant='contained'>
 								New Survey
 							</Button>
-              <Button onClick={handleNewSurvey} variant='contained'>
-								Create Survey
+              <Button onClick={handleAssignSurvey} variant='contained'>
+								Assign Survey
 							</Button>
             </Grid>
 					</form>

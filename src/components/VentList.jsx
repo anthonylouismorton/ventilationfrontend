@@ -107,7 +107,6 @@ function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
-    console.log('yo')
     onRequestSort(event, property);
   };
 
@@ -202,7 +201,6 @@ export default function VentList(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
-  console.log(props)
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -210,6 +208,7 @@ export default function VentList(props) {
   };
 
   const handleClick = (vent) => {
+    console.log(vent)
     props.setSelectedVent(vent);
     props.setShow({
       ...props.show,
@@ -269,7 +268,7 @@ export default function VentList(props) {
   useEffect(()=> {
     getVentsAndTechs();
   }, []);
-  console.log(rows)
+  console.log(props.selectedVent)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>

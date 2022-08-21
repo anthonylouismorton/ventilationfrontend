@@ -60,48 +60,41 @@ function stableSort(array, comparator) {
 }
 const headCells = [
   {
-    id: 'unit',
+    id: 'surveyDate',
     numeric: false,
     disablePadding: true,
-    label: 'Unit',
+    label: 'Survey Date',
   },
   {
-    id: 'description',
+    id: 'expirationDate',
     numeric: false,
     disablePadding: true,
-    label: 'Description',
+    label: 'Expiration Date',
   },
   {
-    id: 'manufacturer',
+    id: 'dueByDate',
     numeric: false,
     disablePadding: true,
-    label: 'Manufacturer',
+    label: 'Due By Date',
   },
   {
-    id: 'model',
+    id: 'pass',
     numeric: false,
     disablePadding: false,
-    label: 'Model',
-  },
-  {
-    id: 'serialNumber',
-    numeric: false,
-    disablePadding: false,
-    label: 'Serial Number',
+    label: 'Pass',
   },
   {
     id: 'technician',
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: 'Assigned Technician',
   },
   {
-    id: 'surveyFrequency',
-    numeric: true,
+    id: 'completedBy',
+    numeric: false,
     disablePadding: false,
-    label: 'Frequency',
+    label: 'Completed By',
   },
-
 ];
 
 function EnhancedTableHead(props) {
@@ -179,7 +172,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Vents
+          Vent Surveys
         </Typography>
       )}
         <Tooltip title="Add New Vent">
@@ -203,7 +196,6 @@ export default function VentList(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
-  console.log(props)
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -211,7 +203,7 @@ export default function VentList(props) {
   };
 
   const handleClick = (vent) => {
-    props.setSelectedVent(vent);
+    // props.setSelectedVent(vent);
     props.setShow({
       ...props.show,
       ventList: false,
@@ -233,7 +225,7 @@ export default function VentList(props) {
     console.log(vent)
     let updatedVent = {...vent, technicianId: tech.technicianId}
     await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
-    getVentsAndTechs();
+    // getVentsAndTechs();
   }
 
   const handleDeleteClick = async (id) => {
@@ -261,7 +253,8 @@ export default function VentList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getVentSurveys = async () =>{
-    let ventSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVentSurvey/${props.selectedVent.unitId}`)
+    let ventSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/allVentSurveys/${props.selectedVent.unitId}`)
+    console.log(ventSurveys)
     setRows([...ventSurveys.data])
   };
   
@@ -293,42 +286,22 @@ export default function VentList(props) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.ventId);
-
                   return (
                     <TableRow
                       hover
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.ventId}
+                      key={row.ventSurveyId}
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
                     >
-                      <TableCell align="center">{row.unitId}</TableCell>
-                      <TableCell align="center">{row.description}</TableCell>
-                      <TableCell align="center">{row.manufacturer}</TableCell>
-                      <TableCell align="center">{row.model}</TableCell>
-                      <TableCell align="center">{row.serialNumber}</TableCell>
-                      {row.technicianId?
-                      <TableCell align="center">{row.technicianId}</TableCell>
-                      : props.technicians.length === 0 ?
-                      <TableCell align="center">No Techs On File</TableCell>
-                      :
-                      <TableCell align="center">
-                        <FormControl fullWidth>
-                          <Select
-                          value={props.technicians[0].lastname ? props.technicians[0].lastname: ''}
-                          defaultValue={`${props.technicians[0].lastname}`}
-                          >
-                            {props.technicians.map((tech) => (
-                            <MenuItem key={tech.technicianId} onClick={() => handleTechSelect(tech,row)} value={`${tech.lastName}, ${tech.firstName}`}>{`${tech.lastName}, ${tech.firstName}`}</MenuItem>
-                            ))}
-
-                          </Select>
-                        </FormControl>
-                      </TableCell>
-                      }
-                      <TableCell align="center">{row.surveyFrequency}</TableCell>
+                      <TableCell align="center">{row.surveyDate}</TableCell>
+                      <TableCell align="center">{row.expirationDate}</TableCell>
+                      <TableCell align="center">{row.dueByDate}</TableCell>
+                      <TableCell align="center">{row.pass}</TableCell>
+                      <TableCell align="center">{`${row.technician.technicianRank} ${row.technician.lastName}, ${row.technician.firstName}`}</TableCell>
+                      <TableCell align="center">{row.completedBy}</TableCell>
                     </TableRow>
                   );
                 })}

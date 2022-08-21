@@ -17,10 +17,10 @@ export default function AddUnitForm(props) {
 	let defaultValues = {
 		firstName: '',
 		middleName: '',
-    LastNameName: '',
+    lastName: '',
 		technicianEmail: '',
 		technicianRank: '',
-		technicianRole: ''
+		technicianRole: 'Technician'
 	}
 	const [formValues, setFormValues] = useState(defaultValues);
 
@@ -34,17 +34,17 @@ export default function AddUnitForm(props) {
 
 	const handleCancel = () => {
 		setFormValues({...defaultValues});
-    props.setShow({...props.show, addTechnician: false, buttons: true, ventList: true})
+    props.setShow({...props.show, addTechnician: false})
   };
+
   const handleAdd = async () => {
     setFormValues({...defaultValues});
 		await axios.post(
 			`${process.env.REACT_APP_DATABASE}/technician`,
 			formValues,
 			);
-    props.setShow({...props.show, addTechnician: false, buttons: true, ventList: true})
     let technicianList = 	await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
-    props.setTechnicians(technicianList.data)
+    props.setTechnicians([...technicianList.data])
   }
 
 	const onSubmit = async (e) => {
@@ -53,12 +53,11 @@ export default function AddUnitForm(props) {
       `${process.env.REACT_APP_DATABASE}/technician`,
 			formValues,
 			);
-      props.setShow({...props.show, addTechnician: false, buttons: true, ventList: true})
+      props.setShow({...props.show, addTechnician: false})
       setFormValues({...defaultValues});
       let technicianList = 	await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
-      props.setTechnicians(technicianList.data)
+      props.setTechnicians([...technicianList.data])
 	};
-  
 	return (
 		<Box>
 			<Paper>
@@ -66,54 +65,59 @@ export default function AddUnitForm(props) {
 				<Grid>
 					<form onSubmit={onSubmit}>
             <Grid>
-                <FormControl fullWidth>
+                <FormControl>
                   <TextField
                     name='firstName'
                     id='outlined-multiline-static'
                     label='First Name'
+                    value={formValues.firstName}
                     rows={1}
                     onChange={handleChange}
                   />
                 </FormControl>
             </Grid>
             <Grid>
-              <FormControl fullWidth>
+              <FormControl>
                 <TextField
                   name='middleName'
                   id='outlined-multiline-static'
                   label='Middle Name'
+                  value={formValues.middleName}
                   rows={1}
                   onChange={handleChange}
                 />
               </FormControl>
 						</Grid>
 						<Grid>
-              <FormControl fullWidth>
+              <FormControl>
                 <TextField
                   name='lastName'
                   id='outlined-multiline-static'
                   label='Last Name'
+                  value={formValues.lastName}
                   rows={1}
                   onChange={handleChange}
                 />
               </FormControl>
 						</Grid>
 						<Grid>
-              <FormControl fullWidth>
+              <FormControl>
                 <TextField
                   name='technicianEmail'
                   id='outlined-multiline-static'
                   label='Email'
+                  value={formValues.technicianEmail}
                   rows={1}
                   onChange={handleChange}
                 />
               </FormControl>
 						</Grid>
 						<Grid>
-              <FormControl fullWidth>
+              <FormControl>
                 <TextField
                   name='technicianRank'
                   id='outlined-multiline-static'
+                  value={formValues.technicianRank}
                   label='Rank'
                   rows={1}
                   onChange={handleChange}
@@ -122,7 +126,7 @@ export default function AddUnitForm(props) {
 						</Grid>
             <Grid>
                 <Grid item>
-                  <FormControl fullWidth>
+                  <FormControl>
                     <InputLabel id='demo-simple-select-label'>
                       Role
                     </InputLabel>

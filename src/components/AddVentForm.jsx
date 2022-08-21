@@ -25,9 +25,9 @@ export default function AddVentForm(props) {
 		startDate: new Date().toISOString().split('T')[0],
     unitId: '',
     unitName: '',
-    surveyFrequency: '',
+    surveyFrequency: 'Quarterly',
     ventShape: 'Square',
-    type: ''
+    type: 'Fume Hood'
   }
 	const [formValues, setFormValues] = useState(defaultFormValues);
 
@@ -78,6 +78,7 @@ export default function AddVentForm(props) {
 			formValues,
 			);
 		props.setUnits(unitList.data);
+    setFormValues({...formValues, unitId: unitList.data[0].unitId, unitName: `${unitList.data[0].WPID} ${unitList.data[0].unitName}`})
   }
   const handleOpen = () => props.setOpen({...props.open, addUnitModal: true });
 
