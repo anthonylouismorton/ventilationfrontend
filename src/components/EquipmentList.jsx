@@ -169,7 +169,7 @@ const EnhancedTableToolbar = (props) => {
           Equipment
         </Typography>
       )}
-        <Tooltip title="Add New Vent">
+        <Tooltip title="Add Equipment">
           <IconButton onClick={props.handleNewEquipment}>
             <AddIcon />
           </IconButton>
@@ -240,13 +240,18 @@ export default function EquipmentList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getEquipment = async () =>{
-    let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
-    setRows(equipmentList.data)
+    if(props.equipment){
+      setRows(props.equipment)
+    }
+    else{
+      let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
+      setRows(equipmentList.data)
+    }
   };
   
   useEffect(()=> {
     getEquipment();
-  }, []);
+  }, [props.equipment]);
   console.log(rows)
   return (
     <Box sx={{ width: '100%' }}>

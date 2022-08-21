@@ -39,7 +39,7 @@ export default function AddEquipmentForm(props) {
 		setFormValues(defaultFormValues);
 		let equipmentList = await axios.get(
       `${process.env.REACT_APP_DATABASE}/equipment`);
-    props.setEquipment(equipmentList.data)
+    props.setEquipment([...equipmentList.data])
     props.setShow({...props.show, addEquipment: false, equipmentList: true})
 	};
 

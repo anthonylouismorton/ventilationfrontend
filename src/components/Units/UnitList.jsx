@@ -53,46 +53,34 @@ function stableSort(array, comparator) {
 }
 const headCells = [
   {
-    id: 'unit',
+    id: 'WPID',
     numeric: false,
     disablePadding: true,
-    label: 'Unit',
+    label: 'WPID',
   },
   {
-    id: 'surveyDate',
+    id: 'unitName',
     numeric: false,
     disablePadding: true,
-    label: 'Survey Date',
+    label: 'Unit Name',
   },
   {
-    id: 'expirationDate',
+    id: 'poc',
     numeric: false,
     disablePadding: true,
-    label: 'Expiration Date',
+    label: 'poc',
   },
   {
-    id: 'dueByDate',
-    numeric: false,
-    disablePadding: true,
-    label: 'Due By Date',
-  },
-  {
-    id: 'pass',
+    id: 'phone',
     numeric: false,
     disablePadding: false,
-    label: 'Pass',
+    label: 'Phone',
   },
   {
-    id: 'technician',
+    id: 'email',
     numeric: false,
     disablePadding: false,
-    label: 'Assigned Technician',
-  },
-  {
-    id: 'completedBy',
-    numeric: false,
-    disablePadding: false,
-    label: 'Completed By',
+    label: 'Email',
   }
 ];
 
@@ -100,7 +88,6 @@ function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
-    console.log('yo')
     onRequestSort(event, property);
   };
 
@@ -171,11 +158,11 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Vent Surveys
+          Units
         </Typography>
       )}
-        <Tooltip title="Add New Vent">
-          <IconButton onClick={props.handleNewVent}>
+        <Tooltip title="Add Unit">
+          <IconButton onClick={props.handleNewUnit}>
             <AddIcon />
           </IconButton>
         </Tooltip>
@@ -187,7 +174,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function VentSurveyList(props) {
+export default function UnitList(props) {
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
@@ -195,30 +182,36 @@ export default function VentSurveyList(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
-  console.log(props)
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  const handleClick = (ventSurvey) => {
-    props.setSelectedVentSurvey(ventSurvey);
-    props.setShow({
-      ...props.show,
-      ventSurveyList: false,
-      completeSurvey: true,
-    });
-  };
-
-  const handleNewVent = () => {
+  const handleClick = (vent) => {
+    props.setSelectedVent(vent);
     props.setShow({
       ...props.show,
       ventList: false,
-      addVent: true,
-      buttons: false 
+      addVent: false,
+      buttons: false,
+      ventInfo: true 
     });
   };
+
+  const handleNewUnit = () => {
+    props.setShow({
+      ...props.show,
+      addUnit: true,
+      unitList: false
+    });
+  };
+  // const handleTechSelect = async (tech, vent) => {
+  //   console.log(vent)
+  //   let updatedVent = {...vent, technicianId: tech.technicianId}
+  //   await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
+  //   getVentsAndTechs();
+  // }
 
   const handleDeleteClick = async (id) => {
     await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
@@ -244,21 +237,24 @@ export default function VentSurveyList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  const getVentSurveys = async () =>{
-    console.log('in here')
-    let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/ventSurvey`)
-    console.log(ventSurveyList)
-    setRows(ventSurveyList.data)
+  const getUnits = async () =>{
+    if(props.units.length > 1){
+      setRows(props.units)
+    }
+    else{
+      let unitList = await axios.get(`${process.env.REACT_APP_DATABASE}/unit`)
+      setRows(unitList.data)
+    }
   };
   
   useEffect(()=> {
-    getVentSurveys();
-  }, []);
+    getUnits();
+  }, [props.units]);
   console.log(rows)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleNewVent={handleNewVent}/>
+        <EnhancedTableToolbar numSelected={selected.length} handleNewUnit={handleNewUnit}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -278,7 +274,7 @@ export default function VentSurveyList(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.ventSurveyId);
+                  const isItemSelected = isSelected(row.unitId);
 
                   return (
                     <TableRow
@@ -286,17 +282,15 @@ export default function VentSurveyList(props) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.ventSurveyId}
+                      key={row.unitId}
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
                     >
-                      <TableCell align="center">{`${row.vent.unit.WPID} ${row.vent.unit.unitName}`}</TableCell>
-                      <TableCell align="center">{row.surveyDate}</TableCell>
-                      <TableCell align="center">{row.expirationDate}</TableCell>
-                      <TableCell align="center">{row.dueByDate}</TableCell>
-                      <TableCell align="center">{row.pass}</TableCell>
-                      <TableCell align="center">{`${row.technician.technicianRank} ${row.technician.lastName}, ${row.technician.firstName}`}</TableCell>
-                      <TableCell align="center">{row.completedBy}</TableCell>
+                      <TableCell align="center">{row.WPID}</TableCell>
+                      <TableCell align="center">{row.unitName}</TableCell>
+                      <TableCell align="center">{row.poc}</TableCell>
+                      <TableCell align="center">{row.phone}</TableCell>
+                      <TableCell align="center">{row.email}</TableCell>
                     </TableRow>
                   );
                 })}
