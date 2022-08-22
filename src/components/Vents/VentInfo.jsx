@@ -28,8 +28,7 @@ export default function VentInfo(props) {
     props.setShow({
       ...props.show,
       ventList: true,
-      ventInfo: false,
-      buttons: true
+      ventInfo: false
     })
   };
   const handleNewSurvey = () =>{

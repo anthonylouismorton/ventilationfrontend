@@ -12,7 +12,6 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { fi } from 'date-fns/locale';
 
 const pages = ['Units', 'Vents', 'Surveys', 'Equipment', 'Technicians'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -46,6 +45,7 @@ const NavBar = (props) => {
     else if(page === 'Units'){
       props.setShow({...props.defaultShow, unitList: true})
     }
+    props.setSelectedUnit({unitId: ''})
   };
 
   const handleCloseUserMenu = () => {

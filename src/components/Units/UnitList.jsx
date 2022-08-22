@@ -188,14 +188,12 @@ export default function UnitList(props) {
     setOrderBy(property);
   };
 
-  const handleClick = (vent) => {
-    props.setSelectedVent(vent);
+  const handleClick = (unit) => {
+    props.setSelectedUnit(unit);
     props.setShow({
       ...props.show,
-      ventList: false,
-      addVent: false,
-      buttons: false,
-      ventInfo: true 
+      unitList: false,
+      unitInfo: true 
     });
   };
 

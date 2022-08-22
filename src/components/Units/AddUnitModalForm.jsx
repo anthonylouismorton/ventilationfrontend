@@ -14,7 +14,7 @@ import {
 export default function AddUnitForm(props) {
 	const defaultFormValues = {
 		WPID: '',
-    unitName: '',
+    unitName: ''
 	}
 	const [formValues, setFormValues] = useState(defaultFormValues);
 
@@ -61,6 +61,7 @@ export default function AddUnitForm(props) {
 											name='WPID'
 											id='outlined-multiline-static'
 											label='WPID'
+											value={formValues.WPID}
 											rows={1}
 											onChange={handleChange}
 										/>
@@ -72,6 +73,7 @@ export default function AddUnitForm(props) {
 										name='unitName'
 										id='outlined-multiline-static'
 										label='Unit Name'
+										value={formValues.unitName}
 										rows={1}
 										onChange={handleChange}
 									/>

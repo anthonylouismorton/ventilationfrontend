@@ -52,8 +52,7 @@ export default function AddVentForm(props) {
     props.setShow({
       ...props.show,
       ventList: true,
-      addVent: false,
-      buttons: true
+      addVent: false
     })
   };
 
@@ -67,8 +66,7 @@ export default function AddVentForm(props) {
       props.setShow({
         ...props.show,
         ventList: true,
-        addVent: false,
-        buttons: true
+        addVent: false
       });
 	};
 

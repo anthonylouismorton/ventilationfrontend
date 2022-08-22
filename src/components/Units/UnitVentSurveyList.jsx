@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -16,8 +17,14 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
+import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
@@ -53,42 +60,41 @@ function stableSort(array, comparator) {
 }
 const headCells = [
   {
-    id: 'description',
+    id: 'surveyDate',
     numeric: false,
     disablePadding: true,
-    label: 'Description',
+    label: 'Survey Date',
   },
   {
-    id: 'manufacturer',
+    id: 'expirationDate',
     numeric: false,
     disablePadding: true,
-    label: 'Manufacturer',
+    label: 'Expiration Date',
   },
   {
-    id: 'model',
+    id: 'dueByDate',
+    numeric: false,
+    disablePadding: true,
+    label: 'Due By Date',
+  },
+  {
+    id: 'pass',
     numeric: false,
     disablePadding: false,
-    label: 'Model',
+    label: 'Pass',
   },
   {
-    id: 'serialNumber',
+    id: 'technician',
     numeric: false,
     disablePadding: false,
-    label: 'Serial Number',
+    label: 'Assigned Technician',
   },
   {
-    id: 'calibrationDate',
-    numeric: true,
+    id: 'completedBy',
+    numeric: false,
     disablePadding: false,
-    label: 'Cal Date',
+    label: 'Completed By',
   },
-  {
-    id: 'calibrationExpiration',
-    numeric: true,
-    disablePadding: false,
-    label: 'Cal Exp.',
-  },
-
 ];
 
 function EnhancedTableHead(props) {
@@ -166,11 +172,11 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Equipment
+          Vent Surveys
         </Typography>
       )}
-        <Tooltip title="Add Equipment">
-          <IconButton onClick={props.handleNewEquipment}>
+        <Tooltip title="Add New Vent">
+          <IconButton onClick={props.handleNewVent}>
             <AddIcon />
           </IconButton>
         </Tooltip>
@@ -182,7 +188,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function EquipmentList(props) {
+export default function VentList(props) {
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
@@ -190,7 +196,6 @@ export default function EquipmentList(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
-  console.log(props)
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -198,22 +203,29 @@ export default function EquipmentList(props) {
   };
 
   const handleClick = (vent) => {
-    props.setSelectedVent(vent);
+    // props.setSelectedVent(vent);
     props.setShow({
       ...props.show,
       ventList: false,
       addVent: false,
-      buttons: false,
       ventInfo: true 
     });
   };
 
-  const handleNewEquipment = () => {
+  const handleNewVent = () => {
     props.setShow({
       ...props.show,
-      addEquipment: true,
+      ventList: false,
+      addVent: true,
+      buttons: false 
     });
   };
+  const handleTechSelect = async (tech, vent) => {
+    console.log(vent)
+    let updatedVent = {...vent, technicianId: tech.technicianId}
+    await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
+    // getVentsAndTechs();
+  }
 
   const handleDeleteClick = async (id) => {
     await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
@@ -239,24 +251,20 @@ export default function EquipmentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  const getEquipment = async () =>{
-    if(props.equipment){
-      setRows(props.equipment)
-    }
-    else{
-      let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
-      setRows(equipmentList.data)
-    }
+  const getVentSurveys = async () =>{
+    let ventSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/allVentSurveys/${props.selectedVent.unitId}`)
+    console.log(ventSurveys)
+    setRows([...ventSurveys.data])
   };
   
   useEffect(()=> {
-    getEquipment();
-  }, [props.equipment]);
+    getVentSurveys();
+  }, []);
   console.log(rows)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleNewEquipment={handleNewEquipment}/>
+        <EnhancedTableToolbar numSelected={selected.length} handleNewVent={handleNewVent}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -276,24 +284,23 @@ export default function EquipmentList(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.equipmentId);
-
+                  const isItemSelected = isSelected(row.ventId);
                   return (
                     <TableRow
                       hover
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.equipmentId}
+                      key={row.ventSurveyId}
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
                     >
-                      <TableCell align="center">{row.description}</TableCell>
-                      <TableCell align="center">{row.manufacturer}</TableCell>
-                      <TableCell align="center">{row.model}</TableCell>
-                      <TableCell align="center">{row.serialNumber}</TableCell>
-                      <TableCell align="center">{row.calibrationDate}</TableCell>
-                      <TableCell align="center">{row.calibrationExpiration}</TableCell>
+                      <TableCell align="center">{row.surveyDate}</TableCell>
+                      <TableCell align="center">{row.expirationDate}</TableCell>
+                      <TableCell align="center">{row.dueByDate}</TableCell>
+                      <TableCell align="center">{row.pass}</TableCell>
+                      <TableCell align="center">{`${row.technician.technicianRank} ${row.technician.lastName}, ${row.technician.firstName}`}</TableCell>
+                      <TableCell align="center">{row.completedBy}</TableCell>
                     </TableRow>
                   );
                 })}

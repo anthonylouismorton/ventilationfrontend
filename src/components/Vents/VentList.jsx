@@ -53,40 +53,52 @@ function stableSort(array, comparator) {
 }
 const headCells = [
   {
-    id: 'technicianRank',
+    id: 'unit',
     numeric: false,
     disablePadding: true,
-    label: 'Rank',
+    label: 'Unit',
   },
   {
-    id: 'lastName',
+    id: 'description',
     numeric: false,
     disablePadding: true,
-    label: 'Last Name',
+    label: 'Description',
   },
   {
-    id: 'firstName',
+    id: 'manufacturer',
     numeric: false,
     disablePadding: true,
-    label: 'First Name',
+    label: 'Manufacturer',
   },
   {
-    id: 'middleName',
+    id: 'model',
     numeric: false,
     disablePadding: false,
-    label: 'Middle Name',
+    label: 'Model',
   },
   {
-    id: 'technicianEmail',
+    id: 'serialNumber',
     numeric: false,
     disablePadding: false,
-    label: 'Email',
+    label: 'Serial Number',
   },
+  // {
+  //   id: 'technician',
+  //   numeric: true,
+  //   disablePadding: false,
+  //   label: 'Assigned Technician',
+  // },
   {
-    id: 'technicianRole',
+    id: 'type',
     numeric: true,
     disablePadding: false,
-    label: 'Role',
+    label: 'Type',
+  },
+  {
+    id: 'surveyFrequency',
+    numeric: true,
+    disablePadding: false,
+    label: 'Frequency',
   },
 
 ];
@@ -165,11 +177,11 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Technicians
+          Vents
         </Typography>
       )}
         <Tooltip title="Add New Vent">
-          <IconButton onClick={props.handleNewTech}>
+          <IconButton onClick={props.handleNewVent}>
             <AddIcon />
           </IconButton>
         </Tooltip>
@@ -201,15 +213,16 @@ export default function VentList(props) {
       ...props.show,
       ventList: false,
       addVent: false,
-      buttons: false,
       ventInfo: true 
     });
   };
 
-  const handleNewTech = () => {
+  const handleNewVent = () => {
     props.setShow({
       ...props.show,
-      addTechnician: true,
+      ventList: false,
+      addVent: true,
+      buttons: false 
     });
   };
   // const handleTechSelect = async (tech, vent) => {
@@ -243,24 +256,30 @@ export default function VentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  const getTechs = async () =>{
-    if(props.technicians){
-      setRows(props.technicians)
+  const getVentsAndTechs = async () =>{
+    if(props.selectedUnit.unitId){
+      console.log('yeah buddy')
+      console.log(props.selectedUnit.unitId)
+      let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVents/${props.selectedUnit.unitId}`)
+      console.log(ventList)
+      setRows(ventList.data)
     }
     else{
-      let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
-      setRows(techList.data)
+      let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/vents`)
+      setRows(ventList.data)
     }
+    let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
+    props.setTechnicians(techList.data)
   };
   
   useEffect(()=> {
-    getTechs();
-  }, [props.technicians]);
-
+    getVentsAndTechs();
+  }, []);
+  console.log(rows)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleNewTech={handleNewTech}/>
+        <EnhancedTableToolbar numSelected={selected.length} handleNewVent={handleNewVent}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -280,7 +299,7 @@ export default function VentList(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.technicianId);
+                  const isItemSelected = isSelected(row.ventId);
 
                   return (
                     <TableRow
@@ -288,16 +307,36 @@ export default function VentList(props) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.technicianId}
+                      key={row.ventId}
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
                     >
-                      <TableCell align="center">{row.technicianRank}</TableCell>
-                      <TableCell align="center">{row.lastName}</TableCell>
-                      <TableCell align="center">{row.firstName}</TableCell>
-                      <TableCell align="center">{row.middleName}</TableCell>
-                      <TableCell align="center">{row.technicianEmail}</TableCell>
-                      <TableCell align="center">{row.technicianRole}</TableCell>
+                      <TableCell align="center">{row.unitId}</TableCell>
+                      <TableCell align="center">{row.description}</TableCell>
+                      <TableCell align="center">{row.manufacturer}</TableCell>
+                      <TableCell align="center">{row.model}</TableCell>
+                      <TableCell align="center">{row.serialNumber}</TableCell>
+                      {/* {row.technicianId?
+                      <TableCell align="center">{row.technicianId}</TableCell>
+                      : props.technicians.length === 0 ?
+                      <TableCell align="center">No Techs On File</TableCell>
+                      :
+                      <TableCell align="center">
+                        <FormControl fullWidth>
+                          <Select
+                          value={props.technicians[0].lastname ? props.technicians[0].lastname: ''}
+                          defaultValue={`${props.technicians[0].lastname}`}
+                          >
+                            {props.technicians.map((tech) => (
+                            <MenuItem key={tech.technicianId} onClick={() => handleTechSelect(tech,row)} value={`${tech.lastName}, ${tech.firstName}`}>{`${tech.lastName}, ${tech.firstName}`}</MenuItem>
+                            ))}
+
+                          </Select>
+                        </FormControl>
+                      </TableCell>
+                      } */}
+                      <TableCell align="center">{row.type}</TableCell>
+                      <TableCell align="center">{row.surveyFrequency}</TableCell>
                     </TableRow>
                   );
                 })}

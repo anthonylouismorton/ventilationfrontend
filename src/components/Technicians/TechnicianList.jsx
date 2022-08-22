@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -17,14 +16,8 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
@@ -60,48 +53,48 @@ function stableSort(array, comparator) {
 }
 const headCells = [
   {
-    id: 'surveyDate',
+    id: 'technicianRank',
     numeric: false,
     disablePadding: true,
-    label: 'Survey Date',
+    label: 'Rank',
   },
   {
-    id: 'expirationDate',
+    id: 'lastName',
     numeric: false,
     disablePadding: true,
-    label: 'Expiration Date',
+    label: 'Last Name',
   },
   {
-    id: 'dueByDate',
+    id: 'firstName',
     numeric: false,
     disablePadding: true,
-    label: 'Due By Date',
+    label: 'First Name',
   },
   {
-    id: 'pass',
+    id: 'middleName',
     numeric: false,
     disablePadding: false,
-    label: 'Pass',
+    label: 'Middle Name',
   },
   {
-    id: 'technician',
+    id: 'technicianEmail',
     numeric: false,
     disablePadding: false,
-    label: 'Assigned Technician',
+    label: 'Email',
   },
   {
-    id: 'completedBy',
-    numeric: false,
+    id: 'technicianRole',
+    numeric: true,
     disablePadding: false,
-    label: 'Completed By',
+    label: 'Role',
   },
+
 ];
 
 function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
-    console.log('yo')
     onRequestSort(event, property);
   };
 
@@ -172,11 +165,11 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Vent Surveys
+          Technicians
         </Typography>
       )}
         <Tooltip title="Add New Vent">
-          <IconButton onClick={props.handleNewVent}>
+          <IconButton onClick={props.handleNewTech}>
             <AddIcon />
           </IconButton>
         </Tooltip>
@@ -203,30 +196,27 @@ export default function VentList(props) {
   };
 
   const handleClick = (vent) => {
-    // props.setSelectedVent(vent);
+    props.setSelectedVent(vent);
     props.setShow({
       ...props.show,
       ventList: false,
       addVent: false,
-      buttons: false,
       ventInfo: true 
     });
   };
 
-  const handleNewVent = () => {
+  const handleNewTech = () => {
     props.setShow({
       ...props.show,
-      ventList: false,
-      addVent: true,
-      buttons: false 
+      addTechnician: true,
     });
   };
-  const handleTechSelect = async (tech, vent) => {
-    console.log(vent)
-    let updatedVent = {...vent, technicianId: tech.technicianId}
-    await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
-    // getVentsAndTechs();
-  }
+  // const handleTechSelect = async (tech, vent) => {
+  //   console.log(vent)
+  //   let updatedVent = {...vent, technicianId: tech.technicianId}
+  //   await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
+  //   getVentsAndTechs();
+  // }
 
   const handleDeleteClick = async (id) => {
     await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
@@ -252,20 +242,24 @@ export default function VentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  const getVentSurveys = async () =>{
-    let ventSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/allVentSurveys/${props.selectedVent.unitId}`)
-    console.log(ventSurveys)
-    setRows([...ventSurveys.data])
+  const getTechs = async () =>{
+    if(props.technicians){
+      setRows(props.technicians)
+    }
+    else{
+      let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
+      setRows(techList.data)
+    }
   };
   
   useEffect(()=> {
-    getVentSurveys();
-  }, []);
-  console.log(rows)
+    getTechs();
+  }, [props.technicians]);
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleNewVent={handleNewVent}/>
+        <EnhancedTableToolbar numSelected={selected.length} handleNewTech={handleNewTech}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -285,23 +279,24 @@ export default function VentList(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.ventId);
+                  const isItemSelected = isSelected(row.technicianId);
+
                   return (
                     <TableRow
                       hover
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.ventSurveyId}
+                      key={row.technicianId}
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
                     >
-                      <TableCell align="center">{row.surveyDate}</TableCell>
-                      <TableCell align="center">{row.expirationDate}</TableCell>
-                      <TableCell align="center">{row.dueByDate}</TableCell>
-                      <TableCell align="center">{row.pass}</TableCell>
-                      <TableCell align="center">{`${row.technician.technicianRank} ${row.technician.lastName}, ${row.technician.firstName}`}</TableCell>
-                      <TableCell align="center">{row.completedBy}</TableCell>
+                      <TableCell align="center">{row.technicianRank}</TableCell>
+                      <TableCell align="center">{row.lastName}</TableCell>
+                      <TableCell align="center">{row.firstName}</TableCell>
+                      <TableCell align="center">{row.middleName}</TableCell>
+                      <TableCell align="center">{row.technicianEmail}</TableCell>
+                      <TableCell align="center">{row.technicianRole}</TableCell>
                     </TableRow>
                   );
                 })}

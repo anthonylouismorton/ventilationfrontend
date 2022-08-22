@@ -1,43 +1,52 @@
 import { useState } from 'react';
 import './App.css';
-import AddTechnicianForm from './components/AddTechnicianForm';
+import AddTechnicianForm from './components/Technicians/AddTechnicianForm';
 import AddUnitModalForm from './components/Units/AddUnitModalForm';
-import AddVentForm from './components/AddVentForm';
-import AddVentSurvey from './components/AddVentSurvey';
-import VentList from './components/VentList';
-import VentInfo from './components/VentInfo';
+import AddVentForm from './components/Vents/AddVentForm';
+import AddVentSurvey from './components/Surveys/AddVentSurvey';
+import VentList from './components/Vents/VentList';
+import VentInfo from './components/Vents/VentInfo';
 import NavBar from './components/NavBar';
-import EquipmentList from './components/EquipmentList';
-import AddEquipmentForm from './components/AddEquipmentForm';
-import VentSurveyList from './components/VentSurveyList';
-import TechnicianList from './components/TechnicianList';
-import UnitVentSurveyList from './components/UnitVentSurveyList';
-import AssignSurveyForm from './components/AssignSurveyForm';
-import CompleteSurveyForm from './components/CompleteVentSurvey';
+import EquipmentList from './components/Equipment/EquipmentList';
+import AddEquipmentForm from './components/Equipment/AddEquipmentForm';
+import VentSurveyList from './components/Surveys/VentSurveyList';
+import TechnicianList from './components/Technicians/TechnicianList';
+import UnitVentSurveyList from './components/Units/UnitVentSurveyList';
+import AssignSurveyForm from './components/Surveys/AssignSurveyForm';
+import CompleteSurveyForm from './components/Surveys/CompleteVentSurvey';
 import UnitList from './components/Units/UnitList';
 import AddUnitForm from './components/Units/AddUnitForm';
+import UnitInfo from './components/Units/UnitInfo';
 
 function App() {
-  const defaultShow = {'ventList': false, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false }
-  const [show, setShow] = useState({'ventList': true, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false  });
+  const defaultShow = {'ventList': false, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false, unitInfo: false };
+  const [show, setShow] = useState({'ventList': true, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false, unitInfo: false });
   const [open, setOpen] = useState({'addUnitModal': false, 'addTechnician': false});
   const [units, setUnits] = useState([]);
   const [technicians, setTechnicians] = useState([]);
   const [selectedVent, setSelectedVent] = useState([]);
   const [equipment, setEquipment] = useState([]);
   const [selectedVentSurvey, setSelectedVentSurvey] = useState([]);
-  // const handleShowTech = () => setShow({...show, addTechnician: true, buttons: false, ventList: false});
+  const [selectedUnit, setSelectedUnit] = useState({unitId: ''});
+  console.log(selectedUnit)
   return (
     <div className="App">
-      <NavBar setShow={setShow} show={show} defaultShow={defaultShow}/>
+      <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit}/>
       {show.addUnit &&
       <AddUnitForm setShow={setShow} show={show} units={units} setUnits={setUnits}/>
       }
       {show.unitList &&
-      <UnitList setShow={setShow} show={show} units={units} setUnits={setUnits}/>
+      <UnitList setShow={setShow} show={show} units={units} setUnits={setUnits} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit}/>
       }
-      {show.ventList &&
-      <VentList setShow={setShow} show={show} technicians={technicians} setTechnicians={setTechnicians} setSelectedVent={setSelectedVent}/>
+      {show.unitInfo &&
+      <>
+      <UnitInfo setShow={setShow} show={show} units={units} setUnits={setUnits} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit}/>
+      <VentList setShow={setShow} show={show} technicians={technicians} setTechnicians={setTechnicians} setSelectedVent={setSelectedVent} selectedUnit={selectedUnit}/>
+      </>
+      }
+      {show.ventList && !show.unitInfo &&
+      <VentList setShow={setShow} show={show} technicians={technicians} setTechnicians={setTechnicians} setSelectedVent={setSelectedVent} selectedUnit={selectedUnit}
+      />
       }
       {show.addTechnician &&
       <AddTechnicianForm setShow={setShow} show={show} technicians={technicians} setTechnicians={setTechnicians}/>

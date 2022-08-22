@@ -8,13 +8,18 @@ import {
 	FormControl,
 	Box,
 	Typography,
-	Modal
 } from '@mui/material';
 
 export default function AddUnitForm(props) {
 	const defaultFormValues = {
 		WPID: '',
     unitName: '',
+    poc: '',
+		altPoc: '',
+		email: '',
+		altEmail: '',
+		phone: '',
+		altPhone: ''
 	}
 	const [formValues, setFormValues] = useState(defaultFormValues);
 
@@ -44,7 +49,7 @@ export default function AddUnitForm(props) {
 		
 		let unitList = await axios.get(
 			`${process.env.REACT_APP_DATABASE}/unit`);
-		props.setUnits(unitList.data)
+		props.setUnits([...unitList.data])
     props.setShow({
       ...props.show,
       unitList: true,
@@ -59,32 +64,92 @@ export default function AddUnitForm(props) {
 					<Grid>
 						<form onSubmit={handleSubmit}>
 							<Grid>
-									<FormControl fullWidth>
+									<FormControl>
 										<TextField
 											name='WPID'
 											id='outlined-multiline-static'
 											label='WPID'
+                      value={formValues.WPID}
 											rows={1}
 											onChange={handleChange}
 										/>
 									</FormControl>
-							</Grid>
-							<Grid>
-								<FormControl fullWidth>
+								<FormControl>
 									<TextField
 										name='unitName'
 										id='outlined-multiline-static'
 										label='Unit Name'
+                    value={formValues.unitName}
+										rows={1}
+										onChange={handleChange}
+									/>
+								</FormControl>
+                <FormControl>
+									<TextField
+										name='poc'
+										id='outlined-multiline-static'
+										label='POC'
+                    value={formValues.poc}
+										rows={1}
+										onChange={handleChange}
+									/>
+								</FormControl>
+                <FormControl>
+									<TextField
+										name='altPoc'
+										id='outlined-multiline-static'
+										label='Alt POC'
+                    value={formValues.altPoc}
+										rows={1}
+										onChange={handleChange}
+									/>
+								</FormControl>
+                <FormControl>
+									<TextField
+										name='email'
+										id='outlined-multiline-static'
+										label='Email'
+                    value={formValues.email}
+										rows={1}
+										onChange={handleChange}
+									/>
+								</FormControl>
+                <FormControl>
+									<TextField
+										name='altEmail'
+										id='outlined-multiline-static'
+										label='Alt Email'
+                    value={formValues.altEmail}
+										rows={1}
+										onChange={handleChange}
+									/>
+								</FormControl>
+                <FormControl>
+									<TextField
+										name='phone'
+										id='outlined-multiline-static'
+										label='phone'
+                    value={formValues.phone}
+										rows={1}
+										onChange={handleChange}
+									/>
+								</FormControl>
+                <FormControl>
+									<TextField
+										name='altPhone'
+										id='outlined-multiline-static'
+										label='Alt Phone'
+                    value={formValues.altPhone}
 										rows={1}
 										onChange={handleChange}
 									/>
 								</FormControl>
 							</Grid>
 							<Grid>
-								<Button type='submit' color='success' variant='contained'>
+								<Button type='submit' variant='contained'>
 									Submit
 								</Button>
-								<Button color='error' variant='contained'>
+								<Button onClick={()=> handleCancel()} color='error' variant='contained'>
 									Cancel
 								</Button>
 							</Grid>
