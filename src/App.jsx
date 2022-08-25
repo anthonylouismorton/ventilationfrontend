@@ -13,7 +13,7 @@ import VentSurveyList from './components/Surveys/VentSurveyList';
 import TechnicianList from './components/Technicians/TechnicianList';
 import UnitVentSurveyList from './components/Units/UnitVentSurveyList';
 import AssignSurveyForm from './components/Surveys/AssignSurveyForm';
-import CompleteSurveyForm from './components/Surveys/CompleteVentSurvey';
+import CompleteVentSurvey from './components/Surveys/CompleteVentSurvey';
 import UnitList from './components/Units/UnitList';
 import AddUnitForm from './components/Units/AddUnitForm';
 import UnitInfo from './components/Units/UnitInfo';
@@ -28,7 +28,6 @@ function App() {
   const [equipment, setEquipment] = useState([]);
   const [selectedVentSurvey, setSelectedVentSurvey] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState({unitId: ''});
-  console.log(selectedUnit)
   return (
     <div className="App">
       <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit}/>
@@ -74,13 +73,13 @@ function App() {
       <AddEquipmentForm setEquipment={setEquipment} equipment={equipment} setShow={setShow} show={show}/>
       }
       {show.equipment &&
-      <EquipmentList setShow={setShow} show={show}/>
+      <EquipmentList setShow={setShow} show={show} setEquipment={setEquipment} equipment={equipment}/>
       }
       {show.assignSurvey &&
       <AssignSurveyForm setTechnicians={setTechnicians} technicians={technicians} setShow={setShow} show={show} selectedVent={selectedVent} setSelectedVent={setSelectedVent}/>
       }
       {show.completeSurvey &&
-      <CompleteSurveyForm selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} setShow={setShow} show={show} equipment={equipment} setEquipment={setEquipment}/>
+      <CompleteVentSurvey selectedVent={selectedVent} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} setShow={setShow} show={show} equipment={equipment} setEquipment={setEquipment}/>
       }
     </div>
   );

@@ -220,7 +220,7 @@ export default function AddVentForm(props) {
 							</Grid>
 						</Grid>
 						<Grid item>
-							<Button type='submit' color='success' variant='contained'>
+							<Button type='submit' variant='contained'>
 								Submit
 							</Button>
 							<Button onClick={handleCancel} color='error' variant='contained'>

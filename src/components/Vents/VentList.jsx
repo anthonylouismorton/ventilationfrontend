@@ -210,9 +210,7 @@ export default function VentList(props) {
   const handleClick = (vent) => {
     props.setSelectedVent(vent);
     props.setShow({
-      ...props.show,
-      ventList: false,
-      addVent: false,
+      ...props.defaultShow,
       ventInfo: true 
     });
   };

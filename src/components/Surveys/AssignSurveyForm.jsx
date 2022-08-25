@@ -103,7 +103,7 @@ export default function AssignSurveyForm(props) {
             />
           </FormControl>
           <Grid>
-            <Button type='submit' color='success' variant='contained'>
+            <Button type='submit' variant='contained'>
               Submit
             </Button>
             <Button onClick={handleCancel} color='error' variant='contained'>

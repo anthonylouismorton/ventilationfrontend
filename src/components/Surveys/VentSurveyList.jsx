@@ -195,7 +195,7 @@ export default function VentSurveyList(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
-  console.log(props)
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');

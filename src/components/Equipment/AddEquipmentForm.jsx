@@ -34,13 +34,13 @@ export default function AddEquipmentForm(props) {
 		e.preventDefault();
 		let newEquipment = await axios.post(
 			`${process.env.REACT_APP_DATABASE}/equipment`,
-			formValues);
-      console.log(newEquipment)
-		setFormValues(defaultFormValues);
+			formValues
+		);
+		setFormValues({...defaultFormValues});
 		let equipmentList = await axios.get(
       `${process.env.REACT_APP_DATABASE}/equipment`);
+		props.setShow({...props.show, addEquipment: false, equipmentList: true})
     props.setEquipment([...equipmentList.data])
-    props.setShow({...props.show, addEquipment: false, equipmentList: true})
 	};
 
 	const handleCancel= () => {
@@ -121,7 +121,7 @@ export default function AddEquipmentForm(props) {
 								</FormControl>
 							</Grid>
 							<Grid>
-								<Button type='submit' color='success' variant='contained'>
+								<Button type='submit' variant='contained'>
 									Submit
 								</Button>
 								<Button onClick={handleCancel} color='error' variant='contained'>

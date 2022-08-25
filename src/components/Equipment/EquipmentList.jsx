@@ -239,6 +239,7 @@ export default function EquipmentList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getEquipment = async () =>{
+    console.log(props.equipment)
     if(props.equipment){
       setRows(props.equipment)
     }

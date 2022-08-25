@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import axios from 'axios';
 import {
 	TextField,
@@ -10,19 +10,33 @@ import {
 	Typography,
   Select,
   MenuItem,
-  InputLabel,
-  Tooltip,
-  IconButton
+  InputLabel
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 
 export default function VentInfo(props) {
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-    props.setSelectedVent({
-      ...props.selectedVent,
-      [name]: value,
-    });
+    if(value === 'Circular'){
+      props.setSelectedVent({
+        ...props.selectedVent,
+        [name]: value,
+        ventDimension2: ''
+      });
+    }
+    else{
+        if(name === 'ventDimension1' || name === 'ventDimension2'){
+          props.setSelectedVent({
+            ...props.selectedVent,
+            [name]: parseInt(value),
+          });
+        }
+        else{
+          props.setSelectedVent({
+            ...props.selectedVent,
+            [name]: value,
+          });
+        };
+    }
 	};
 	const handleBack = () => {
     props.setShow({
@@ -49,7 +63,7 @@ export default function VentInfo(props) {
     let ventUpdate = await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${props.selectedVent.ventId}`, props.selectedVent);
     console.log(ventUpdate)
   };
-
+  console.log(props.selectedVent)
 	return (
 		<Box>
 			<Paper>
@@ -139,20 +153,6 @@ export default function VentInfo(props) {
                   <MenuItem value={'Square'}>Square</MenuItem>
                 </Select>
               </FormControl>
-              {/* <FormControl>
-                <InputLabel id='demo-simple-select-label'>
-                  Assigned Technician
-                </InputLabel>
-                <Select
-                name='technicianId'
-                value={props.selectedVent.technicianId}
-                onChange={handleChange}
-                >
-                  {props.technicians.map((tech) => (
-                  <MenuItem key={tech.technicianId} value={tech.technicianId}>{tech.technicianId}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl> */}
               <FormControl>
                 <TextField
                   name='startDate'
@@ -173,6 +173,75 @@ export default function VentInfo(props) {
                   onChange={handleChange}
                 />
               </FormControl>
+              {props.selectedVent.ventShape === 'Square' ?
+              <>
+              <FormControl>
+                <TextField
+                  name='ventDimension1'
+                  id='outlined-multiline-static'
+                  label={'Vent Height'}
+                  defaultValue={props.selectedVent.ventDimension1}
+                  rows={1}
+                  onChange={handleChange}
+                />
+              </FormControl>
+              <FormControl>
+                <TextField
+                  name='ventDimension2'
+                  id='outlined-multiline-static'
+                  label='Vent Length'
+                  defaultValue={props.selectedVent.ventDimension2}
+                  rows={1}
+                  onChange={handleChange}
+                />
+              </FormControl>
+              </>
+              :
+              <FormControl>
+              <TextField
+                name='ventDimension1'
+                id='outlined-multiline-static'
+                label={'Diameter'}
+                defaultValue={props.selectedVent.ventDimension1}
+                rows={1}
+                onChange={handleChange}
+              />
+              </FormControl>
+              }
+              {props.selectedVent.type === 'Battery Room' &&
+              <>
+              <FormControl>
+                <TextField
+                  name='roomHeight'
+                  id='outlined-multiline-static'
+                  label={'Room Height'}
+                  defaultValue={props.selectedVent.roomHeight}
+                  rows={1}
+                  onChange={handleChange}
+                />
+              </FormControl>
+              <FormControl>
+                <TextField
+                  name='roomLength'
+                  id='outlined-multiline-static'
+                  label='Room Length'
+                  defaultValue={props.selectedVent.roomLength}
+                  rows={1}
+                  onChange={handleChange}
+                />
+              </FormControl>
+              <FormControl>
+              <TextField
+                name='roomWidth'
+                id='outlined-multiline-static'
+                label={'Room Width'}
+                defaultValue={props.selectedVent.roomWidth}
+                rows={1}
+                onChange={handleChange}
+              />
+              </FormControl>
+              </>
+              }
             </Grid>
             <Grid>
 							<Button onClick={handleUpdate} variant='contained'>

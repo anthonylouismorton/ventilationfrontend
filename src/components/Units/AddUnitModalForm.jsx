@@ -80,7 +80,7 @@ export default function AddUnitForm(props) {
 								</FormControl>
 							</Grid>
 							<Grid>
-								<Button type='submit' color='success' variant='contained'>
+								<Button type='submit' variant='contained'>
 									Submit
 								</Button>
 								<Button onClick={handleClose} color='error' variant='contained'>

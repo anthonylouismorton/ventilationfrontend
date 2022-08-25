@@ -203,7 +203,7 @@ export default function VentList(props) {
   };
 
   const handleClick = (vent) => {
-    // props.setSelectedVent(vent);
+    props.setSelectedVent(vent);
     props.setShow({
       ...props.show,
       ventList: false,
@@ -220,17 +220,17 @@ export default function VentList(props) {
       buttons: false 
     });
   };
-  const handleTechSelect = async (tech, vent) => {
-    console.log(vent)
-    let updatedVent = {...vent, technicianId: tech.technicianId}
-    await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
-    // getVentsAndTechs();
-  }
+  // const handleTechSelect = async (tech, vent) => {
+  //   console.log(vent)
+  //   let updatedVent = {...vent, technicianId: tech.technicianId}
+  //   await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
+  //   // getVentsAndTechs();
+  // }
 
-  const handleDeleteClick = async (id) => {
-    await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
-    setShowDeleteWarning(!showDeleteWarning, null)
-  }
+  // const handleDeleteClick = async (id) => {
+  //   await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
+  //   setShowDeleteWarning(!showDeleteWarning, null)
+  // }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

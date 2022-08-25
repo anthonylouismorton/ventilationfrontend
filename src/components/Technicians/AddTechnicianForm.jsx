@@ -52,11 +52,11 @@ export default function AddUnitForm(props) {
 		await axios.post(
       `${process.env.REACT_APP_DATABASE}/technician`,
 			formValues,
-			);
-      props.setShow({...props.show, addTechnician: false})
-      setFormValues({...defaultValues});
-      let technicianList = 	await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
-      props.setTechnicians([...technicianList.data])
+		);
+    props.setShow({...props.show, addTechnician: false})
+    setFormValues({...defaultValues});
+    let technicianList = 	await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
+    props.setTechnicians([...technicianList.data])
 	};
 	return (
 		<Box>
@@ -143,7 +143,7 @@ export default function AddUnitForm(props) {
                 </Grid>
 						</Grid>
             <Grid>
-							<Button type='submit' color='success' variant='contained'>
+							<Button type='submit' variant='contained'>
 								Submit
 							</Button>
               <Button onClick={handleAdd} variant='contained'>
