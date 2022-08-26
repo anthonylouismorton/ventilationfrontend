@@ -180,7 +180,7 @@ const EnhancedTableToolbar = (props) => {
           Vents
         </Typography>
       )}
-        <Tooltip title="Add New Vent">
+        <Tooltip title="Add Vent">
           <IconButton onClick={props.handleNewVent}>
             <AddIcon />
           </IconButton>
@@ -254,24 +254,23 @@ export default function VentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  const getVentsAndTechs = async () =>{
+  const getVents = async () =>{
     if(props.selectedUnit.unitId){
-      console.log('yeah buddy')
-      console.log(props.selectedUnit.unitId)
       let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVents/${props.selectedUnit.unitId}`)
-      console.log(ventList)
-      setRows(ventList.data)
+
+      setRows([...ventList.data])
     }
     else{
       let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/vents`)
-      setRows(ventList.data)
+
+      setRows([...ventList.data])
     }
-    let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
-    props.setTechnicians(techList.data)
+    // let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
+    // props.setTechnicians(techList.data)
   };
   
   useEffect(()=> {
-    getVentsAndTechs();
+    getVents();
   }, []);
   console.log(rows)
   return (

@@ -174,7 +174,7 @@ const EnhancedTableToolbar = (props) => {
           Vent Surveys
         </Typography>
       )}
-        <Tooltip title="Add New Vent">
+        <Tooltip title="Add Survey">
           <IconButton onClick={props.handleNewVent}>
             <AddIcon />
           </IconButton>

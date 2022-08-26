@@ -75,7 +75,7 @@ export default function AddVentForm(props) {
 			`${process.env.REACT_APP_DATABASE}/unit`,
 			formValues,
 			);
-		props.setUnits(unitList.data);
+		props.setUnits([...unitList.data]);
     setFormValues({...formValues, unitId: unitList.data[0].unitId, unitName: `${unitList.data[0].WPID} ${unitList.data[0].unitName}`})
   }
   const handleOpen = () => props.setOpen({...props.open, addUnitModal: true });

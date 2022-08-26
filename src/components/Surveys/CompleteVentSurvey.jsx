@@ -30,6 +30,7 @@ export default function CompleteSurveyForm(props) {
     surveyDate: new Date().toISOString().split('T')[0],
     ventId: props.selectedVentSurvey.ventId,
     pass: '',
+    distanceFromVent: '',
     technicianId: props.selectedVentSurvey.technician.technicianId,
     completedBy: `${props.selectedVentSurvey.technician.technicianRank} ${props.selectedVentSurvey.technician.lastName}, ${props.selectedVentSurvey.technician.firstName}`,
     status: props.selectedVentSurvey.status
@@ -84,14 +85,24 @@ export default function CompleteSurveyForm(props) {
     };
     if(props.selectedVentSurvey.vent.type === 'Fume Hood'){
       let lowFlows = []
-      let failFlow = newVentFlowMeasurements.every(el => el < 75)
+      let failFlow = newVentFlowMeasurements.every(flow => flow >= 75)
       for(let i = 0; newVentFlowMeasurements.length > i; i++){
         if(newVentFlowMeasurements[i] < 100){
           lowFlows.push(newVentFlowMeasurements[i])
         };
       };
-
-      if(lowFlows.length < 2 && average > 99 && failFlow === false){
+      if(lowFlows.length < 2 && average > 99 && failFlow === true){
+        console.log('in here')
+        setVentFlowMeasurements([...newVentFlowMeasurements]);
+        setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Pass'});
+      }
+      else{
+        setVentFlowMeasurements([...newVentFlowMeasurements]);
+        setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Fail'});
+      };
+    };
+    if(props.selectedVentSurvey.vent.type === 'Welding Hood'){
+      if(average > 99){
         setVentFlowMeasurements([...newVentFlowMeasurements]);
         setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Pass'});
       }
@@ -240,7 +251,13 @@ export default function CompleteSurveyForm(props) {
     props.setEquipment(equipmentList.data)
     let surveyDate = new Date();
     if(props.selectedVentSurvey.vent.surveyFrequency === 'Quarterly'){
-      setFormValues({...formValues, expirationDate: new Date(surveyDate.setMonth(surveyDate.getMonth()+8)).toISOString().split('T')[0]})
+      setFormValues({...formValues, expirationDate: new Date(surveyDate.setMonth(surveyDate.getMonth()+3)).toISOString().split('T')[0]})
+    }
+    else if (props.selectedVentSurvey.vent.surveyFrequency === 'Semi Annually'){
+      setFormValues({...formValues, expirationDate: new Date(surveyDate.setMonth(surveyDate.getMonth()+6)).toISOString().split('T')[0]})
+    }
+    else if (props.selectedVentSurvey.vent.surveyFrequency === 'Annually'){
+      setFormValues({...formValues, expirationDate: new Date(surveyDate.setMonth(surveyDate.getMonth()+12)).toISOString().split('T')[0]})
     }
     let volume = Math.round((props.selectedVentSurvey.vent.roomHeight * props.selectedVentSurvey.vent.roomWidth * props.selectedVentSurvey.vent.roomLength)/1728)
     setRoomVolume(volume);
@@ -259,8 +276,7 @@ export default function CompleteSurveyForm(props) {
   useEffect(()=> {
     getEquipment();
   }, []);
-  console.log(formValues)
-  console.log(props.selectedVentSurvey.vent)
+  console.log(props.selectedVentSurvey.vent.type)
   return (
     <Box>
       <Paper>
@@ -335,6 +351,7 @@ export default function CompleteSurveyForm(props) {
                 </Grid>
               )}
             </Grid>
+            {props.selectedVentSurvey.vent.type !== 'Welding Hood' &&
             <Grid item>
               <FormControl>
                 <TextField
@@ -346,6 +363,21 @@ export default function CompleteSurveyForm(props) {
                 />
               </FormControl>
             </Grid>
+            }
+            {props.selectedVentSurvey.vent.type === 'Welding Hood' &&
+            <Grid item>
+              <FormControl>
+                <TextField
+                  name='distanceFromVent'
+                  id='outlined-multiline-static'
+                  label='Distance from Vent (in.)'
+                  value={formValues.distanceFromVent}
+                  onChange={handleChange}
+                  rows={1}
+                />
+              </FormControl>
+            </Grid>
+            }
             {props.selectedVentSurvey.vent.type === 'Battery Room' &&
             <Grid>
               <Typography>Room Dimensions</Typography>

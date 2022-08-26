@@ -27,6 +27,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import axios from 'axios';
 
 function descendingComparator(a, b, orderBy) {
@@ -95,10 +96,16 @@ const headCells = [
     disablePadding: false,
     label: 'Completed By',
   },
+  {
+    id: 'status',
+    numeric: false,
+    disablePadding: false,
+    label: 'Status',
+  },
 ];
 
 function EnhancedTableHead(props) {
-  const { order, orderBy, onRequestSort } =
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
     console.log('yo')
@@ -108,26 +115,37 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
+        <TableCell padding="checkbox">
+          <Checkbox
+            color="primary"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            // onChange={onSelectAllClick}
+            inputProps={{
+              'aria-label': 'select all desserts',
+            }}
+          />
+        </TableCell>
         {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align='center'
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
+        <TableCell
+          key={headCell.id}
+          align='center'
+          padding={headCell.disablePadding ? 'none' : 'normal'}
+          sortDirection={orderBy === headCell.id ? order : false}
+        >
+          <TableSortLabel
+            active={orderBy === headCell.id}
+            direction={orderBy === headCell.id ? order : 'asc'}
+            onClick={createSortHandler(headCell.id)}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
+            {headCell.label}
+            {orderBy === headCell.id ? (
+              <Box component="span" sx={visuallyHidden}>
+                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+              </Box>
+            ) : null}
+          </TableSortLabel>
+        </TableCell>
         ))}
       </TableRow>
     </TableHead>
@@ -175,11 +193,25 @@ const EnhancedTableToolbar = (props) => {
           Vent Surveys
         </Typography>
       )}
-        <Tooltip title="Add New Vent">
-          <IconButton onClick={props.handleNewVent}>
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
+      {numSelected === 0 ?
+      <Tooltip title="Add Survey">
+        <IconButton onClick={props.handleNewVent}>
+          <AddIcon />
+        </IconButton>
+      </Tooltip>
+      : numSelected === 1 ?
+      <Tooltip title="Assign Survey">
+        <IconButton onClick={props.handleNewVent}>
+          <AssignmentIndIcon />
+        </IconButton>
+      </Tooltip>
+      :
+      <Tooltip title="This is temp">
+        <IconButton>
+          <AddIcon />
+        </IconButton>
+    </Tooltip>
+    }
     </Toolbar>
   );
 };
@@ -189,6 +221,7 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function VentList(props) {
+  
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
@@ -202,14 +235,31 @@ export default function VentList(props) {
     setOrderBy(property);
   };
 
-  const handleClick = (vent) => {
-    props.setSelectedVent(vent);
-    props.setShow({
-      ...props.show,
-      ventList: false,
-      addVent: false,
-      ventInfo: true 
-    });
+  const handleClick = (event, vent) => {
+    console.log(vent)
+    // props.setShow({
+    //   ...props.show,
+    //   ventList: false,
+    //   addVent: false,
+    //   ventInfo: true 
+    // });
+    const selectedIndex = selected.indexOf(vent.ventSurveyId);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, vent.ventSurveyId);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
   };
 
   const handleNewVent = () => {
@@ -285,6 +335,7 @@ export default function VentList(props) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.ventId);
+                  const labelId = `enhanced-table-checkbox-${index}`;
                   return (
                     <TableRow
                       hover
@@ -293,14 +344,24 @@ export default function VentList(props) {
                       tabIndex={-1}
                       key={row.ventSurveyId}
                       selected={isItemSelected}
-                      onClick={() => handleClick(row)}
+                      onClick={(event) => handleClick(event, row)}
                     >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId,
+                          }}
+                      />
+                      </TableCell>
                       <TableCell align="center">{row.surveyDate}</TableCell>
                       <TableCell align="center">{row.expirationDate}</TableCell>
                       <TableCell align="center">{row.dueByDate}</TableCell>
                       <TableCell align="center">{row.pass}</TableCell>
                       <TableCell align="center">{`${row.technician.technicianRank} ${row.technician.lastName}, ${row.technician.firstName}`}</TableCell>
                       <TableCell align="center">{row.completedBy}</TableCell>
+                      <TableCell align="center">{row.status}</TableCell>
                     </TableRow>
                   );
                 })}

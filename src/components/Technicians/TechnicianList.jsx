@@ -168,7 +168,7 @@ const EnhancedTableToolbar = (props) => {
           Technicians
         </Typography>
       )}
-        <Tooltip title="Add New Vent">
+        <Tooltip title="Add Technician">
           <IconButton onClick={props.handleNewTech}>
             <AddIcon />
           </IconButton>
