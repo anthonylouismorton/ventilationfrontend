@@ -93,6 +93,12 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: 'Completed By',
+  },
+  {
+    id: 'status',
+    numeric: false,
+    disablePadding: false,
+    label: 'Status',
   }
 ];
 
@@ -100,7 +106,6 @@ function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
-    console.log('yo')
     onRequestSort(event, property);
   };
 
@@ -195,6 +200,7 @@ export default function VentSurveyList(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
+  const [list, setList] = useState([])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -245,16 +251,14 @@ export default function VentSurveyList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getVentSurveys = async () =>{
-    console.log('in here')
     let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/ventSurvey`)
-    console.log(ventSurveyList)
     setRows(ventSurveyList.data)
   };
   
   useEffect(()=> {
     getVentSurveys();
   }, []);
-  console.log(rows)
+  console.log(list)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -297,6 +301,7 @@ export default function VentSurveyList(props) {
                       <TableCell align="center">{row.pass}</TableCell>
                       <TableCell align="center">{`${row.technician.technicianRank} ${row.technician.lastName}, ${row.technician.firstName}`}</TableCell>
                       <TableCell align="center">{row.completedBy}</TableCell>
+                      <TableCell align="center">{row.status}</TableCell>
                     </TableRow>
                   );
                 })}

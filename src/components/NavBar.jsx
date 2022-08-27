@@ -29,7 +29,7 @@ const NavBar = (props) => {
 
   const handleCloseNavMenu = (page) => {
     setAnchorElNav(null);
-    console.log(page)
+
     if(page === 'Equipment'){
       props.setShow({...props.defaultShow, equipment: true})
     }

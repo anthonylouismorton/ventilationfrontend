@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,21 +12,14 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import ReviewsIcon from '@mui/icons-material/Reviews';
 import axios from 'axios';
 
 function descendingComparator(a, b, orderBy) {
@@ -60,6 +52,12 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 const headCells = [
+  {
+    id: 'coverage',
+    numeric: false,
+    disablePadding: true,
+    label: 'Coverage',
+  },
   {
     id: 'surveyDate',
     numeric: false,
@@ -108,7 +106,6 @@ function EnhancedTableHead(props) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
-    console.log('yo')
     onRequestSort(event, property);
   };
 
@@ -195,14 +192,14 @@ const EnhancedTableToolbar = (props) => {
       )}
       {numSelected === 0 ?
       <Tooltip title="Add Survey">
-        <IconButton onClick={props.handleNewVent}>
+        <IconButton onClick={props.handleAssignSurvey}>
           <AddIcon />
         </IconButton>
       </Tooltip>
       : numSelected === 1 ?
-      <Tooltip title="Assign Survey">
-        <IconButton onClick={props.handleNewVent}>
-          <AssignmentIndIcon />
+      <Tooltip title="Review">
+        <IconButton onClick={props.handleReview}>
+          <ReviewsIcon />
         </IconButton>
       </Tooltip>
       :
@@ -228,26 +225,33 @@ export default function VentList(props) {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  const handleClick = (event, vent) => {
-    console.log(vent)
-    // props.setShow({
-    //   ...props.show,
-    //   ventList: false,
-    //   addVent: false,
-    //   ventInfo: true 
-    // });
-    const selectedIndex = selected.indexOf(vent.ventSurveyId);
+  const handleAssignSurvey = () =>{
+    props.setShow({
+      ...props.show,
+      ventInfo: false,
+      assignSurvey: true
+    });
+  };
+  const handleReview = () =>{
+    props.setShow({
+      ...props.show,
+      ventInfo: false,
+      reviewSurvey: true
+    });
+  };
+
+  const handleClick = (event, survey) => {
+    const selectedIndex = selected.indexOf(survey.ventSurveyId);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, vent.ventSurveyId);
+      newSelected = newSelected.concat(selected, survey.ventSurveyId);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -258,20 +262,18 @@ export default function VentList(props) {
         selected.slice(selectedIndex + 1),
       );
     }
-
     setSelected(newSelected);
+    props.setSelectedVentSurvey(survey)
   };
 
-  const handleNewVent = () => {
-    props.setShow({
-      ...props.show,
-      ventList: false,
-      addVent: true,
-      buttons: false 
-    });
-  };
+  // const handleNewVentSurvey = () => {
+  //   props.setShow({
+  //     ...props.show,
+  //     ventInfo: false,
+  //     assignSurvey: true,
+  //   });
+  // };
   // const handleTechSelect = async (tech, vent) => {
-  //   console.log(vent)
   //   let updatedVent = {...vent, technicianId: tech.technicianId}
   //   await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
   //   // getVentsAndTechs();
@@ -302,9 +304,11 @@ export default function VentList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getVentSurveys = async () =>{
-    let ventSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/allVentSurveys/${props.selectedVent.unitId}`)
-    console.log(ventSurveys)
+    let ventSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/allVentSurveys/${props.selectedVent.ventId}`)
     setRows([...ventSurveys.data])
+
+    let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`);
+    props.setEquipment([...equipmentList.data]);
   };
   
   useEffect(()=> {
@@ -314,7 +318,7 @@ export default function VentList(props) {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleNewVent={handleNewVent}/>
+        <EnhancedTableToolbar numSelected={selected.length} handleAssignSurvey={handleAssignSurvey} handleReview={handleReview}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -334,7 +338,7 @@ export default function VentList(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.ventId);
+                  const isItemSelected = isSelected(row.ventSurveyId);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
                     <TableRow
@@ -355,6 +359,7 @@ export default function VentList(props) {
                           }}
                       />
                       </TableCell>
+                      <TableCell align="center">{row.coverageDate}</TableCell>
                       <TableCell align="center">{row.surveyDate}</TableCell>
                       <TableCell align="center">{row.expirationDate}</TableCell>
                       <TableCell align="center">{row.dueByDate}</TableCell>

@@ -205,7 +205,6 @@ export default function UnitList(props) {
     });
   };
   // const handleTechSelect = async (tech, vent) => {
-  //   console.log(vent)
   //   let updatedVent = {...vent, technicianId: tech.technicianId}
   //   await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
   //   getVentsAndTechs();
@@ -248,7 +247,7 @@ export default function UnitList(props) {
   useEffect(()=> {
     getUnits();
   }, [props.units]);
-  console.log(rows)
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>

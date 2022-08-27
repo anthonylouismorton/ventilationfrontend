@@ -45,13 +45,13 @@ export default function VentInfo(props) {
       ventInfo: false
     })
   };
-  const handleNewSurvey = () =>{
-    props.setShow({
-      ...props.show,
-      ventInfo: false,
-      addVentSurvey: true
-    });
-  };
+  // const handleNewSurvey = () =>{
+  //   props.setShow({
+  //     ...props.show,
+  //     ventInfo: false,
+  //     addVentSurvey: true
+  //   });
+  // };
   const handleAssignSurvey = () =>{
     props.setShow({
       ...props.show,
@@ -61,9 +61,7 @@ export default function VentInfo(props) {
   };
   const handleUpdate = async () => {
     let ventUpdate = await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${props.selectedVent.ventId}`, props.selectedVent);
-    console.log(ventUpdate)
   };
-  console.log(props.selectedVent)
 	return (
 		<Box>
 			<Paper>
@@ -250,12 +248,12 @@ export default function VentInfo(props) {
 							<Button onClick={handleBack} variant='contained'>
 								Back
 							</Button>
-              <Button onClick={handleNewSurvey} variant='contained'>
+              {/* <Button onClick={handleNewSurvey} variant='contained'>
 								New Survey
-							</Button>
-              <Button onClick={handleAssignSurvey} variant='contained'>
+							</Button> */}
+              {/* <Button onClick={handleAssignSurvey} variant='contained'>
 								Assign Survey
-							</Button>
+							</Button> */}
             </Grid>
 					</form>
 			</Paper>

@@ -49,25 +49,44 @@ export default function AddVentForm(props) {
 
 	const handleCancel = () => {
 		setFormValues(defaultFormValues);
-    props.setShow({
-      ...props.show,
-      ventList: true,
-      addVent: false
-    })
-  };
-
-	const onSubmit = async (e) => {
-		e.preventDefault();
-    console.log(await axios.post(
-      `${process.env.REACT_APP_DATABASE}/vents`,
-      formValues,
-      ))
-      setFormValues(defaultFormValues);
+    if(props.selectedUnit.unitId){
+      props.setShow({
+        ...props.show,
+        addVent: false,
+        unitInfo: true
+      });
+    }
+    else{
       props.setShow({
         ...props.show,
         ventList: true,
         addVent: false
       });
+    }
+  };
+
+	const onSubmit = async (e) => {
+		e.preventDefault();
+    await axios.post(
+      `${process.env.REACT_APP_DATABASE}/vents`,
+      formValues,
+    )
+    setFormValues(defaultFormValues);
+    if(props.selectedUnit.unitId){
+      props.setShow({
+        ...props.show,
+        addVent: false,
+        unitInfo: true
+      });
+    }
+    else{
+      props.setShow({
+        ...props.show,
+        ventList: true,
+        addVent: false
+      });
+    }
+
 	};
 
   const getUnits = async () => {
@@ -76,7 +95,12 @@ export default function AddVentForm(props) {
 			formValues,
 			);
 		props.setUnits([...unitList.data]);
-    setFormValues({...formValues, unitId: unitList.data[0].unitId, unitName: `${unitList.data[0].WPID} ${unitList.data[0].unitName}`})
+    if(props.selectedUnit.unitId){
+      setFormValues({...formValues, unitId: props.selectedUnit.unitId, unitName: `${props.selectedUnit.WPID} ${props.selectedUnit.unitName}`})
+    }
+    else{
+      setFormValues({...formValues, unitId: unitList.data[0].unitId, unitName: `${unitList.data[0].WPID} ${unitList.data[0].unitName}`})
+    }
   }
   const handleOpen = () => props.setOpen({...props.open, addUnitModal: true });
 
@@ -203,21 +227,23 @@ export default function AddVentForm(props) {
               </Grid>
 						</Grid>
             <Grid>
+              {!props.selectedUnit.unitId &&
 							<Grid item>
-                    <Select
-                      name='unitName'
-                      value={formValues.unitName}
-                    >
-                      {props.units.map((unit) =>(
-                        <MenuItem key={unit.unitId} onClick={() => handleUnit(unit)} value={`${unit.WPID} ${unit.unitName}`}>{`${unit.WPID} ${unit.unitName}`}</MenuItem>
-                      ))}
-                    </Select>
+                <Select
+                  name='unitName'
+                  value={formValues.unitName}
+                >
+                  {props.units.map((unit) =>(
+                    <MenuItem key={unit.unitId} onClick={() => handleUnit(unit)} value={`${unit.WPID} ${unit.unitName}`}>{`${unit.WPID} ${unit.unitName}`}</MenuItem>
+                  ))}
+                </Select>
                 <Tooltip title="Add New Unit">
                   <IconButton onClick={handleOpen}>
                     <AddIcon />
                   </IconButton>
                 </Tooltip>
 							</Grid>
+              }
 						</Grid>
 						<Grid item>
 							<Button type='submit' variant='contained'>

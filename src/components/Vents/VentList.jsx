@@ -220,15 +220,9 @@ export default function VentList(props) {
       ...props.show,
       ventList: false,
       addVent: true,
-      buttons: false 
+      unitInfo: false
     });
   };
-  // const handleTechSelect = async (tech, vent) => {
-  //   console.log(vent)
-  //   let updatedVent = {...vent, technicianId: tech.technicianId}
-  //   await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
-  //   getVentsAndTechs();
-  // }
 
   const handleDeleteClick = async (id) => {
     await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
@@ -255,24 +249,14 @@ export default function VentList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getVents = async () =>{
-    if(props.selectedUnit.unitId){
-      let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVents/${props.selectedUnit.unitId}`)
-
-      setRows([...ventList.data])
-    }
-    else{
-      let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/vents`)
-
-      setRows([...ventList.data])
-    }
-    // let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
-    // props.setTechnicians(techList.data)
+    let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/vents`);
+    setRows([...ventList.data]);
   };
   
   useEffect(()=> {
     getVents();
   }, []);
-  console.log(rows)
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -308,30 +292,11 @@ export default function VentList(props) {
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
                     >
-                      <TableCell align="center">{row.unitId}</TableCell>
+                      <TableCell align="center">{`${row.unit.WPID} ${row.unit.unitName}`}</TableCell>
                       <TableCell align="center">{row.description}</TableCell>
                       <TableCell align="center">{row.manufacturer}</TableCell>
                       <TableCell align="center">{row.model}</TableCell>
                       <TableCell align="center">{row.serialNumber}</TableCell>
-                      {/* {row.technicianId?
-                      <TableCell align="center">{row.technicianId}</TableCell>
-                      : props.technicians.length === 0 ?
-                      <TableCell align="center">No Techs On File</TableCell>
-                      :
-                      <TableCell align="center">
-                        <FormControl fullWidth>
-                          <Select
-                          value={props.technicians[0].lastname ? props.technicians[0].lastname: ''}
-                          defaultValue={`${props.technicians[0].lastname}`}
-                          >
-                            {props.technicians.map((tech) => (
-                            <MenuItem key={tech.technicianId} onClick={() => handleTechSelect(tech,row)} value={`${tech.lastName}, ${tech.firstName}`}>{`${tech.lastName}, ${tech.firstName}`}</MenuItem>
-                            ))}
-
-                          </Select>
-                        </FormControl>
-                      </TableCell>
-                      } */}
                       <TableCell align="center">{row.type}</TableCell>
                       <TableCell align="center">{row.surveyFrequency}</TableCell>
                     </TableRow>

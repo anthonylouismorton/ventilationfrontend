@@ -28,9 +28,7 @@ export default function UnitInfo(props) {
 
   const handleUpdate = async () => {
     let unitUpdate = await axios.put(`${process.env.REACT_APP_DATABASE}/unit/${props.selectedUnit.unitId}`, props.selectedUnit);
-    console.log(unitUpdate)
   };
-  console.log(props.selectedUnit)
 	return (
 		<Box>
 			<Paper>

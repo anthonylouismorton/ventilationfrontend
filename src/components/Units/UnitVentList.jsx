@@ -76,17 +76,23 @@ const headCells = [
     disablePadding: false,
     label: 'Serial Number',
   },
+  // {
+  //   id: 'technician',
+  //   numeric: true,
+  //   disablePadding: false,
+  //   label: 'Assigned Technician',
+  // },
   {
-    id: 'calibrationDate',
+    id: 'type',
     numeric: true,
     disablePadding: false,
-    label: 'Cal Date',
+    label: 'Type',
   },
   {
-    id: 'calibrationExpiration',
+    id: 'surveyFrequency',
     numeric: true,
     disablePadding: false,
-    label: 'Cal Exp.',
+    label: 'Frequency',
   },
 
 ];
@@ -165,11 +171,11 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Equipment
+          Vents
         </Typography>
       )}
-        <Tooltip title="Add Equipment">
-          <IconButton onClick={props.handleNewEquipment}>
+        <Tooltip title="Add Vent">
+          <IconButton onClick={props.handleNewVent}>
             <AddIcon />
           </IconButton>
         </Tooltip>
@@ -181,7 +187,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function EquipmentList(props) {
+export default function UnitVentList(props) {
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
@@ -198,17 +204,17 @@ export default function EquipmentList(props) {
   const handleClick = (vent) => {
     props.setSelectedVent(vent);
     props.setShow({
-      ...props.show,
-      ventList: false,
-      addVent: false,
+      ...props.defaultShow,
       ventInfo: true 
     });
   };
 
-  const handleNewEquipment = () => {
+  const handleNewVent = () => {
     props.setShow({
       ...props.show,
-      addEquipment: true,
+      ventList: false,
+      addVent: true,
+      unitInfo: false
     });
   };
 
@@ -236,23 +242,19 @@ export default function EquipmentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  const getEquipment = async () =>{
-    if(props.equipment){
-      setRows(props.equipment)
-    }
-    else{
-      let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
-      setRows(equipmentList.data)
-    }
+  const getVents = async () =>{
+    let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVents/${props.selectedUnit.unitId}`)
+    setRows([...ventList.data])
   };
   
   useEffect(()=> {
-    getEquipment();
-  }, [props.equipment]);
+    getVents();
+  }, []);
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleNewEquipment={handleNewEquipment}/>
+        <EnhancedTableToolbar numSelected={selected.length} handleNewVent={handleNewVent}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -272,7 +274,7 @@ export default function EquipmentList(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.equipmentId);
+                  const isItemSelected = isSelected(row.ventId);
 
                   return (
                     <TableRow
@@ -280,7 +282,7 @@ export default function EquipmentList(props) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.equipmentId}
+                      key={row.ventId}
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
                     >
@@ -288,8 +290,8 @@ export default function EquipmentList(props) {
                       <TableCell align="center">{row.manufacturer}</TableCell>
                       <TableCell align="center">{row.model}</TableCell>
                       <TableCell align="center">{row.serialNumber}</TableCell>
-                      <TableCell align="center">{row.calibrationDate}</TableCell>
-                      <TableCell align="center">{row.calibrationExpiration}</TableCell>
+                      <TableCell align="center">{row.type}</TableCell>
+                      <TableCell align="center">{row.surveyFrequency}</TableCell>
                     </TableRow>
                   );
                 })}

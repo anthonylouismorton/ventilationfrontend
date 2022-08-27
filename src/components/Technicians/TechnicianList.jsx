@@ -212,7 +212,6 @@ export default function VentList(props) {
     });
   };
   // const handleTechSelect = async (tech, vent) => {
-  //   console.log(vent)
   //   let updatedVent = {...vent, technicianId: tech.technicianId}
   //   await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
   //   getVentsAndTechs();

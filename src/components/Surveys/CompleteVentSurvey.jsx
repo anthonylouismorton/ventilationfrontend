@@ -63,12 +63,10 @@ export default function CompleteSurveyForm(props) {
     setVentFlowMeasurements([...newVentFlowMeasurements]);
     // passCheck(newVentFlowMeasurements,average)
     if(props.selectedVentSurvey.vent.type === 'Battery Room'){
-      console.log('in here now')
       let ventCuFtPerHour = average * ventArea * 60
       let airChangesPerHour = ventCuFtPerHour /roomVolume;
       let roundedAirChanges = Math.round((airChangesPerHour + Number.EPSILON) * 10) / 10;
       if(roundedAirChanges >= 6){
-        console.log('in the rounded air changes if')
         setFormValues({
           ...formValues,
           pass: 'Pass',
@@ -92,7 +90,6 @@ export default function CompleteSurveyForm(props) {
         };
       };
       if(lowFlows.length < 2 && average > 99 && failFlow === true){
-        console.log('in here')
         setVentFlowMeasurements([...newVentFlowMeasurements]);
         setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Pass'});
       }
@@ -111,11 +108,6 @@ export default function CompleteSurveyForm(props) {
         setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Fail'});
       };
     };
-    // else{
-    //   setVentFlowMeasurements([...newVentFlowMeasurements]);
-    //   setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements]})
-    //   setAverageVentFlow(average);
-    // }
   };
 
   const handleNewVentFlow = () => {
@@ -132,90 +124,6 @@ export default function CompleteSurveyForm(props) {
     setAverageVentFlow(Math.round(sum/newVentFlowMeasurements.length));
   };
 
-// Room dimensions are set on the vent info form. Vent dimensions have been moved from the vent survey model to vent model.
-//Unsure whether I want to set room dimensions on this form as they should not change
-
-// const handleRoomDimensions = (e) => {
-//   const { name, value } = e.target;
-//   if(name === 'roomHeight'){
-//     let newRoomDimensions = roomDimensions;
-//     newRoomDimensions[0] = parseInt(value);
-//     setRoomDimensions([...newRoomDimensions]);
-//     if(roomDimensions.every(e => typeof e === 'number')){
-//       let volume = newRoomDimensions.reduce((prev, current) => prev * current);
-//       let sqFtVolume = Math.round(volume/1728)
-//       setRoomVolume(sqFtVolume);
-//     };
-//   }
-//   else if(name === 'roomWidth'){
-//     let newRoomDimensions = roomDimensions;
-//     newRoomDimensions[1] = parseInt(value);
-//     setRoomDimensions([...newRoomDimensions]);
-//     if(roomDimensions.every(e => typeof e === 'number')){
-//       let volume = newRoomDimensions.reduce((prev, current) => prev * current);
-//       let sqFtVolume = Math.round(volume/1728)
-//       setRoomVolume(sqFtVolume);
-//     };
-//   }
-//   else if(name === 'roomLength'){
-//     let newRoomDimensions = roomDimensions;
-//     newRoomDimensions[2] = parseInt(value);
-//     setRoomDimensions([...newRoomDimensions]);
-//     console.log(newRoomDimensions.every(e => e === true))
-//     if(roomDimensions.every(e => typeof e === 'number')){
-//       let volume = newRoomDimensions.reduce((prev, current) => prev * current)
-//       let sqFtVolume = Math.round(volume/1728)
-//       setRoomVolume(sqFtVolume);
-//     };
-//   };
-// };
-  // const handleVentArea = (e) => {
-  //   if(!e.target.value){
-  //     console.log('in here')
-  //     setVentDimensions([0,0])
-  //     setVentArea(0)
-  //   }
-  //   else if(props.selectedVent.ventShape === 'Circular'){
-  //     const diameter = e.target.value;
-  //     let newVentDimensions = ventDimensions
-  //     newVentDimensions[0] = parseInt(diameter)
-  //     setVentDimensions([...newVentDimensions])
-  //     let area = diameter/2 * diameter/2 * Math.PI /144;
-  //     let areaRounded = Math.round((area + Number.EPSILON) * 100) / 100;
-  //     setVentArea(areaRounded);
-  //   }
-  // };
-
-  // const handleAirChanges = () => {
-  //   console.log('hello')
-  //   if(averageVentFlow){
-  //     console.log(averageVentFlow, ventArea, roomVolume);
-  //     let ventCuFtPerHour = averageVentFlow * ventArea * 60
-  //     let airChangesPerHour = ventCuFtPerHour /roomVolume;
-  //     let roundedAirChanges = Math.round((airChangesPerHour + Number.EPSILON) * 10) / 10;
-  //     setAirChanges(roundedAirChanges);
-  //   };
-  // };
-  
-  // const passCheck = (flows, average) => {
-  //   let lowFlows = []
-  //   let failFlow = flows.every(el => el < 75)
-  //   for(let i = 0; flows.length > i; i++){
-  //     if(flows[i] < 100){
-  //       lowFlows.push(flows[i])
-  //     }
-  //   }
-
-  //   if(lowFlows.length < 2 && average > 99 && failFlow === false){
-  //     console.log('in the if')
-  //     setFormValues({...formValues, pass: true})
-  //   }
-  //   else{
-  //     console.log('in the else')
-  //     setFormValues({...formValues, pass: false})
-  //   }
-  // };
-
   const handleCancel = () => {
     setFormValues(defaultFormValues);
     props.setShow({
@@ -223,7 +131,7 @@ export default function CompleteSurveyForm(props) {
       ventSurveyList: true,
       completeSurvey: false,
     });
-    props.selectedVentSurvey([]);
+    props.setSelectedVentSurvey([]);
   };
 
   const onSubmit = async (e) => {
@@ -276,7 +184,6 @@ export default function CompleteSurveyForm(props) {
   useEffect(()=> {
     getEquipment();
   }, []);
-  console.log(props.selectedVentSurvey.vent.type)
   return (
     <Box>
       <Paper>
