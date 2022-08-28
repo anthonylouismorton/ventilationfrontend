@@ -30,6 +30,7 @@ function App() {
   const [equipment, setEquipment] = useState([]);
   const [selectedVentSurvey, setSelectedVentSurvey] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState({unitId: ''});
+  console.log(selectedVentSurvey)
   return (
     <div className="App">
       <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit}/>

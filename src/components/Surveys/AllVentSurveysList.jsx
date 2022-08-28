@@ -251,15 +251,14 @@ export default function VentSurveyList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getVentSurveys = async () =>{
-    let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/ventSurvey`)
-    console.log(ventSurveyList.data)
-    setRows(ventSurveyList.data)
+      let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/ventSurvey`)
+      setRows(ventSurveyList.data)
   };
   
   useEffect(()=> {
     getVentSurveys();
   }, []);
-  console.log(rows)
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -283,7 +282,7 @@ export default function VentSurveyList(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.ventSurveyId);
+                  const isItemSelected = isSelected(row.ventSurvey.ventSurveyId);
 
                   return (
                     <TableRow
@@ -291,18 +290,18 @@ export default function VentSurveyList(props) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.ventSurveyId}
+                      key={row.ventSurvey.ventSurveyId}
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
                     >
-                      <TableCell align="center">{`${row.vent.unit.WPID} ${row.vent.unit.unitName}`}</TableCell>
-                      <TableCell align="center">{row.surveyDate}</TableCell>
-                      <TableCell align="center">{row.expirationDate}</TableCell>
-                      <TableCell align="center">{row.dueByDate}</TableCell>
-                      <TableCell align="center">{row.pass}</TableCell>
-                      <TableCell align="center">{`${row.technician.technicianRank} ${row.technician.lastName}, ${row.technician.firstName}`}</TableCell>
-                      <TableCell align="center">{row.completedBy}</TableCell>
-                      <TableCell align="center">{row.status}</TableCell>
+                      <TableCell align="center">{`${row.ventSurvey.vent.unit.WPID} ${row.ventSurvey.vent.unit.unitName}`}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.surveyDate}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.expirationDate}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.dueByDate}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.pass}</TableCell>
+                      <TableCell align="center">{`${row.ventSurvey.technician.technicianRank} ${row.ventSurvey.technician.lastName}, ${row.ventSurvey.technician.firstName}`}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.completedBy}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.status}</TableCell>
                     </TableRow>
                   );
                 })}
