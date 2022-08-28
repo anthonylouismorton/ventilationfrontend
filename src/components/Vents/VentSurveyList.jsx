@@ -225,6 +225,7 @@ export default function VentList(props) {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [measurements, setMeasurements] = useState([])
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -304,8 +305,22 @@ export default function VentList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getVentSurveys = async () =>{
-    let ventSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/allVentSurveys/${props.selectedVent.ventId}`)
-    setRows([...ventSurveys.data])
+    await axios.get(`${process.env.REACT_APP_DATABASE}/allVentSurveys/${props.selectedVent.ventId}`)
+    .then((response) => {
+      setRows(response.data);
+      return response.data;
+    })
+    .then(async(rows) => {
+      let updatedRows = []
+      rows.forEach((row) => {
+        axios.get(`${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements/${row.ventSurveyId}`)
+        .then((response) => {
+          console.log(response)
+          updatedRows.push({...row, ventMeasurements: response.data})
+        })
+      })
+      setRows(updatedRows)
+    })
 
     let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`);
     props.setEquipment([...equipmentList.data]);

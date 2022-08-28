@@ -252,13 +252,14 @@ export default function VentSurveyList(props) {
   
   const getVentSurveys = async () =>{
     let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/ventSurvey`)
+    console.log(ventSurveyList.data)
     setRows(ventSurveyList.data)
   };
   
   useEffect(()=> {
     getVentSurveys();
   }, []);
-  console.log(list)
+  console.log(rows)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
