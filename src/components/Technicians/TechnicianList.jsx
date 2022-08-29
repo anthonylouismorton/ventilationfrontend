@@ -195,13 +195,12 @@ export default function VentList(props) {
     setOrderBy(property);
   };
 
-  const handleClick = (vent) => {
-    props.setSelectedVent(vent);
+  const handleClick = (tech) => {
+    props.setSelectedTech(tech);
     props.setShow({
       ...props.show,
-      ventList: false,
-      addVent: false,
-      ventInfo: true 
+      technicianList: false,
+      techInfo: true
     });
   };
 
@@ -242,19 +241,14 @@ export default function VentList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getTechs = async () =>{
-    if(props.technicians){
-      setRows(props.technicians)
-    }
-    else{
-      let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
-      setRows(techList.data)
-    }
+    let techList = await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
+    setRows(techList.data)
   };
   
   useEffect(()=> {
     getTechs();
   }, [props.technicians]);
-
+  console.log(rows)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>

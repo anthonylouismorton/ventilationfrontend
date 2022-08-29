@@ -7,114 +7,114 @@ import {
 	Grid,
 	FormControl,
 	Box,
-	Typography
+	Typography,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 
-export default function UnitInfo(props) {
+export default function TechInfo(props) {
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-    props.setSelectedUnit({
-      ...props.selectedUnit,
+    props.setSelectedTech({
+      ...props.selectedTech,
       [name]: value,
     });
 	};
 	const handleBack = () => {
     props.setShow({
       ...props.show,
-      unitList: true,
-      unitInfo: false
+      technicianList: true,
+      techInfo: false
     })
   };
 
   const handleUpdate = async () => {
-    await axios.put(`${process.env.REACT_APP_DATABASE}/unit/${props.selectedUnit.unitId}`, props.selectedUnit);
+    await axios.put(`${process.env.REACT_APP_DATABASE}/technician/${props.selectedTech.technicianId}`, props.selectedTech);
+    props.setShow({
+      ...props.show,
+      technicianList: true,
+      techInfo: false
+    })
+    props.selectedTech([])
   };
+  console.log(props.selectedTech)
 	return (
 		<Box>
 			<Paper>
-				<Typography>{`${props.selectedUnit.WPID} ${props.selectedUnit.unitName} Unit Info`}</Typography>
+				<Typography>{`${props.selectedTech.firstName} ${props.selectedTech.lastName} Unit Info`}</Typography>
 					<form>
             <Grid>
               <FormControl>
                 <TextField
-                  name='WPID'
+                  name='firstName'
                   id='outlined-multiline-static'
-                  label='WPID'
+                  label='First Name'
                   rows={1}
-                  value={props.selectedUnit.WPID}
+                  value={props.selectedTech.firstName}
                   onChange={handleChange}
                 />
               </FormControl>
               <FormControl>
                 <TextField
-                  name='unitName'
+                  name='middleName'
                   id='outlined-multiline-static'
-                  label='Unit Name'
+                  label='middleName'
                   rows={1}
-                  value={props.selectedUnit.unitName}
+                  value={props.selectedTech.middleName}
                   onChange={handleChange}
                 />
               </FormControl>
               <FormControl>
                 <TextField
-                  name='poc'
+                  name='lastName'
                   id='outlined-multiline-static'
-                  label='POC'
+                  label='Last Name'
                   rows={1}
-                  value={props.selectedUnit.poc}
+                  value={props.selectedTech.lastName}
                   onChange={handleChange}
                 />
               </FormControl>
               <FormControl>
                 <TextField
-                  name='altPoc'
-                  id='outlined-multiline-static'
-                  label='Secondary POC'
-                  rows={1}
-                  value={props.selectedUnit.altPoc}
-                  onChange={handleChange}
-                />
-              </FormControl>
-              <FormControl>
-                <TextField
-                  name='email'
+                  name='technicianEmail'
                   id='outlined-multiline-static'
                   label='Email'
+                  value={props.selectedTech.technicianEmail}
                   rows={1}
-                  value={props.selectedUnit.email}
                   onChange={handleChange}
                 />
               </FormControl>
+						</Grid>
+						<Grid>
               <FormControl>
                 <TextField
-                  name='altEmail'
+                  name='technicianRank'
                   id='outlined-multiline-static'
-                  label='Alt Email'
+                  value={props.selectedTech.technicianRank}
+                  label='Rank'
                   rows={1}
-                  value={props.selectedUnit.altEmail}
                   onChange={handleChange}
                 />
               </FormControl>
-              <FormControl>
-                <TextField
-                  name='phone'
-                  id='outlined-multiline-static'
-                  label='Phone'
-                  rows={1}
-                  value={props.selectedUnit.phone}
-                  onChange={handleChange}
-                />
-              </FormControl>
-              <FormControl>
-                <TextField
-                  name='altPhone'
-                  id='outlined-multiline-static'
-                  label='Alt Phone'
-                  rows={1}
-                  value={props.selectedUnit.altPhone}
-                  onChange={handleChange}
-                />
-              </FormControl>
+						</Grid>
+            <Grid>
+                <Grid item>
+                  <FormControl>
+                    <InputLabel id='demo-simple-select-label'>
+                      Role
+                    </InputLabel>
+                    <Select
+                      name='technicianRole'
+                      value={props.selectedTech.technicianRole}
+                      onChange={handleChange}
+                    >
+                      <MenuItem value={'Admin'}>Admin</MenuItem>
+                      <MenuItem value={'Program Manager'}>Program Manager</MenuItem>
+                      <MenuItem value={'Technician'}>Technician</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
               {/* <FormControl>
                 <TextField
                   name='startDate'

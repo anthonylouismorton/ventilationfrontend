@@ -45,22 +45,15 @@ export default function VentInfo(props) {
       ventInfo: false
     })
   };
-  // const handleNewSurvey = () =>{
+  // const handleAssignSurvey = () =>{
   //   props.setShow({
   //     ...props.show,
   //     ventInfo: false,
-  //     addVentSurvey: true
+  //     assignSurvey: true
   //   });
   // };
-  const handleAssignSurvey = () =>{
-    props.setShow({
-      ...props.show,
-      ventInfo: false,
-      assignSurvey: true
-    });
-  };
   const handleUpdate = async () => {
-    let ventUpdate = await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${props.selectedVent.ventId}`, props.selectedVent);
+    await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${props.selectedVent.ventId}`, props.selectedVent);
   };
 	return (
 		<Box>

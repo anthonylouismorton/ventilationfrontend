@@ -16,7 +16,6 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import ClassNameGenerator from '@mui/utils/ClassNameGenerator';
 
 export default function ReviewSurveyForm(props) {
   let [ventFlowMeasurements, setVentFlowMeasurements] = useState(['']);
@@ -24,17 +23,17 @@ export default function ReviewSurveyForm(props) {
   let [roomVolume, setRoomVolume] = useState('');
   let [ventArea, setVentArea] = useState('');
   const defaultFormValues = {
-    equipmentId: props.selectedVentSurvey.equipmentId,
+    equipmentId: props.selectedVentSurvey.ventSurvey.equipmentId,
     equipment: '',
-    airChanges: props.selectedVentSurvey.airChanges,
-    expirationDate: props.selectedVentSurvey.expirationDate,
-    surveyDate: props.selectedVentSurvey.surveyDate,
-    ventId: props.selectedVentSurvey.ventId,
-    pass: props.selectedVentSurvey.pass,
-    distanceFromVent: props.selectedVentSurvey.distanceFromVent,
-    technicianId: props.selectedVentSurvey.technician.technicianId,
-    completedBy: `${props.selectedVentSurvey.technician.technicianRank} ${props.selectedVentSurvey.technician.lastName}, ${props.selectedVentSurvey.technician.firstName}`,
-    status: props.selectedVentSurvey.status
+    airChanges: props.selectedVentSurvey.ventSurvey.airChanges,
+    expirationDate: props.selectedVentSurvey.ventSurvey.expirationDate,
+    surveyDate: props.selectedVentSurvey.ventSurvey.surveyDate,
+    ventId: props.selectedVentSurvey.ventSurvey.ventId,
+    pass: props.selectedVentSurvey.ventSurvey.pass,
+    distanceFromVent: props.selectedVentSurvey.ventSurvey.distanceFromVent,
+    technicianId: props.selectedVentSurvey.ventSurvey.technician.technicianId,
+    completedBy: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`,
+    status: props.selectedVentSurvey.ventSurvey.status
   }
   const [formValues, setFormValues] = useState(defaultFormValues);
 
@@ -63,7 +62,7 @@ export default function ReviewSurveyForm(props) {
     setAverageVentFlow(average);
     setVentFlowMeasurements([...newVentFlowMeasurements]);
     // passCheck(newVentFlowMeasurements,average)
-    if(props.selectedVentSurvey.vent.type === 'Battery Room'){
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Battery Room'){
       let ventCuFtPerHour = average * ventArea * 60
       let airChangesPerHour = ventCuFtPerHour /roomVolume;
       let roundedAirChanges = Math.round((airChangesPerHour + Number.EPSILON) * 10) / 10;
@@ -82,7 +81,7 @@ export default function ReviewSurveyForm(props) {
         });
       };
     };
-    if(props.selectedVentSurvey.vent.type === 'Fume Hood'){
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
       let lowFlows = []
       let failFlow = newVentFlowMeasurements.every(flow => flow >= 75)
       for(let i = 0; newVentFlowMeasurements.length > i; i++){
@@ -99,7 +98,7 @@ export default function ReviewSurveyForm(props) {
         setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Fail'});
       };
     };
-    if(props.selectedVentSurvey.vent.type === 'Welding Hood'){
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Welding Hood'){
       if(average > 99){
         setVentFlowMeasurements([...newVentFlowMeasurements]);
         setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Pass'});
@@ -129,8 +128,8 @@ export default function ReviewSurveyForm(props) {
     setFormValues(defaultFormValues);
     props.setShow({
       ...props.show,
-      ventSurveyList: true,
-      completeSurvey: false,
+      ventInfo: true,
+      reviewSurvey: false,
     });
     props.selectedVentSurvey([]);
   };
@@ -139,37 +138,41 @@ export default function ReviewSurveyForm(props) {
     // new Date().toISOString().split('T')[0]
     e.preventDefault();
 		await axios.put(
-			`${process.env.REACT_APP_DATABASE}/ventSurvey/${props.selectedVentSurvey.ventSurveyId}`,
+			`${process.env.REACT_APP_DATABASE}/ventSurvey/${props.selectedVentSurvey.ventSurvey.ventSurveyId}`,
 			formValues,
 		);
     Promise.all(ventFlowMeasurements.map((ventFlow) => axios.post(
       `${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements`,
-			{ventMeasurement: ventFlow, ventSurveyId: props.selectedVentSurvey.ventSurveyId},
+			{ventMeasurement: ventFlow, ventSurveyId: props.selectedVentSurvey.ventSurvey.ventSurveyId},
     )))
 
     setFormValues(defaultFormValues);
     props.setShow({
       ...props.show,
-      ventSurveyList: true,
-      completeSurvey: false,
+      ventInfo: true,
+      reviewSurvey: false,
     });
     props.setSelectedVentSurvey([]);
   };
   const setForm = async () => {
     let equipmentName = ''
-    props.equipment.map((equipment) => equipment.equipmentId = props.selectedVentSurvey.equipmentId ? equipmentName = `${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}` : equipmentName ='')
+    props.equipment.map((equipment) => equipment.equipmentId = props.selectedVentSurvey.ventSurvey.equipmentId ? equipmentName = `${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}` : equipmentName ='')
     setFormValues({
       ...formValues,
       equipment: equipmentName
     });
+    let dbVentMeasurements = props.selectedVentSurvey.ventMeasurements
+    const sum = dbVentMeasurements.reduce((prev, current) => prev.ventMeasurement + current.ventMeasurement);
+    let average = Math.round(sum/dbVentMeasurements.length);
+    setAverageVentFlow(average);
+    setVentFlowMeasurements([...dbVentMeasurements])
 
   };
   
   useEffect(()=> {
     setForm();
   }, []);
-  console.log(formValues)
-  console.log(props.selectedVentSurvey)
+  console.log(ventFlowMeasurements)
   return (
     <Box>
       <Paper>
@@ -219,7 +222,7 @@ export default function ReviewSurveyForm(props) {
                 name='ventFlow'
                 id='outlined-multiline-static'
                 label={`Vent Flow Measurement ${index+1} (fpm)`}
-                value={ventFlowMeasurements[index]}
+                value={ventFlowMeasurements[index].ventMeasurement}
                 rows={1}
                 onChange={(e)=> handleVentMeasurements(index, e)}
                 />
@@ -239,7 +242,7 @@ export default function ReviewSurveyForm(props) {
                 </Grid>
               )}
             </Grid>
-            {props.selectedVentSurvey.vent.type !== 'Welding Hood' &&
+            {props.selectedVentSurvey.ventSurvey.vent.type !== 'Welding Hood' &&
             <Grid item>
               <FormControl>
                 <TextField
@@ -252,7 +255,7 @@ export default function ReviewSurveyForm(props) {
               </FormControl>
             </Grid>
             }
-            {props.selectedVentSurvey.vent.type === 'Welding Hood' &&
+            {props.selectedVentSurvey.ventSurvey.vent.type === 'Welding Hood' &&
             <Grid item>
               <FormControl>
                 <TextField
@@ -266,28 +269,28 @@ export default function ReviewSurveyForm(props) {
               </FormControl>
             </Grid>
             }
-            {props.selectedVentSurvey.vent.type === 'Battery Room' &&
+            {props.selectedVentSurvey.ventSurvey.vent.type === 'Battery Room' &&
             <Grid>
               <Typography>Room Dimensions</Typography>
                 <TextField
                 name='roomHeight'
                 id='outlined-multiline-static'
                 label={`Height (in.)`}
-                value={props.selectedVentSurvey.vent.roomHeight}
+                value={props.selectedVentSurvey.ventSurvey.vent.roomHeight}
                 rows={1}
                 />
                 <TextField
                 name='roomWidth'
                 id='outlined-multiline-static'
                 label={`Width (in.)`}
-                value={props.selectedVentSurvey.vent.roomWidth}
+                value={props.selectedVentSurvey.ventSurvey.vent.roomWidth}
                 rows={1}
                 />
                 <TextField
                 name='roomLength'
                 id='outlined-multiline-static'
                 label={`Length (in.)`}
-                value={props.selectedVentSurvey.vent.roomLength}
+                value={props.selectedVentSurvey.ventSurvey.vent.roomLength}
                 rows={1}
                 />
                 <FormControl>
@@ -301,13 +304,13 @@ export default function ReviewSurveyForm(props) {
                 </FormControl>
             <Grid item>
             <Typography>Vent Dimensions</Typography>
-              {props.selectedVentSurvey.vent.ventShape === 'Circular' ?
+              {props.selectedVentSurvey.ventSurvey.vent.ventShape === 'Circular' ?
               <Grid>
                 <TextField
                 name='diameter'
                 id='outlined-multiline-static'
                 label={`Diameter (in.)`}
-                value={props.selectedVentSurvey.vent.ventDimension1}
+                value={props.selectedVentSurvey.ventSurvey.vent.ventDimension1}
                 rows={1}
                 />
               </Grid>
@@ -317,14 +320,14 @@ export default function ReviewSurveyForm(props) {
                 name='ventWidth'
                 id='outlined-multiline-static'
                 label={`Width (in.)`}
-                value={props.selectedVentSurvey.vent.ventDimension1}
+                value={props.selectedVentSurvey.ventSurvey.vent.ventDimension1}
                 rows={1}
                 />
                 <TextField
                 name='ventLength'
                 id='outlined-multiline-static'
                 label={`Length (in.)`}
-                value={props.selectedVentSurvey.vent.ventDimension2}
+                value={props.selectedVentSurvey.ventSurvey.vent.ventDimension2}
                 rows={1}
                 />
               </Grid>

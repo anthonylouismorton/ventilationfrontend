@@ -248,11 +248,12 @@ export default function VentList(props) {
   };
 
   const handleClick = (event, survey) => {
-    const selectedIndex = selected.indexOf(survey.ventSurveyId);
+    console.log(survey.ventSurvey)
+    const selectedIndex = selected.indexOf(survey.ventSurvey.ventSurveyId);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, survey.ventSurveyId);
+      newSelected = newSelected.concat(selected, survey.ventSurvey.ventSurveyId);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -305,22 +306,23 @@ export default function VentList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getVentSurveys = async () =>{
-    await axios.get(`${process.env.REACT_APP_DATABASE}/allVentSurveys/${props.selectedVent.ventId}`)
-    .then((response) => {
-      setRows(response.data);
-      return response.data;
-    })
-    .then(async(rows) => {
-      let updatedRows = []
-      rows.forEach((row) => {
-        axios.get(`${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements/${row.ventSurveyId}`)
-        .then((response) => {
-          console.log(response)
-          updatedRows.push({...row, ventMeasurements: response.data})
-        })
-      })
-      setRows(updatedRows)
-    })
+    let unitVentSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVentSurveys/${props.selectedVent.ventId}`)
+    setRows(unitVentSurveys.data)
+    // .then((response) => {
+    //   setRows(response.data);
+    //   return response.data;
+    // })
+    // .then(async(rows) => {
+    //   let updatedRows = []
+    //   rows.forEach((row) => {
+    //     axios.get(`${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements/${row.ventSurvey.ventSurveyId}`)
+    //     .then((response) => {
+    //       console.log(response)
+    //       updatedRows.push({...row, ventMeasurements: response.data})
+    //     })
+    //   })
+    //   setRows(updatedRows)
+    // })
 
     let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`);
     props.setEquipment([...equipmentList.data]);
@@ -353,7 +355,7 @@ export default function VentList(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.ventSurveyId);
+                  const isItemSelected = isSelected(row.ventSurvey.ventSurveyId);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
                     <TableRow
@@ -361,7 +363,7 @@ export default function VentList(props) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.ventSurveyId}
+                      key={row.ventSurvey.ventSurveyId}
                       selected={isItemSelected}
                       onClick={(event) => handleClick(event, row)}
                     >
@@ -374,14 +376,14 @@ export default function VentList(props) {
                           }}
                       />
                       </TableCell>
-                      <TableCell align="center">{row.coverageDate}</TableCell>
-                      <TableCell align="center">{row.surveyDate}</TableCell>
-                      <TableCell align="center">{row.expirationDate}</TableCell>
-                      <TableCell align="center">{row.dueByDate}</TableCell>
-                      <TableCell align="center">{row.pass}</TableCell>
-                      <TableCell align="center">{`${row.technician.technicianRank} ${row.technician.lastName}, ${row.technician.firstName}`}</TableCell>
-                      <TableCell align="center">{row.completedBy}</TableCell>
-                      <TableCell align="center">{row.status}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.coverageDate}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.surveyDate}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.expirationDate}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.dueByDate}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.pass}</TableCell>
+                      <TableCell align="center">{`${row.ventSurvey.technician.technicianRank} ${row.ventSurvey.technician.lastName}, ${row.ventSurvey.technician.firstName}`}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.completedBy}</TableCell>
+                      <TableCell align="center">{row.ventSurvey.status}</TableCell>
                     </TableRow>
                   );
                 })}
