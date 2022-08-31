@@ -172,6 +172,7 @@ export default function ReviewSurveyForm(props) {
   useEffect(()=> {
     setForm();
   }, []);
+  console.log(props.selectedVentSurvey)
   console.log(ventFlowMeasurements)
   return (
     <Box>

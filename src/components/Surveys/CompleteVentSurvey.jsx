@@ -46,6 +46,47 @@ export default function CompleteSurveyForm(props) {
     });
   };
 
+  const handleRoomDimensions = async (e) => {
+    const { name, value } = e.target;
+    if(name === 'roomLength'){
+      await props.setSelectedVentSurvey({
+        ...props.ventMeasurements,
+        ventSurvey: {
+          ...props.selectedVentSurvey.ventSurvey,
+          vent: {
+            ...props.selectedVentSurvey.ventSurvey.vent,
+            roomLength: parseInt(value)
+          }
+        }
+      });
+    }
+    else if(name === 'roomWidth'){
+      await props.setSelectedVentSurvey({
+        ...props.ventMeasurements,
+        ventSurvey: {
+          ...props.selectedVentSurvey.ventSurvey,
+          vent: {
+            ...props.selectedVentSurvey.ventSurvey.vent,
+            roomWidth: parseInt(value)
+          }
+        }
+      });
+    }
+    else{
+      await props.setSelectedVentSurvey({
+        ...props.ventMeasurements,
+        ventSurvey: {
+          ...props.selectedVentSurvey.ventSurvey,
+          vent: {
+            ...props.selectedVentSurvey.ventSurvey.vent,
+            roomHeight: parseInt(value)
+          }
+        }
+      });
+    }
+    console.log(props.selectedVentSurvey.ventSurvey.vent)
+  };
+
   const handleEquipmentSelect = (equipment) => {
     setFormValues({
       ...formValues,
@@ -143,12 +184,18 @@ export default function CompleteSurveyForm(props) {
 			`${process.env.REACT_APP_DATABASE}/ventSurvey/${formValues.ventSurveyId}`,
 			formValues,
 		);
-    console.log('we here')
+    await axios.put(
+			`${process.env.REACT_APP_DATABASE}/vent/${props.selectedVentSurvey.ventSurvey.vent.ventId}`,
+			{
+        roomHeight: props.selectedVentSurvey.ventSurvey.vent.roomHeight,
+        roomLength: props.selectedVentSurvey.ventSurvey.vent.roomLength,
+        roomWidth: props.selectedVentSurvey.ventSurvey.vent.roomWidth
+      }
+		);
     Promise.all(ventFlowMeasurements.map((ventFlow) => axios.post(
       `${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements`,
 			{ventMeasurement: ventFlow, ventSurveyId: formValues.ventSurveyId},
     )))
-    console.log('here')
     setFormValues([]);
     props.setShow({
       ...props.show,
@@ -166,7 +213,8 @@ export default function CompleteSurveyForm(props) {
     props.setEquipment(equipmentList.data)
     let surveyDate = new Date();
     if(props.selectedVentSurvey.ventSurvey.vent.surveyFrequency === 'Quarterly'){
-      setFormValues({...formValues, expirationDate: new Date(surveyDate.setMonth(surveyDate.getMonth()+3)).toISOString().split('T')[0]})
+      setFormValues({...formValues, 
+        expirationDate: new Date(surveyDate.setMonth(surveyDate.getMonth()+3)).toISOString().split('T')[0]})
     }
     else if (props.selectedVentSurvey.ventSurvey.vent.surveyFrequency === 'Semi Annually'){
       setFormValues({...formValues, expirationDate: new Date(surveyDate.setMonth(surveyDate.getMonth()+6)).toISOString().split('T')[0]})
@@ -186,12 +234,12 @@ export default function CompleteSurveyForm(props) {
       let areaRounded = Math.round((area + Number.EPSILON) * 100) / 100;
       setVentArea(areaRounded);
     }
+
   };
   
   useEffect(()=> {
     getEquipment();
   }, []);
-  console.log(formValues)
   console.log(props.selectedVentSurvey)
   return (
     <Box>
@@ -303,6 +351,7 @@ export default function CompleteSurveyForm(props) {
                 label={`Height (in.)`}
                 value={props.selectedVentSurvey.ventSurvey.vent.roomHeight}
                 rows={1}
+                onChange={handleRoomDimensions}
                 />
                 <TextField
                 name='roomWidth'
@@ -310,6 +359,7 @@ export default function CompleteSurveyForm(props) {
                 label={`Width (in.)`}
                 value={props.selectedVentSurvey.ventSurvey.vent.roomWidth}
                 rows={1}
+                onChange={handleRoomDimensions}
                 />
                 <TextField
                 name='roomLength'
@@ -317,6 +367,7 @@ export default function CompleteSurveyForm(props) {
                 label={`Length (in.)`}
                 value={props.selectedVentSurvey.ventSurvey.vent.roomLength}
                 rows={1}
+                onChange={handleRoomDimensions}
                 />
                 <FormControl>
                   <TextField

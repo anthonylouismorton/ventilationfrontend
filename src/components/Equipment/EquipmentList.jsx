@@ -195,13 +195,12 @@ export default function EquipmentList(props) {
     setOrderBy(property);
   };
 
-  const handleClick = (vent) => {
-    props.setSelectedVent(vent);
+  const handleClick = (equipment) => {
+    props.setSelectedEquipment(equipment);
     props.setShow({
       ...props.show,
-      ventList: false,
-      addVent: false,
-      ventInfo: true 
+      equipment: false,
+      equipmentInfo: true 
     });
   };
 
@@ -237,7 +236,8 @@ export default function EquipmentList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   const getEquipment = async () =>{
-    if(props.equipment){
+    console.log(props.equipment)
+    if(!props.equipment){
       setRows(props.equipment)
     }
     else{

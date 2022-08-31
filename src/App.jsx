@@ -19,11 +19,12 @@ import AddUnitForm from './components/Units/AddUnitForm';
 import UnitInfo from './components/Units/UnitInfo';
 import UnitVentList from './components/Units/UnitVentList';
 import ReviewSurveyForm from './components/Surveys/ReviewSurveyForm';
-import TechInfo from './components/Technicians/techInfo';
+import TechInfo from './components/Technicians/TechInfo';
+import EquipmentInfo from './components/Equipment/EquipmentInfo';
 
 function App() {
-  const defaultShow = {'ventList': false, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false, unitInfo: false, reviewSurvey: false, techInfo: false };
-  const [show, setShow] = useState({'ventList': true, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false, unitInfo: false, reviewSurvey: false, techInfo: false });
+  const defaultShow = {'ventList': false, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false, unitInfo: false, reviewSurvey: false, techInfo: false, equipmentInfo: false };
+  const [show, setShow] = useState({'ventList': true, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false, unitInfo: false, reviewSurvey: false, techInfo: false, equipmentInfo: false });
   const [open, setOpen] = useState({'addUnitModal': false, 'addTechnician': false});
   const [units, setUnits] = useState([]);
   const [technicians, setTechnicians] = useState([]);
@@ -31,8 +32,9 @@ function App() {
   const [equipment, setEquipment] = useState([]);
   const [selectedVentSurvey, setSelectedVentSurvey] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState({unitId: ''});
-  const [selectedTech, setSelectedTech] = useState([])
-  console.log(selectedVentSurvey)
+  const [selectedTech, setSelectedTech] = useState([]);
+  const [selectedEquipment, setSelectedEquipment] = useState([]);
+
   return (
     <div className="App">
       <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit}/>
@@ -78,7 +80,10 @@ function App() {
       <AddEquipmentForm setEquipment={setEquipment} equipment={equipment} setShow={setShow} show={show}/>
       }
       {show.equipment &&
-      <EquipmentList setShow={setShow} show={show} setEquipment={setEquipment} equipment={equipment}/>
+      <EquipmentList setShow={setShow} show={show} setEquipment={setEquipment} equipment={equipment} selectedEquipment={selectedEquipment} setSelectedEquipment={setSelectedEquipment}/>
+      }
+      {show.equipmentInfo &&
+      <EquipmentInfo setShow={setShow} show={show} selectedEquipment={selectedEquipment} setSelectedEquipment={setSelectedEquipment}/>
       }
       {show.assignSurvey &&
       <AssignSurveyForm setTechnicians={setTechnicians} technicians={technicians} setShow={setShow} show={show} selectedVent={selectedVent} setSelectedVent={setSelectedVent}/>

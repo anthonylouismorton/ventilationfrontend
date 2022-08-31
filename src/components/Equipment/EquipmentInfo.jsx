@@ -13,74 +13,84 @@ import {
   MenuItem
 } from '@mui/material';
 
-export default function TechInfo(props) {
+export default function EquipmentInfo(props) {
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-    props.setSelectedTech({
-      ...props.selectedTech,
+    props.setSelectedEquipment({
+      ...props.selectedEquipment,
       [name]: value,
     });
 	};
 	const handleBack = () => {
     props.setShow({
       ...props.show,
-      technicianList: true,
-      techInfo: false
+      equipment: true,
+      equipmentInfo: false
     })
   };
 
   const handleUpdate = async () => {
-    await axios.put(`${process.env.REACT_APP_DATABASE}/technician/${props.selectedTech.technicianId}`, props.selectedTech);
+    await axios.put(`${process.env.REACT_APP_DATABASE}/equipment/${props.selectedEquipment.equipmentId}`, props.selectedEquipment);
     props.setShow({
       ...props.show,
-      technicianList: true,
-      techInfo: false
+      equipment: true,
+      equipmentInfo: false
     })
-    props.selectedTech([])
+    props.selectedEquipment([])
   };
-  console.log(props.selectedTech)
+  console.log(props.selectedEquipment)
 	return (
 		<Box>
 			<Paper>
-				<Typography>{`${props.selectedTech.firstName} ${props.selectedTech.lastName} Info`}</Typography>
+				<Typography>{`${props.selectedEquipment.serialNumber} ${props.selectedEquipment.manufacturer} ${props.selectedEquipment.model} Info`}</Typography>
 					<form>
             <Grid>
               <FormControl>
                 <TextField
-                  name='firstName'
+                  name='manufacturer'
                   id='outlined-multiline-static'
-                  label='First Name'
+                  label='Manufacturer'
                   rows={1}
-                  value={props.selectedTech.firstName}
+                  value={props.selectedEquipment.manufacturer}
                   onChange={handleChange}
                 />
               </FormControl>
               <FormControl>
                 <TextField
-                  name='middleName'
+                  name='model'
                   id='outlined-multiline-static'
-                  label='Middle Name'
+                  label='Model'
                   rows={1}
-                  value={props.selectedTech.middleName}
+                  value={props.selectedEquipment.model}
                   onChange={handleChange}
                 />
               </FormControl>
               <FormControl>
                 <TextField
-                  name='lastName'
+                  name='description'
                   id='outlined-multiline-static'
-                  label='Last Name'
+                  label='Description'
                   rows={1}
-                  value={props.selectedTech.lastName}
+                  value={props.selectedEquipment.description}
                   onChange={handleChange}
                 />
               </FormControl>
               <FormControl>
                 <TextField
-                  name='technicianEmail'
+                  name='serialNumber'
                   id='outlined-multiline-static'
-                  label='Email'
-                  value={props.selectedTech.technicianEmail}
+                  label='Serial #'
+                  rows={1}
+                  value={props.selectedEquipment.serialNumber}
+                  onChange={handleChange}
+                />
+              </FormControl>
+              <FormControl>
+                <TextField
+                  name='calibrationDate'
+                  id='outlined-multiline-static'
+                  label='calibration Date'
+                  value={props.selectedEquipment.calibrationDate}
                   rows={1}
                   onChange={handleChange}
                 />
@@ -89,10 +99,10 @@ export default function TechInfo(props) {
 						<Grid>
               <FormControl>
                 <TextField
-                  name='technicianRank'
+                  name='calibrationExpiration'
                   id='outlined-multiline-static'
-                  value={props.selectedTech.technicianRank}
-                  label='Rank'
+                  value={props.selectedEquipment.calibrationExpiration}
+                  label='Calibration Expiration'
                   rows={1}
                   onChange={handleChange}
                 />
@@ -102,16 +112,14 @@ export default function TechInfo(props) {
                 <Grid item>
                   <FormControl>
                     <InputLabel id='demo-simple-select-label'>
-                      Role
+                      Calibration Location
                     </InputLabel>
                     <Select
-                      name='technicianRole'
-                      value={props.selectedTech.technicianRole}
+                      name='calibrationLocation'
+                      value={props.selectedEquipment.calibrationLocation}
                       onChange={handleChange}
                     >
-                      <MenuItem value={'Admin'}>Admin</MenuItem>
-                      <MenuItem value={'Program Manager'}>Program Manager</MenuItem>
-                      <MenuItem value={'Technician'}>Technician</MenuItem>
+                      <MenuItem value={'Nellis'}>Nellis</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
