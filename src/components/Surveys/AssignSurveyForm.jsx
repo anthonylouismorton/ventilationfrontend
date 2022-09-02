@@ -102,7 +102,9 @@ export default function AssignSurveyForm(props) {
     props.setTechnicians(techList.data)
     setFormValues({
       ...formValues,
-      coverageDate: currentCoverage
+      coverageDate: currentCoverage,
+      technicianId: techList.data[0].technicianId,
+      assignedTechnician: `${techList.data[0].technicianRank} ${techList.data[0].lastName}, ${techList.data[0].firstName}`
     });
   };
 
@@ -123,6 +125,7 @@ export default function AssignSurveyForm(props) {
   useEffect(()=> {
     getTechs();
   }, []);
+  console.log(formValues)
   return (
     <Box>
       <Paper>
