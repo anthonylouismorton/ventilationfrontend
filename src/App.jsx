@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import AddTechnicianForm from './components/Technicians/AddTechnicianForm';
 import AddUnitModalForm from './components/Units/AddUnitModalForm';
@@ -21,6 +21,7 @@ import UnitVentList from './components/Units/UnitVentList';
 import ReviewSurveyForm from './components/Surveys/ReviewSurveyForm';
 import TechInfo from './components/Technicians/TechInfo';
 import EquipmentInfo from './components/Equipment/EquipmentInfo';
+import axios from 'axios'
 
 function App() {
   const defaultShow = {'ventList': false, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false, unitInfo: false, reviewSurvey: false, techInfo: false, equipmentInfo: false };
@@ -34,6 +35,16 @@ function App() {
   const [selectedUnit, setSelectedUnit] = useState({unitId: ''});
   const [selectedTech, setSelectedTech] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState([]);
+  
+  const getTechs = async () => {
+    let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
+    setTechnicians(techList.data)
+  }
+  useEffect(()=> {
+    let ignore = false;
+    if (!ignore)  getTechs()
+    return () => { ignore = true; }
+  }, []);
 
   return (
     <div className="App">
@@ -89,7 +100,7 @@ function App() {
       <AssignSurveyForm setTechnicians={setTechnicians} technicians={technicians} setShow={setShow} show={show} selectedVent={selectedVent} setSelectedVent={setSelectedVent}/>
       }
       {show.completeSurvey &&
-      <CompleteVentSurvey selectedVent={selectedVent} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} setShow={setShow} show={show} equipment={equipment} setEquipment={setEquipment}/>
+      <CompleteVentSurvey selectedVent={selectedVent} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} setShow={setShow} show={show} equipment={equipment} setEquipment={setEquipment} technicians={technicians} setTechnicians={setTechnicians}/>
       }
       {show.reviewSurvey &&
       <ReviewSurveyForm setTechnicians={setTechnicians} technicians={technicians} setShow={setShow} show={show} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} equipment={equipment} setEquipment={setEquipment}/>
