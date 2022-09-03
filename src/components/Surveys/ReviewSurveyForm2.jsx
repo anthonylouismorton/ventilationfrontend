@@ -322,6 +322,11 @@ export default function CompleteSurveyForm(props) {
     await axios.put(
 			`${process.env.REACT_APP_DATABASE}/vents/${props.selectedVentSurvey.ventSurvey.vent.ventId}`,
       props.selectedVentSurvey.ventSurvey.vent
+			// {
+      //   roomHeight: props.selectedVentSurvey.ventSurvey.vent.roomHeight,
+      //   roomLength: props.selectedVentSurvey.ventSurvey.vent.roomLength,
+      //   roomWidth: props.selectedVentSurvey.ventSurvey.vent.roomWidth
+      // }
 		);
     Promise.all(props.selectedVentSurvey.ventMeasurements.map((ventFlow) => axios.post(
       `${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements`,
@@ -380,8 +385,7 @@ export default function CompleteSurveyForm(props) {
         equipmentId: equipmentId,
         equipment: equipment,
         airChanges: airChanges.airChanges,
-        pass: airChanges.pass,
-        completedBy: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`
+        pass: airChanges.pass
       }
     })
   };
@@ -391,7 +395,7 @@ export default function CompleteSurveyForm(props) {
     if (!ignore)  getEquipment()
     return () => { ignore = true; }
   }, [props.selectedVentSurvey.ventSurvey.vent, props.selectedVentSurvey.ventSurvey.technician]);
-  console.log(props.selectedVentSurvey)
+  console.log(props.selectedVentSurvey.ventSurvey.vent)
   return (
     <Box>
       <Paper>
