@@ -19,7 +19,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 export default function CompleteSurveyForm(props) {
   let [ventFlowMeasurements, setVentFlowMeasurements] = useState(['']);
-  let [averageVentFlow, setAverageVentFlow] = useState('');
+  let [averageVentFlow, setAverageVentFlow] = useState(0);
   let [roomVolume, setRoomVolume] = useState('');
   let [ventArea, setVentArea] = useState('');
   const defaultFormValues = {
@@ -32,8 +32,8 @@ export default function CompleteSurveyForm(props) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     var regEx = /^\d{4}-\d{2}-\d{2}$/
-    let expirationDate = '';
-    let surveyDate = '';
+    let expirationDate = props.selectedVentSurvey.ventSurvey.expirationDate;
+    let surveyDate = props.selectedVentSurvey.ventSurvey.surveyDate;
     let status = props.selectedVentSurvey.ventSurvey.status
     let ventShape = props.selectedVentSurvey.ventSurvey.vent.ventShape;
     if(name === 'surveyDate' && value.match(regEx)){
@@ -52,7 +52,7 @@ export default function CompleteSurveyForm(props) {
       expirationDate = new Date(surveyDate.setMonth(surveyDate.getMonth()+6)).toISOString().split('T')[0]
     }
     else if (props.selectedVentSurvey.ventSurvey.vent.surveyFrequency === 'Annually' && value.match(regEx)){
-      console.log('in the else if')
+
       expirationDate = new Date(surveyDate.setMonth(surveyDate.getMonth()+12)).toISOString().split('T')[0]
     };
 
@@ -214,9 +214,11 @@ export default function CompleteSurveyForm(props) {
       value = 0
     };
 
-    let newVentFlowMeasurements = ventFlowMeasurements;
-    newVentFlowMeasurements[index] = parseInt(value);
-    const sum = newVentFlowMeasurements.reduce((prev, current) => prev + current);
+    let newVentFlowMeasurements = props.selectedVentSurvey.ventMeasurements;
+    newVentFlowMeasurements[index] = {...newVentFlowMeasurements[index], ventMeasurement: parseInt(value)};
+    const sum = newVentFlowMeasurements.reduce((prev, current) => {
+      return prev = prev + current.ventMeasurement
+    }, 0);
     let average = Math.round(sum/newVentFlowMeasurements.length);
     let airChanges = checkAirChanges(roomVolume, average, ventArea);
     setAverageVentFlow(average);
@@ -260,19 +262,36 @@ export default function CompleteSurveyForm(props) {
 
   const handleNewVentFlow = () => {
     let newVentFlowMeasurements = props.selectedVentSurvey.ventMeasurements;
-    newVentFlowMeasurements.push('');
+    newVentFlowMeasurements.push({distanceFromVent: '', ventMeasurement: 0, ventMeasurementId: '', ventSurveyId: props.selectedVentSurvey.ventSurvey.ventSurveyId});
+    console.log(newVentFlowMeasurements)
+    const sum = newVentFlowMeasurements.reduce((prev, current) => {
+      console.log(current.ventMeasurement)
+      return prev = prev + current.ventMeasurement
+    }, 0);
+    let average = Math.round(sum/newVentFlowMeasurements.length);
+    let airChanges = checkAirChanges(roomVolume, average, ventArea);
+    
     props.setSelectedVentSurvey({
       ventSurvey:{
-        ...props.selectedVentSurvey.ventSurvey
+        ...props.selectedVentSurvey.ventSurvey,
+        airChanges: airChanges.airChanges,
+        pass: airChanges.pass
       },
       ventMeasurements: [...newVentFlowMeasurements]
     });
+    setAverageVentFlow(average);
   };
 
   const handleRemoveVentFlow = (flow) => {
-    let newVentFlowMeasurements = ventFlowMeasurements;
+    let newVentFlowMeasurements = props.selectedVentSurvey.ventMeasurements;
     newVentFlowMeasurements.splice(flow, 1);
-    const sum = newVentFlowMeasurements.reduce((prev, current) => prev + current);
+    const sum = newVentFlowMeasurements.reduce((prev, current) => {
+      console.log(current.ventMeasurement)
+      return prev = prev + current.ventMeasurement
+    }, 0);
+    let average = Math.round(sum/newVentFlowMeasurements.length);
+    let airChanges = checkAirChanges(roomVolume, average, ventArea);
+
     props.setSelectedVentSurvey({
       ventSurvey:{
         ...props.selectedVentSurvey.ventSurvey
@@ -280,6 +299,7 @@ export default function CompleteSurveyForm(props) {
       ventMeasurements: [...newVentFlowMeasurements]
     });
     setAverageVentFlow(Math.round(sum/newVentFlowMeasurements.length));
+    setAverageVentFlow(average);
   };
 
   const checkAirChanges = (volume, area, ventFlow) => {
@@ -314,7 +334,6 @@ export default function CompleteSurveyForm(props) {
     // new Date().toISOString().split('T')[0]
     try{
     e.preventDefault();
-    console.log(props.selectedVentSurvey.ventSurveyId, props.selectedVentSurvey.ventSurvey.vent.ventId)
 		await axios.put(
 			`${process.env.REACT_APP_DATABASE}/ventSurvey/${props.selectedVentSurvey.ventSurvey.ventSurveyId}`,
       props.selectedVentSurvey.ventSurvey
@@ -323,10 +342,20 @@ export default function CompleteSurveyForm(props) {
 			`${process.env.REACT_APP_DATABASE}/vents/${props.selectedVentSurvey.ventSurvey.vent.ventId}`,
       props.selectedVentSurvey.ventSurvey.vent
 		);
-    Promise.all(props.selectedVentSurvey.ventMeasurements.map((ventFlow) => axios.post(
-      `${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements`,
-			{ventMeasurement: ventFlow, ventSurveyId: props.selectedVentSurvey.ventSurveyId},
-    )))
+    await Promise.all(props.selectedVentSurvey.ventMeasurements.map((ventFlow) => {
+      if(ventFlow.ventMeasurementId === ''){
+        let postVentMeasurement = axios.post(
+        `${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements`,
+        ventFlow
+        )
+      }
+      else{
+        axios.put(
+        `${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements/${ventFlow.ventMeasurementId}`,
+        ventFlow
+        )
+      }
+    }))
     props.setShow({
       ...props.show,
       ventSurveyList: true,
@@ -340,13 +369,14 @@ export default function CompleteSurveyForm(props) {
   };
   
   const getEquipment = async () => {
-    
     let equipmentId = '';
     let equipment = '';
     let setArea = 0;
     let ventMeasurements = props.selectedVentSurvey.ventMeasurements;
+    let average = '';
+
     if (props.selectedVentSurvey.ventMeasurements.length === 0){
-      ventMeasurements = ['']
+      ventMeasurements = [{distanceFromVent: '', ventMeasurement: 0, ventMeasurementId: '', ventSurveyId: props.selectedVentSurvey.ventSurvey.ventSurveyId}]
     }
     if(props.selectedVentSurvey.ventSurvey.vent.ventShape === 'Square'){
       console.log(props.selectedVentSurvey.ventSurvey.vent.ventDimension1, props.selectedVentSurvey.ventSurvey.vent.ventDimension2)
@@ -366,8 +396,21 @@ export default function CompleteSurveyForm(props) {
       equipmentId = props.equipment[0].equipmentId
       equipment = props.equipment[0].equipment
     }
-    let volume = Math.round((props.selectedVentSurvey.ventSurvey.vent.roomHeight * props.selectedVentSurvey.ventSurvey.vent.roomWidth * props.selectedVentSurvey.ventSurvey.vent.roomLength)/1728)
-    let airChanges = checkAirChanges(volume, averageVentFlow, setArea)
+    let volume = Math.round((props.selectedVentSurvey.ventSurvey.vent.roomHeight * props.selectedVentSurvey.ventSurvey.vent.roomWidth * props.selectedVentSurvey.ventSurvey.vent.roomLength)/1728);
+    
+    if(ventMeasurements[0].ventMeasurementId !== ''){
+      const sum = props.selectedVentSurvey.ventMeasurements.reduce((prev, current) => {
+        return prev = prev + current.ventMeasurement
+      }, 0);
+      average = Math.round(sum/props.selectedVentSurvey.ventMeasurements.length);
+      console.log(average)
+    }
+    else{
+
+      average = averageVentFlow
+    }
+    let airChanges = checkAirChanges(volume, average, setArea);
+    setAverageVentFlow(average);
     setRoomVolume(volume);
     setVentArea(setArea);
 
@@ -447,7 +490,7 @@ export default function CompleteSurveyForm(props) {
                 name='ventFlow'
                 id='outlined-multiline-static'
                 label={`Vent Flow Measurement ${index+1} (fpm)`}
-                value={props.selectedVentSurvey.ventMeasurements[index]}
+                value={props.selectedVentSurvey.ventMeasurements[index].ventMeasurement}
                 rows={1}
                 onChange={(e)=> handleVentMeasurements(index, e)}
                 />

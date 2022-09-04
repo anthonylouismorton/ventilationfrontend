@@ -258,14 +258,14 @@ export default function VentSurveyList(props) {
       let refinedEquipment = equipmentList.data.map((equipment) => {
         return {equipmentId: equipment.equipmentId, equipment: `${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}
       })
-      console.log(refinedEquipment)
+
       props.setEquipment(refinedEquipment)
   };
   
   useEffect(()=> {
     getVentSurveys();
   }, []);
-  console.log(props.equipment)
+  console.log(rows)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
