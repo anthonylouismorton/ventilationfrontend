@@ -200,7 +200,6 @@ export default function VentSurveyList(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
-  const [list, setList] = useState([])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -252,8 +251,17 @@ export default function VentSurveyList(props) {
   
   const getVentSurveys = async () =>{
       let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/ventSurvey`)
+      ventSurveyList.data.map((survey) => {
+        if(survey.ventMeasurements.length === 0){
+            survey.ventMeasurements = [{
+              distanceFromVent: '',
+              ventMeasurement: '',
+              ventMeasurementId: '',
+              ventSurveyId: survey.ventSurvey.ventSurveyId
+          }]
+        }
+      })
       setRows(ventSurveyList.data)
-
       let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
       let refinedEquipment = equipmentList.data.map((equipment) => {
         return {equipmentId: equipment.equipmentId, equipment: `${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}
