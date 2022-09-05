@@ -209,96 +209,175 @@ export default function CompleteSurveyForm(props) {
   //This is for the actual vent flow and not the dimensions of the vent
   const handleVentMeasurements = (index, e) => {
     let value = e.target.value;
-
     if(value === ''){
-      value = 0
+      value = 0;
     };
-
     let newVentFlowMeasurements = props.selectedVentSurvey.ventMeasurements;
     newVentFlowMeasurements[index] = {...newVentFlowMeasurements[index], ventMeasurement: parseInt(value)};
     const sum = newVentFlowMeasurements.reduce((prev, current) => {
       return prev = prev + current.ventMeasurement
     }, 0);
     let average = Math.round(sum/newVentFlowMeasurements.length);
-    let airChanges = checkAirChanges(roomVolume, average, ventArea);
     setAverageVentFlow(average);
-    props.setSelectedVentSurvey({
-      ventSurvey:{
-        ...props.selectedVentSurvey.ventSurvey,
-        airChanges: airChanges.airChanges,
-        pass: airChanges.pass
-      },
-      ventMeasurements: [...newVentFlowMeasurements]
-    });
-
+    
     if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
-      let lowFlows = []
-      let failFlow = newVentFlowMeasurements.every(flow => flow >= 75)
+      let lowFlows = [];
+      let failFlow = '';
       for(let i = 0; newVentFlowMeasurements.length > i; i++){
-        if(newVentFlowMeasurements[i] < 100){
+        console.log(newVentFlowMeasurements[i])
+        if(newVentFlowMeasurements[i].ventMeasurement < 75){
+          failFlow = true
+        }
+        else{
+          failFlow = false
+        }
+        if(newVentFlowMeasurements[i].ventMeasurement < 100){
           lowFlows.push(newVentFlowMeasurements[i])
         };
       };
-      if(lowFlows.length < 2 && average > 99 && failFlow === true){
-        setVentFlowMeasurements([...newVentFlowMeasurements]);
-        // setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Pass'});
+      console.log(lowFlows)
+      if(lowFlows.length < 2 && average > 99 && failFlow === false){
+        props.setSelectedVentSurvey({
+          ventSurvey:{
+            ...props.selectedVentSurvey.ventSurvey,
+            pass: 'Pass'
+          },
+          ventMeasurements: [...newVentFlowMeasurements]
+        });
       }
       else{
-        setVentFlowMeasurements([...newVentFlowMeasurements]);
-        // setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Fail'});
+        props.setSelectedVentSurvey({
+          ventSurvey:{
+            ...props.selectedVentSurvey.ventSurvey,
+            pass: 'Fail'
+          },
+          ventMeasurements: [...newVentFlowMeasurements]
+        });
       };
     };
-    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Welding Hood'){
-      if(average > 99){
-        setVentFlowMeasurements([...newVentFlowMeasurements]);
-        // setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Pass'});
-      }
-      else{
-        setVentFlowMeasurements([...newVentFlowMeasurements]);
-        // setFormValues({...formValues, ventReadings: [...newVentFlowMeasurements], pass: 'Fail'});
-      };
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Battery Room'){
+      let airChanges = checkAirChanges(roomVolume, average, ventArea);
+      props.setSelectedVentSurvey({
+        ventSurvey:{
+          ...props.selectedVentSurvey.ventSurvey,
+          airChanges: airChanges.airChanges,
+          pass: airChanges.pass
+        },
+        ventMeasurements: [...newVentFlowMeasurements]
+      });
     };
   };
 
   const handleNewVentFlow = () => {
     let newVentFlowMeasurements = props.selectedVentSurvey.ventMeasurements;
     newVentFlowMeasurements.push({distanceFromVent: '', ventMeasurement: 0, ventMeasurementId: '', ventSurveyId: props.selectedVentSurvey.ventSurvey.ventSurveyId});
-    console.log(newVentFlowMeasurements)
     const sum = newVentFlowMeasurements.reduce((prev, current) => {
-      console.log(current.ventMeasurement)
       return prev = prev + current.ventMeasurement
     }, 0);
     let average = Math.round(sum/newVentFlowMeasurements.length);
-    let airChanges = checkAirChanges(roomVolume, average, ventArea);
-    
-    props.setSelectedVentSurvey({
-      ventSurvey:{
-        ...props.selectedVentSurvey.ventSurvey,
-        airChanges: airChanges.airChanges,
-        pass: airChanges.pass
-      },
-      ventMeasurements: [...newVentFlowMeasurements]
-    });
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
+      let lowFlows = []
+      let failFlow = ''
+      for(let i = 0; newVentFlowMeasurements.length > i; i++){
+        if(newVentFlowMeasurements[i].ventMeasurement < 75){
+          failFlow = true
+        }
+        else{
+          failFlow = false
+        }
+        if(newVentFlowMeasurements[i] < 100){
+          lowFlows.push(newVentFlowMeasurements[i])
+        };
+      };
+      if(lowFlows.length < 2 && average > 99 && failFlow === false){
+        props.setSelectedVentSurvey({
+          ventSurvey:{
+            ...props.selectedVentSurvey.ventSurvey,
+            pass: 'Pass'
+          },
+          ventMeasurements: [...newVentFlowMeasurements]
+        });
+      }
+      else{
+        props.setSelectedVentSurvey({
+          ventSurvey:{
+            ...props.selectedVentSurvey.ventSurvey,
+            pass: 'Fail'
+          },
+          ventMeasurements: [...newVentFlowMeasurements]
+        });
+      };
+    }
+    else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
+      let airChanges = checkAirChanges(roomVolume, average, ventArea);
+      props.setSelectedVentSurvey({
+        ventSurvey:{
+          ...props.selectedVentSurvey.ventSurvey,
+          airChanges: airChanges.airChanges,
+          pass: airChanges.pass
+        },
+        ventMeasurements: [...newVentFlowMeasurements]
+      });
+    };
+
     setAverageVentFlow(average);
   };
 
-  const handleRemoveVentFlow = (flow) => {
+  const handleRemoveVentFlow = (index, flow) => {
     let newVentFlowMeasurements = props.selectedVentSurvey.ventMeasurements;
-    newVentFlowMeasurements.splice(flow, 1);
+    newVentFlowMeasurements.splice(index, 1);
     const sum = newVentFlowMeasurements.reduce((prev, current) => {
-      console.log(current.ventMeasurement)
       return prev = prev + current.ventMeasurement
     }, 0);
     let average = Math.round(sum/newVentFlowMeasurements.length);
-    let airChanges = checkAirChanges(roomVolume, average, ventArea);
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
+      console.log('in the fume hood')
+      let lowFlows = []
+      let failFlow = ''
+      for(let i = 0; newVentFlowMeasurements.length > i; i++){
+        if(newVentFlowMeasurements[i] < 75){
+          failFlow = true
+        }
+        else{
+          failFlow = false
+        }
+      };
+      for(let i = 0; newVentFlowMeasurements.length > i; i++){
+        if(newVentFlowMeasurements[i] < 100){
+          lowFlows.push(newVentFlowMeasurements[i])
+        };
+      };
+      if(lowFlows.length < 2 && average > 99 && failFlow === false){
+        props.setSelectedVentSurvey({
+          ventSurvey:{
+            ...props.selectedVentSurvey.ventSurvey,
+            pass: 'Pass'
+          },
+          ventMeasurements: [...newVentFlowMeasurements]
+        });
+      }
+      else{
+        props.setSelectedVentSurvey({
+          ventSurvey:{
+            ...props.selectedVentSurvey.ventSurvey,
+            pass: 'Fail'
+          },
+          ventMeasurements: [...newVentFlowMeasurements]
+        });
+      };
+    }
+    else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Battery Room'){
+      let airChanges = checkAirChanges(roomVolume, average, ventArea);
+      props.setSelectedVentSurvey({
+        ventSurvey:{
+          ...props.selectedVentSurvey.ventSurvey,
+          airChanges: airChanges.airChanges,
+          pass: airChanges.pass
 
-    props.setSelectedVentSurvey({
-      ventSurvey:{
-        ...props.selectedVentSurvey.ventSurvey
-      },
-      ventMeasurements: [...newVentFlowMeasurements]
-    });
-    setAverageVentFlow(Math.round(sum/newVentFlowMeasurements.length));
+        },
+        ventMeasurements: [...newVentFlowMeasurements]
+      });
+    };
     setAverageVentFlow(average);
   };
 
@@ -342,11 +421,11 @@ export default function CompleteSurveyForm(props) {
 			`${process.env.REACT_APP_DATABASE}/vents/${props.selectedVentSurvey.ventSurvey.vent.ventId}`,
       props.selectedVentSurvey.ventSurvey.vent
 		);
-    await Promise.all(props.selectedVentSurvey.ventMeasurements.map((ventFlow) => {
+    props.selectedVentSurvey.ventMeasurements.map((ventFlow) => {
       if(ventFlow.ventMeasurementId === ''){
-        let postVentMeasurement = axios.post(
+        axios.post(
         `${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements`,
-        ventFlow
+        {distanceFromVent: ventFlow.distanceFromVent, ventMeasurement: ventFlow.ventMeasurement, ventSurveyId: ventFlow.ventSurveyId}
         )
       }
       else{
@@ -355,7 +434,7 @@ export default function CompleteSurveyForm(props) {
         ventFlow
         )
       }
-    }))
+    });
     props.setShow({
       ...props.show,
       ventSurveyList: true,
@@ -365,7 +444,7 @@ export default function CompleteSurveyForm(props) {
     }
     catch(e){
       console.log(e)
-    }
+    };
   };
   
   const getEquipment = async () => {
@@ -374,6 +453,8 @@ export default function CompleteSurveyForm(props) {
     let setArea = 0;
     let ventMeasurements = props.selectedVentSurvey.ventMeasurements;
     let average = '';
+    let airChanges = '';
+    let pass = '';
 
     if (props.selectedVentSurvey.ventMeasurements.length === 0){
       ventMeasurements = [{distanceFromVent: '', ventMeasurement: 0, ventMeasurementId: '', ventSurveyId: props.selectedVentSurvey.ventSurvey.ventSurveyId}]
@@ -403,13 +484,30 @@ export default function CompleteSurveyForm(props) {
         return prev = prev + current.ventMeasurement
       }, 0);
       average = Math.round(sum/props.selectedVentSurvey.ventMeasurements.length);
-      console.log(average)
     }
     else{
-
       average = averageVentFlow
     }
-    let airChanges = checkAirChanges(volume, average, setArea);
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Battery Room'){
+      const airChangeCheck = checkAirChanges(volume, average, setArea);
+      airChanges = airChangeCheck.airChanges;
+      pass = airChangeCheck.pass;
+    }
+    else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
+      let lowFlows = []
+      let failFlow = props.selectedVentSurvey.ventMeasurements.every(flow => flow.ventMeasurement >= 75)
+      for(let i = 0; props.selectedVentSurvey.ventMeasurements.length > i; i++){
+        if(props.selectedVentSurvey.ventMeasurements[i].ventMeasurement < 100){
+          lowFlows.push(props.selectedVentSurvey.ventMeasurements[i].ventMeasurement)
+        };
+      };
+      if(lowFlows.length < 2 && average > 99 && failFlow === true){
+        pass ='Pass'
+      }
+      else{
+        pass ='Fail'
+      }
+    }  
     setAverageVentFlow(average);
     setRoomVolume(volume);
     setVentArea(setArea);
@@ -423,7 +521,7 @@ export default function CompleteSurveyForm(props) {
         equipmentId: equipmentId,
         equipment: equipment,
         airChanges: airChanges.airChanges,
-        pass: airChanges.pass,
+        pass: pass,
         completedBy: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`
       }
     })
@@ -502,7 +600,7 @@ export default function CompleteSurveyForm(props) {
                 </Tooltip>
                 :
                 <Tooltip title="Remove Measurement">
-                  <IconButton onClick={()=> handleRemoveVentFlow(index)}>
+                  <IconButton onClick={()=> handleRemoveVentFlow(index, flow)}>
                     <RemoveCircleOutlineIcon />
                   </IconButton>
                 </Tooltip>
@@ -637,6 +735,7 @@ export default function CompleteSurveyForm(props) {
                   <TextField
                     name='airChanges'
                     id='outlined-multiline-static'
+                    placeholder='Pass/Fail'
                     value={props.selectedVentSurvey.ventSurvey.airChanges}
                     rows={1}
                     />
@@ -648,6 +747,7 @@ export default function CompleteSurveyForm(props) {
                 <TextField
                   name='pass'
                   id='outlined-multiline-static'
+                  placeholder='Pass/Fail'
                   value={props.selectedVentSurvey.ventSurvey.pass}
                   rows={1}
                 />
