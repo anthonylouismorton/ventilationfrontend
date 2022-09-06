@@ -45,13 +45,6 @@ export default function VentInfo(props) {
       ventInfo: false
     })
   };
-  // const handleAssignSurvey = () =>{
-  //   props.setShow({
-  //     ...props.show,
-  //     ventInfo: false,
-  //     assignSurvey: true
-  //   });
-  // };
   const handleUpdate = async () => {
     await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${props.selectedVent.ventId}`, props.selectedVent);
   };

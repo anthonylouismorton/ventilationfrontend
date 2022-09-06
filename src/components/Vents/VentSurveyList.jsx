@@ -225,7 +225,6 @@ export default function VentList(props) {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [measurements, setMeasurements] = useState([])
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -268,24 +267,6 @@ export default function VentList(props) {
     props.setSelectedVentSurvey(survey)
   };
 
-  // const handleNewVentSurvey = () => {
-  //   props.setShow({
-  //     ...props.show,
-  //     ventInfo: false,
-  //     assignSurvey: true,
-  //   });
-  // };
-  // const handleTechSelect = async (tech, vent) => {
-  //   let updatedVent = {...vent, technicianId: tech.technicianId}
-  //   await axios.put(`${process.env.REACT_APP_DATABASE}/vents/${vent.ventId}`, updatedVent);
-  //   // getVentsAndTechs();
-  // }
-
-  // const handleDeleteClick = async (id) => {
-  //   await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
-  //   setShowDeleteWarning(!showDeleteWarning, null)
-  // }
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -307,22 +288,17 @@ export default function VentList(props) {
   
   const getVentSurveys = async () =>{
     let unitVentSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVentSurveys/${props.selectedVent.ventId}`)
+    unitVentSurveys.data.map((survey) => {
+      if(survey.ventMeasurements.length === 0){
+          survey.ventMeasurements = [{
+            distanceFromVent: '',
+            ventMeasurement: '',
+            ventMeasurementId: '',
+            ventSurveyId: survey.ventSurvey.ventSurveyId
+        }]
+      }
+    })
     setRows(unitVentSurveys.data)
-    // .then((response) => {
-    //   setRows(response.data);
-    //   return response.data;
-    // })
-    // .then(async(rows) => {
-    //   let updatedRows = []
-    //   rows.forEach((row) => {
-    //     axios.get(`${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements/${row.ventSurvey.ventSurveyId}`)
-    //     .then((response) => {
-    //       console.log(response)
-    //       updatedRows.push({...row, ventMeasurements: response.data})
-    //     })
-    //   })
-    //   setRows(updatedRows)
-    // })
 
     let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`);
     props.setEquipment([...equipmentList.data]);

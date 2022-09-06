@@ -254,7 +254,7 @@ export default function CompleteSurveyForm(props) {
     let average = Math.round(sum/newVentFlowMeasurements.length);
     setAverageVentFlow(average);
     
-    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood' || props.selectedVentSurvey.ventSurvey.vent.type === 'Paint Booth'){
       let lowFlows = [];
       let failFlow = '';
       for(let i = 0; newVentFlowMeasurements.length > i; i++){
@@ -309,7 +309,7 @@ export default function CompleteSurveyForm(props) {
       return prev = prev + current.ventMeasurement
     }, 0);
     let average = Math.round(sum/newVentFlowMeasurements.length);
-    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood' || props.selectedVentSurvey.ventSurvey.vent.type === 'Paint Booth'){
       let lowFlows = []
       let failFlow = ''
       for(let i = 0; newVentFlowMeasurements.length > i; i++){
@@ -342,7 +342,7 @@ export default function CompleteSurveyForm(props) {
         });
       };
     }
-    else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
+    else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood' || props.selectedVentSurvey.ventSurvey.vent.type === 'Paint Booth'){
       let airChanges = checkAirChanges(roomVolume, average, ventArea);
       props.setSelectedVentSurvey({
         ventSurvey:{
@@ -364,8 +364,7 @@ export default function CompleteSurveyForm(props) {
       return prev = prev + current.ventMeasurement
     }, 0);
     let average = Math.round(sum/newVentFlowMeasurements.length);
-    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
-      console.log('in the fume hood')
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood' || props.selectedVentSurvey.ventSurvey.vent.type === 'Paint Booth'){
       let lowFlows = []
       let failFlow = ''
       for(let i = 0; newVentFlowMeasurements.length > i; i++){
@@ -504,13 +503,13 @@ export default function CompleteSurveyForm(props) {
       setArea = Math.round((area + Number.EPSILON) * 100) / 100;
 
     };
-    if(props.selectedVentSurvey.equipmentId === undefined){
+    if(props.selectedVentSurvey.ventSurvey.equipmentId === undefined){
       equipmentId = props.equipment[0].equipmentId
       equipment = props.equipment[0].equipment
     }
-    else{
-      equipmentId = props.equipment[0].equipmentId
-      equipment = props.equipment[0].equipment
+    else if(props.selectedVentSurvey.ventSurvey.equipmentId){
+      equipmentId = props.selectedVentSurvey.equipmentId
+      equipment = props.selectedVentSurvey.equipment
     };
     let volume = Math.round((props.selectedVentSurvey.ventSurvey.vent.roomHeight * props.selectedVentSurvey.ventSurvey.vent.roomWidth * props.selectedVentSurvey.ventSurvey.vent.roomLength)/1728);
     
@@ -528,7 +527,7 @@ export default function CompleteSurveyForm(props) {
       airChanges = airChangeCheck.airChanges;
       pass = airChangeCheck.pass;
     }
-    else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood'){
+    else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood' || props.selectedVentSurvey.ventSurvey.vent.type === 'Paint Booth'){
       let lowFlows = []
       let failFlow = props.selectedVentSurvey.ventMeasurements.every(flow => flow.ventMeasurement >= 75)
       for(let i = 0; props.selectedVentSurvey.ventMeasurements.length > i; i++){
@@ -544,7 +543,6 @@ export default function CompleteSurveyForm(props) {
       };
     }
     else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Welding Hood'){
-      console.log('in this else if')
       if(props.selectedVentSurvey.ventMeasurements[0].ventMeasurement < 100){
         pass = 'Fail'
       }
