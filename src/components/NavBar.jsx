@@ -13,8 +13,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
-const pages = ['Units', 'Vents', 'Surveys', 'Equipment', 'Technicians'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+// const pages = ['Units', 'Vents', 'Surveys', 'Equipment', 'Technicians'];
+const settings = ['Logout'];
 
 const NavBar = (props) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -51,7 +51,7 @@ const NavBar = (props) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
+  console.log(props.userProfile.technicianRole === 'Admin')
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -104,11 +104,23 @@ const NavBar = (props) => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={()=> handleCloseNavMenu(page)}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem key={'Units'} onClick={()=> handleCloseNavMenu('Units')}>
+                <Typography textAlign="center">Units</Typography>
+              </MenuItem>
+              <MenuItem key={'Vents'} onClick={()=> handleCloseNavMenu('Vents')}>
+                <Typography textAlign="center">Vents</Typography>
+              </MenuItem>
+              <MenuItem key={'Surveys'} onClick={()=> handleCloseNavMenu('Surveys')}>
+                <Typography textAlign="center">Surveys</Typography>
+              </MenuItem>
+              <MenuItem key={'Equipment'} onClick={()=> handleCloseNavMenu('Equipment')}>
+                <Typography textAlign="center">Equipment</Typography>
+              </MenuItem>
+              {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manger') && (
+              <MenuItem key={'Technicians'} onClick={()=> handleCloseNavMenu('Technicians')}>
+                <Typography textAlign="center">Technicians</Typography>
+              </MenuItem>
+              )}
             </Menu>
           </Box>
           {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
@@ -131,23 +143,51 @@ const NavBar = (props) => {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={()=> handleCloseNavMenu(page)}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
+            <Button
+              key={'Units'}
+              onClick={()=> handleCloseNavMenu('Units')}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Units
+            </Button>
+            <Button
+              key={'Vents'}
+              onClick={()=> handleCloseNavMenu('Vents')}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Vents
+            </Button>
+            <Button
+              key={'Surveys'}
+              onClick={()=> handleCloseNavMenu('Surveys')}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Surveys
+            </Button>
+            <Button
+              key={'Equipment'}
+              onClick={()=> handleCloseNavMenu('Equipment')}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Equipment
+            </Button>
+            {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manger') && (
+            <Button
+              key={'Technicians'}
+              onClick={()=> handleCloseNavMenu('Technicians')}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Technicians
+            </Button>
+            )}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            {/* <Tooltip title="Open settings">
+            <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
-            </Tooltip> */}
+            </Tooltip>
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"

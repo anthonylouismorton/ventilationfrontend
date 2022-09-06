@@ -20,7 +20,8 @@ import ReviewSurveyForm from './Surveys/ReviewSurveyForm';
 import TechInfo from './Technicians/TechInfo';
 import EquipmentInfo from './Equipment/EquipmentInfo';
 import NavBar from './NavBar';
-import axios from 'axios'
+import { useAuth0 } from "@auth0/auth0-react";
+import axios from 'axios';
 
 function Main() {
   const defaultShow = {'ventList': false, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false, unitInfo: false, reviewSurvey: false, techInfo: false, equipmentInfo: false };
@@ -34,9 +35,17 @@ function Main() {
   const [selectedUnit, setSelectedUnit] = useState({unitId: ''});
   const [selectedTech, setSelectedTech] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState([]);
-  
+  const [userProfile, setUserProfile] = useState([]);
+  const { user, isAuthenticated} = useAuth0();
+
   const getTechs = async () => {
-    let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
+    let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
+    let currentUser = techList.data.map((tech) => {
+      if(user.email === tech.technicianEmail){
+        return tech
+      }
+    })
+    setUserProfile({...currentUser[0], ...user})
     setTechnicians(techList.data)
   }
   useEffect(()=> {
@@ -44,10 +53,11 @@ function Main() {
     if (!ignore)  getTechs()
     return () => { ignore = true; }
   }, []);
-
+  console.log(userProfile)
+  console.log(isAuthenticated)
   return (
     <>
-      <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit}/>
+      <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit} userProfile={userProfile}/>
       {show.addUnit &&
         <AddUnitForm setShow={setShow} show={show} units={units} setUnits={setUnits}/>
       }

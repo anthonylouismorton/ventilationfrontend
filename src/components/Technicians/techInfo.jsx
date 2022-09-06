@@ -36,7 +36,7 @@ export default function TechInfo(props) {
       technicianList: true,
       techInfo: false
     })
-    props.selectedTech([])
+    props.setSelectedTech([])
   };
   console.log(props.selectedTech)
 	return (

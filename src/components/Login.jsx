@@ -9,8 +9,6 @@ import {
 
 export default function Login() {
   const { user, isAuthenticated} = useAuth0();
-
-
   const handleSubmit = () => {};
   return (
     <Box>
