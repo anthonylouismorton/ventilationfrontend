@@ -103,7 +103,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
+  const { order, orderBy, numSelected, rowCount, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -190,13 +190,13 @@ const EnhancedTableToolbar = (props) => {
           Vent Surveys
         </Typography>
       )}
-      {numSelected === 0 ?
-      <Tooltip title="Add Survey">
+      {(numSelected === 0 && props.userProfile.technicianRole === 'Program Manager') || (numSelected === 0 && props.userProfile.technicianRole === 'Admin') ?
+      <Tooltip title="Assign Survey">
         <IconButton onClick={props.handleAssignSurvey}>
-          <AddIcon />
+          <AssignmentIndIcon />
         </IconButton>
       </Tooltip>
-      : numSelected === 1 ?
+      : numSelected === 1 && props.userProfile.technicianRole === 'Program Manager' || (numSelected === 1 && props.userProfile.technicianRole === 'Admin')?
       <Tooltip title="Review">
         <IconButton onClick={props.handleReview}>
           <ReviewsIcon />
@@ -207,7 +207,7 @@ const EnhancedTableToolbar = (props) => {
         <IconButton>
           <AddIcon />
         </IconButton>
-    </Tooltip>
+      </Tooltip>
     }
     </Toolbar>
   );
@@ -307,11 +307,11 @@ export default function VentList(props) {
   useEffect(()=> {
     getVentSurveys();
   }, []);
-  console.log(rows)
+  console.log(props.userProfile)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleAssignSurvey={handleAssignSurvey} handleReview={handleReview}/>
+        <EnhancedTableToolbar numSelected={selected.length} handleAssignSurvey={handleAssignSurvey} handleReview={handleReview} userProfile={props.userProfile}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}

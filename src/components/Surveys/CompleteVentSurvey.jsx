@@ -23,7 +23,7 @@ export default function CompleteSurveyForm(props) {
   let [ventArea, setVentArea] = useState('');
   const defaultFormValues = {
     equipmentId: props.equipment[0].equipmentId,
-    equipment: props.equipment[0].equipment,
+    equipment: `${props.equipment[0].manufacturer} ${props.equipment[0].model} ${props.equipment[0].serialNumber}`,
     completedBy: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`,
     weldingHoodMeasurement: {
       distanceFromVent: props.selectedVentSurvey.ventMeasurements[0].distanceFromVent, 
@@ -40,6 +40,13 @@ export default function CompleteSurveyForm(props) {
     let surveyDate = props.selectedVentSurvey.ventSurvey.surveyDate;
     let status = props.selectedVentSurvey.ventSurvey.status
     let ventShape = props.selectedVentSurvey.ventSurvey.vent.ventShape;
+    let pass = props.selectedVentSurvey.ventSurvey.pass;
+    let ventDimension1 = props.selectedVentSurvey.ventSurvey.vent.ventDimension1;
+    let ventDimension2 = props.selectedVentSurvey.ventSurvey.vent.ventDimension2;
+    let airChanges = props.selectedVentSurvey.ventSurvey.airChanges;
+    let setArea = ventArea;
+    let setVolume = roomVolume;
+
     if(name === 'surveyDate' && value.match(regEx)){
       let from = value.split('-')
       let convertedDate = new Date(from[0], from[1]-1, from[2] )
@@ -69,6 +76,12 @@ export default function CompleteSurveyForm(props) {
 
     if(name === 'ventShape'){
       ventShape = value
+      ventDimension1 = 0
+      ventDimension2 = 0
+      airChanges = 0;
+      setArea = 0;
+      setVolume = 0;
+      pass = 'Fail'
     }
 
     if(name === 'status'){
@@ -83,17 +96,24 @@ export default function CompleteSurveyForm(props) {
         surveyDate: surveyDate,
         expirationDate: expirationDate,
         status: status,
+        airChanges: airChanges,
+        pass: pass,
         vent: {
           ...props.selectedVentSurvey.ventSurvey.vent,
-          ventShape: ventShape
+          ventShape: ventShape,
+          ventDimension1: ventDimension1,
+          ventDimension2: ventDimension2,
         }
       }
     });
+    setVentArea(setArea)
+    setRoomVolume(setVolume)
   };
 
   const handleWeldingHood = async (e) => {
     let { name, value } = e.target;
     let newVentMeasurements = props.selectedVentSurvey.ventMeasurements
+    let pass = props.selectedVentSurvey.ventSurvey.pass
     if(value === ''){
       value = 0
     }
@@ -103,13 +123,19 @@ export default function CompleteSurveyForm(props) {
     else if(name === 'distanceFromVent'){
       newVentMeasurements[0].distanceFromVent = parseInt(value)
     }
-    console.log(newVentMeasurements)
+    if(newVentMeasurements[0].ventMeasurement >= 100 && newVentMeasurements[0].distanceFromVent > 0){
+      pass = 'Pass'
+    }
+    else{
+      pass = 'Fail'
+    }
     props.setSelectedVentSurvey({
       ventMeasurements: [
         ...newVentMeasurements
       ],
       ventSurvey: {
         ...props.selectedVentSurvey.ventSurvey,
+        pass: pass
       }
     });
     setFormValues({
@@ -123,96 +149,83 @@ export default function CompleteSurveyForm(props) {
   };
 
   const handleDimensions = async (e) => {
+    let roomLength = props.selectedVentSurvey.ventSurvey.vent.roomLength;
+    let roomHeight = props.selectedVentSurvey.ventSurvey.vent.roomHeight;
+    let roomWidth = props.selectedVentSurvey.ventSurvey.vent.roomWidth;
+    let ventDimension1 = props.selectedVentSurvey.ventSurvey.vent.ventDimension1;
+    let ventDimension2 = props.selectedVentSurvey.ventSurvey.vent.ventDimension2;
+    let airChanges = props.selectedVentSurvey.ventSurvey.airChanges;
+    let area = 0
+    let setArea = ventArea;
+    let setVolume = roomVolume;
     let { name, value } = e.target;
     if(value === ''){
       value = 0
     }
     if(name === 'roomLength'){
-      props.setSelectedVentSurvey({
-        ventMeasurements: [
-          ...props.selectedVentSurvey.ventMeasurements,
-        ],
-        ventSurvey: {
-          ...props.selectedVentSurvey.ventSurvey,
-          vent: {
-            ...props.selectedVentSurvey.ventSurvey.vent,
-            roomLength: parseInt(value)
-          }
-        }
-      });
+      roomLength = parseInt(value)
     }
     else if(name === 'roomWidth'){
-      props.setSelectedVentSurvey({
-        ventMeasurements: [
-          ...props.selectedVentSurvey.ventMeasurements,
-        ],
-        ventSurvey: {
-          ...props.selectedVentSurvey.ventSurvey,
-          vent: {
-            ...props.selectedVentSurvey.ventSurvey.vent,
-            roomWidth: parseInt(value)
-          }
-        }
-      });
+      roomWidth = parseInt(value)
     }
     else if(name === 'roomHeight'){
-      props.setSelectedVentSurvey({
-        ventMeasurements: [
-          ...props.selectedVentSurvey.ventMeasurements,
-        ],
-        ventSurvey: {
-          ...props.selectedVentSurvey.ventSurvey,
-          vent: {
-            ...props.selectedVentSurvey.ventSurvey.vent,
-            roomHeight: parseInt(value)
-          }
-        }
-      });
+      roomHeight = parseInt(value)
     }
     else if(name === 'ventDimension1'){
-      props.setSelectedVentSurvey({
-        ventMeasurements: [
-          ...props.selectedVentSurvey.ventMeasurements,
-        ],
-        ventSurvey: {
-          ...props.selectedVentSurvey.ventSurvey,
-          vent: {
-            ...props.selectedVentSurvey.ventSurvey.vent,
-            ventDimension1: parseInt(value)
-          }
-        }
-      });
+      ventDimension1 = parseInt(value)
     }
     else if(name === 'ventDimension2'){
-      console.log(parseInt(value))
-      props.setSelectedVentSurvey({
-        ventMeasurements: [
-          ...props.selectedVentSurvey.ventMeasurements,
-        ],
-        ventSurvey: {
-          ...props.selectedVentSurvey.ventSurvey,
-          vent: {
-            ...props.selectedVentSurvey.ventSurvey.vent,
-            ventDimension2: parseInt(value)
-          }
-        }
-      });
+      ventDimension2 = parseInt(value)
     }
+    if(props.selectedVentSurvey.ventSurvey.vent.ventShape === 'Square'){
+      area = (ventDimension1 * ventDimension2)/144
+    }
+    else if(props.selectedVentSurvey.ventSurvey.vent.ventShape === 'Circular'){
+      area = ventDimension1/2 * ventDimension1/2 * Math.PI /144;
+      setArea = Math.round((area + Number.EPSILON) * 100) / 100;
+    }
+    setArea = Math.round((area + Number.EPSILON) * 100) / 100;
+    setVolume = Math.round((roomHeight * roomWidth * roomLength)/1728);
+
+    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Battery Room'){
+      airChanges = checkAirChanges(setVolume, averageVentFlow, setArea);
+    };
+    props.setSelectedVentSurvey({
+      ventMeasurements: [
+        ...props.selectedVentSurvey.ventMeasurements,
+      ],
+      ventSurvey: {
+        ...props.selectedVentSurvey.ventSurvey,
+        airChanges: airChanges.airChanges,
+        pass: airChanges.pass,
+        vent: {
+          ...props.selectedVentSurvey.ventSurvey.vent,
+          roomHeight: roomHeight,
+          roomWidth: roomWidth,
+          roomLength: roomLength,    
+          ventDimension1: ventDimension1,  
+          ventDimension2: ventDimension2,  
+        }
+      }
+    });
+    setRoomVolume(setVolume);
+    setVentArea(setArea);
   };
 
   const handleEquipmentSelect = (equipment) => {
+    console.log(equipment)
     props.setSelectedVentSurvey({
       ...props.selectedVentSurvey,
       ventSurvey: {
         ...props.selectedVentSurvey.ventSurvey,
         equipmentId: equipment.equipmentId,
-        equipment: equipment.equipment
+        equipment: `${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`
       }
     })
     setFormValues({
       ...formValues,
       equipmentId: equipment.equipmentId,
-      equipment: equipment.equipment
+      equipment: `${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`
     })
   }
 
@@ -258,7 +271,6 @@ export default function CompleteSurveyForm(props) {
       let lowFlows = [];
       let failFlow = '';
       for(let i = 0; newVentFlowMeasurements.length > i; i++){
-        console.log(newVentFlowMeasurements[i])
         if(newVentFlowMeasurements[i].ventMeasurement < 75){
           failFlow = true
         }
@@ -269,7 +281,6 @@ export default function CompleteSurveyForm(props) {
           lowFlows.push(newVentFlowMeasurements[i])
         };
       };
-      console.log(lowFlows)
       if(lowFlows.length < 2 && average > 99 && failFlow === false){
         props.setSelectedVentSurvey({
           ventSurvey:{
@@ -443,7 +454,6 @@ export default function CompleteSurveyForm(props) {
   };
 
   const onSubmit = async (e) => {
-    // new Date().toISOString().split('T')[0]
     try{
     e.preventDefault();
 		await axios.put(
@@ -456,7 +466,6 @@ export default function CompleteSurveyForm(props) {
 		);
     props.selectedVentSurvey.ventMeasurements.map((ventFlow) => {
       if(ventFlow.ventMeasurementId === ''){
-        console.log('in the post', ventFlow)
         axios.post(
         `${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements`,
         {distanceFromVent: ventFlow.distanceFromVent, ventMeasurement: ventFlow.ventMeasurement, ventSurveyId: ventFlow.ventSurveyId}
@@ -494,7 +503,6 @@ export default function CompleteSurveyForm(props) {
       ventMeasurements = [{distanceFromVent: '', ventMeasurement: 0, ventMeasurementId: '', ventSurveyId: props.selectedVentSurvey.ventSurvey.ventSurveyId}]
     };
     if(props.selectedVentSurvey.ventSurvey.vent.ventShape === 'Square'){
-      console.log(props.selectedVentSurvey.ventSurvey.vent.ventDimension1, props.selectedVentSurvey.ventSurvey.vent.ventDimension2)
       let area = (props.selectedVentSurvey.ventSurvey.vent.ventDimension1 * props.selectedVentSurvey.ventSurvey.vent.ventDimension2)/144
       setArea = Math.round((area + Number.EPSILON) * 100) / 100;
     }
@@ -503,13 +511,15 @@ export default function CompleteSurveyForm(props) {
       setArea = Math.round((area + Number.EPSILON) * 100) / 100;
 
     };
-    if(props.selectedVentSurvey.ventSurvey.equipmentId === undefined){
+    if(props.selectedVentSurvey.ventSurvey.equipmentId === '' || props.selectedVentSurvey.ventSurvey.equipmentId === null || props.selectedVentSurvey.ventSurvey.equipmentId === 'undefined'){
+      console.log('in the if')
       equipmentId = props.equipment[0].equipmentId
-      equipment = props.equipment[0].equipment
+      equipment = `${props.equipment[0].manufacturer} ${props.equipment[0].model} ${props.equipment[0].serialNumber}`
     }
     else if(props.selectedVentSurvey.ventSurvey.equipmentId){
-      equipmentId = props.selectedVentSurvey.equipmentId
-      equipment = props.selectedVentSurvey.equipment
+      equipmentId = props.selectedVentSurvey.ventSurvey.equipmentId
+      let findEquipment = props.equipment.filter(equipment => equipment.equipmentId === props.selectedVentSurvey.ventSurvey.equipmentId)
+      equipment = `${findEquipment[0].manufacturer} ${findEquipment[0].model} ${findEquipment[0].serialNumber}`
     };
     let volume = Math.round((props.selectedVentSurvey.ventSurvey.vent.roomHeight * props.selectedVentSurvey.ventSurvey.vent.roomWidth * props.selectedVentSurvey.ventSurvey.vent.roomLength)/1728);
     
@@ -553,6 +563,13 @@ export default function CompleteSurveyForm(props) {
     setAverageVentFlow(average);
     setRoomVolume(volume);
     setVentArea(setArea);
+    setFormValues(
+      {
+        ...formValues,
+        equipmentId: equipmentId,
+        equipment: equipment
+      }
+    )
     props.setSelectedVentSurvey({
       ventMeasurements: [
         ...ventMeasurements
@@ -572,9 +589,8 @@ export default function CompleteSurveyForm(props) {
     let ignore = false;
     if (!ignore)  getEquipment()
     return () => { ignore = true; }
-  }, [props.selectedVentSurvey.ventSurvey.vent, props.selectedVentSurvey.ventSurvey.technician, props.selectedVentSurvey.ventMeasurement, formValues]);
-  console.log(props.selectedVentSurvey.ventSurvey)
-  console.log(formValues)
+  }, [props.selectedVentSurvey.ventSurvey.vent, props.selectedVentSurvey.ventSurvey.technician, props.selectedVentSurvey.ventMeasurement]);
+  console.log(props.selectedVentSurvey)
   return (
     <Box>
       <Paper>
@@ -593,7 +609,7 @@ export default function CompleteSurveyForm(props) {
                   placeholder={'Select Equipment'}
                   >
                 {props.equipment.map((equipment) => (
-                  <MenuItem onClick={()=> handleEquipmentSelect(equipment)} key={equipment.equipmentId} value={equipment.equipment}>{equipment.equipment}</MenuItem>
+                  <MenuItem onClick={()=> handleEquipmentSelect(equipment)} key={equipment.equipmentId} value={`${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}>{`${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}</MenuItem>
                 ))}
                 </Select>
               </FormControl>

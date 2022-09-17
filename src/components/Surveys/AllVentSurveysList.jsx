@@ -263,11 +263,10 @@ export default function VentSurveyList(props) {
       })
       setRows(ventSurveyList.data)
       let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
-      let refinedEquipment = equipmentList.data.map((equipment) => {
-        return {equipmentId: equipment.equipmentId, equipment: `${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}
-      })
-
-      props.setEquipment(refinedEquipment)
+      // let refinedEquipment = equipmentList.data.map((equipment) => {
+      //   return {equipmentId: equipment.equipmentId, equipment: `${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}
+      // })
+      props.setEquipment(equipmentList.data)
   };
   
   useEffect(()=> {

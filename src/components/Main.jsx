@@ -40,11 +40,13 @@ function Main() {
 
   const getTechs = async () => {
     let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
-    let currentUser = techList.data.map((tech) => {
+    let currentUser = techList.data.filter((tech) => {
+      console.log(user.email, tech.technicianEmail)
       if(user.email === tech.technicianEmail){
         return tech
       }
     })
+    console.log(currentUser)
     setUserProfile({...currentUser[0], ...user})
     setTechnicians(techList.data)
   }
@@ -53,8 +55,6 @@ function Main() {
     if (!ignore)  getTechs()
     return () => { ignore = true; }
   }, []);
-  console.log(userProfile)
-  console.log(isAuthenticated)
   return (
     <>
       <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit} userProfile={userProfile}/>
@@ -71,51 +71,51 @@ function Main() {
       </>
       }
       {show.ventList &&
-        <VentList setShow={setShow} show={show} technicians={technicians} setTechnicians={setTechnicians} setSelectedVent={setSelectedVent} selectedUnit={selectedUnit}
-        />
+      <VentList setShow={setShow} show={show} technicians={technicians} setTechnicians={setTechnicians} setSelectedVent={setSelectedVent} selectedUnit={selectedUnit}
+      />
       }
       {show.addTechnician &&
-        <AddTechnicianForm setShow={setShow} show={show} technicians={technicians} setTechnicians={setTechnicians}/>
+      <AddTechnicianForm setShow={setShow} show={show} technicians={technicians} setTechnicians={setTechnicians}/>
       }
       {show.technicianList &&
-        <TechnicianList setShow={setShow} show={show} technicians={technicians} selectedTech={selectedTech} setSelectedTech={setSelectedTech}/>
+      <TechnicianList setShow={setShow} show={show} technicians={technicians} selectedTech={selectedTech} setSelectedTech={setSelectedTech}/>
       }
       {show.addVentSurvey &&
-        <AddVentSurvey selectedVent={selectedVent} show={show} setShow={setShow} equipment={equipment} setEquipment={setEquipment}/>
+      <AddVentSurvey selectedVent={selectedVent} show={show} setShow={setShow} equipment={equipment} setEquipment={setEquipment}/>
       }
       <AddUnitModalForm open={open} setOpen={setOpen} units={units} setUnits={setUnits}/>
       {show.addVent &&
-        <AddVentForm setShow={setShow} show={show} open={open} setOpen={setOpen} units={units} setUnits={setUnits} selectedUnit={selectedUnit}/>
+      <AddVentForm setShow={setShow} show={show} open={open} setOpen={setOpen} units={units} setUnits={setUnits} selectedUnit={selectedUnit}/>
       }
       {show.ventInfo &&
-        <>
-        <VentInfo selectedVent={selectedVent} setSelectedVent={setSelectedVent} technicians={technicians} show={show} setShow={setShow}/>
-        <VentSurveyList selectedVent={selectedVent} setShow={setShow} show={show} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} equipment={equipment} setEquipment={setEquipment}/>
-        </>
+      <>
+      <VentInfo selectedVent={selectedVent} setSelectedVent={setSelectedVent} technicians={technicians} show={show} setShow={setShow}/>
+      <VentSurveyList selectedVent={selectedVent} setShow={setShow} show={show} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} equipment={equipment} setEquipment={setEquipment} userProfile={userProfile}/>
+      </>
       }
       {show.ventSurveyList &&
-        <AllVentSurveysList selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} setShow={setShow} show={show} equipment={equipment} setEquipment={setEquipment}/>
+      <AllVentSurveysList selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} setShow={setShow} show={show} equipment={equipment} setEquipment={setEquipment}/>
       }
       {show.addEquipment &&
-        <AddEquipmentForm setEquipment={setEquipment} equipment={equipment} setShow={setShow} show={show}/>
+      <AddEquipmentForm setEquipment={setEquipment} equipment={equipment} setShow={setShow} show={show}/>
       }
       {show.equipment &&
-        <EquipmentList setShow={setShow} show={show} setEquipment={setEquipment} equipment={equipment} selectedEquipment={selectedEquipment} setSelectedEquipment={setSelectedEquipment}/>
+      <EquipmentList setShow={setShow} show={show} setEquipment={setEquipment} equipment={equipment} selectedEquipment={selectedEquipment} setSelectedEquipment={setSelectedEquipment}/>
       }
       {show.equipmentInfo &&
-        <EquipmentInfo setShow={setShow} show={show} selectedEquipment={selectedEquipment} setSelectedEquipment={setSelectedEquipment}/>
+      <EquipmentInfo setShow={setShow} show={show} selectedEquipment={selectedEquipment} setSelectedEquipment={setSelectedEquipment}/>
       }
       {show.assignSurvey &&
-        <AssignSurveyForm setTechnicians={setTechnicians} technicians={technicians} setShow={setShow} show={show} selectedVent={selectedVent} setSelectedVent={setSelectedVent}/>
+      <AssignSurveyForm setTechnicians={setTechnicians} technicians={technicians} setShow={setShow} show={show} selectedVent={selectedVent} setSelectedVent={setSelectedVent}/>
       }
       {show.completeSurvey &&
-        <CompleteVentSurvey selectedVent={selectedVent} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} setShow={setShow} show={show} equipment={equipment} setEquipment={setEquipment} technicians={technicians} setTechnicians={setTechnicians}/>
+      <CompleteVentSurvey selectedVent={selectedVent} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} setShow={setShow} show={show} equipment={equipment} setEquipment={setEquipment} technicians={technicians} setTechnicians={setTechnicians}/>
       }
       {show.reviewSurvey &&
-        <ReviewSurveyForm setTechnicians={setTechnicians} technicians={technicians} setShow={setShow} show={show} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} equipment={equipment} setEquipment={setEquipment}/>
+      <ReviewSurveyForm setTechnicians={setTechnicians} technicians={technicians} setShow={setShow} show={show} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} equipment={equipment} setEquipment={setEquipment}/>
       }
       {show.techInfo &&
-        <TechInfo selectedTech={selectedTech} setSelectedTech={setSelectedTech} show={show} setShow={setShow}/>
+      <TechInfo selectedTech={selectedTech} setSelectedTech={setSelectedTech} show={show} setShow={setShow}/>
       }
     </>
   );

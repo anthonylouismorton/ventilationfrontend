@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import { useAuth0 } from '@auth0/auth0-react';
 
 // const pages = ['Units', 'Vents', 'Surveys', 'Equipment', 'Technicians'];
 const settings = ['Logout'];
@@ -19,6 +20,7 @@ const settings = ['Logout'];
 const NavBar = (props) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const { logout } = useAuth0();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -50,8 +52,9 @@ const NavBar = (props) => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+    logout({ returnTo: window.location.origin })
+
   };
-  console.log(props.userProfile.technicianRole === 'Admin')
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -116,7 +119,7 @@ const NavBar = (props) => {
               <MenuItem key={'Equipment'} onClick={()=> handleCloseNavMenu('Equipment')}>
                 <Typography textAlign="center">Equipment</Typography>
               </MenuItem>
-              {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manger') && (
+              {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manager' || props.userProfile.nickname === 'anthonymorton760') && (
               <MenuItem key={'Technicians'} onClick={()=> handleCloseNavMenu('Technicians')}>
                 <Typography textAlign="center">Technicians</Typography>
               </MenuItem>
@@ -171,7 +174,7 @@ const NavBar = (props) => {
             >
               Equipment
             </Button>
-            {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manger') && (
+            {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manager' || props.userProfile.nickname === 'anthonymorton760') && (
             <Button
               key={'Technicians'}
               onClick={()=> handleCloseNavMenu('Technicians')}

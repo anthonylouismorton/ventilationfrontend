@@ -22,8 +22,8 @@ export default function ReviewSurveyForm(props) {
   let [roomVolume, setRoomVolume] = useState('');
   let [ventArea, setVentArea] = useState('');
   const defaultFormValues = {
-    equipmentId: props.equipment[0].equipmentId,
-    equipment: props.equipment[0].equipment,
+    equipmentId: props.selectedVentSurvey.ventSurvey.equipmentId,
+    equipment: `${props.equipment[0].manufacturer} ${props.equipment[0].model} ${props.equipment[0].serialNumber}`,
     completedBy: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`,
     weldingHoodMeasurement: {
       distanceFromVent: props.selectedVentSurvey.ventMeasurements[0].distanceFromVent, 
@@ -269,7 +269,6 @@ export default function ReviewSurveyForm(props) {
           lowFlows.push(newVentFlowMeasurements[i])
         };
       };
-      console.log(lowFlows)
       if(lowFlows.length < 2 && average > 99 && failFlow === false){
         props.setSelectedVentSurvey({
           ventSurvey:{
@@ -472,8 +471,8 @@ export default function ReviewSurveyForm(props) {
     });
     props.setShow({
       ...props.show,
-      ventSurveyList: true,
-      completeSurvey: false,
+      ventInfo: true,
+      reviewSurvey: false,
     });
     props.setSelectedVentSurvey([]);
     }
@@ -483,8 +482,6 @@ export default function ReviewSurveyForm(props) {
   };
   
   const getEquipment = async () => {
-    let equipmentId = '';
-    let equipment = '';
     let setArea = 0;
     let ventMeasurements = props.selectedVentSurvey.ventMeasurements;
     let average = '';
@@ -502,15 +499,6 @@ export default function ReviewSurveyForm(props) {
       let area = props.selectedVentSurvey.ventSurvey.vent.ventDimension1/2 * props.selectedVentSurvey.ventSurvey.vent.ventDimension1/2 * Math.PI /144;
       setArea = Math.round((area + Number.EPSILON) * 100) / 100;
 
-    };
-    console.log(props.selectedVentSurvey.ventSurvey.equipmentId === undefined)
-    if(props.selectedVentSurvey.ventSurvey.equipmentId === undefined){
-      equipmentId = props.equipment[0].equipmentId
-      equipment = props.equipment[0].equipment
-    }
-    else if(props.selectedVentSurvey.ventSurvey.equipmentId){
-      equipmentId = props.selectedVentSurvey.equipmentId
-      equipment = props.selectedVentSurvey.equipment
     };
     let volume = Math.round((props.selectedVentSurvey.ventSurvey.vent.roomHeight * props.selectedVentSurvey.ventSurvey.vent.roomWidth * props.selectedVentSurvey.ventSurvey.vent.roomLength)/1728);
     
@@ -544,7 +532,6 @@ export default function ReviewSurveyForm(props) {
       };
     }
     else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Welding Hood'){
-      console.log('in this else if')
       if(props.selectedVentSurvey.ventMeasurements[0].ventMeasurement < 100){
         pass = 'Fail'
       }
@@ -561,8 +548,6 @@ export default function ReviewSurveyForm(props) {
       ],
       ventSurvey: {
         ...props.selectedVentSurvey.ventSurvey,
-        equipmentId: equipmentId,
-        equipment: equipment,
         airChanges: airChanges.airChanges,
         pass: pass,
         completedBy: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`
@@ -575,7 +560,8 @@ export default function ReviewSurveyForm(props) {
     if (!ignore)  getEquipment()
     return () => { ignore = true; }
   }, [props.selectedVentSurvey.ventSurvey.vent, props.selectedVentSurvey.ventSurvey.technician, props.selectedVentSurvey.ventMeasurement, formValues]);
-  console.log(props.equipment)
+  console.log(props.selectedVentSurvey)
+  console.log(formValues)
   return (
     <Box>
       <Paper>
@@ -594,7 +580,7 @@ export default function ReviewSurveyForm(props) {
                   placeholder={'Select Equipment'}
                   >
                 {props.equipment.map((equipment) => (
-                  <MenuItem onClick={()=> handleEquipmentSelect(equipment)} key={equipment.equipmentId} value={equipment.equipment}>{equipment.equipment}</MenuItem>
+                  <MenuItem onClick={()=> handleEquipmentSelect(equipment)} key={equipment.equipmentId} value={`${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}>{`${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}</MenuItem>
                 ))}
                 </Select>
               </FormControl>
