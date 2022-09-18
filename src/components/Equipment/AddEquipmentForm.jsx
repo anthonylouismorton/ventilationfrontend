@@ -32,7 +32,7 @@ export default function AddEquipmentForm(props) {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		let newEquipment = await axios.post(
+		await axios.post(
 			`${process.env.REACT_APP_DATABASE}/equipment`,
 			formValues
 		);

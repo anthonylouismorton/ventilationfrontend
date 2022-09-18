@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import axios from 'axios';
 import {
 	TextField,
@@ -38,7 +38,7 @@ export default function TechInfo(props) {
     })
     props.setSelectedTech([]);
   };
-  console.log(props.selectedTech)
+
 	return (
 		<Box>
 			<Paper>

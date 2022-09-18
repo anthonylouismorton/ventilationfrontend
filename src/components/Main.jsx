@@ -20,6 +20,7 @@ import ReviewSurveyForm from './Surveys/ReviewSurveyForm';
 import TechInfo from './Technicians/TechInfo';
 import EquipmentInfo from './Equipment/EquipmentInfo';
 import NavBar from './NavBar';
+import Login from './Login';
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from 'axios';
 
@@ -38,26 +39,26 @@ function Main() {
   const [userProfile, setUserProfile] = useState([]);
   const { user, isAuthenticated} = useAuth0();
 
-  const getTechs = async () => {
-    let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
-    let currentUser = techList.data.filter((tech) => {
-      console.log(user.email, tech.technicianEmail)
-      if(user.email === tech.technicianEmail){
-        return tech
-      }
-    })
-    console.log(currentUser)
-    setUserProfile({...currentUser[0], ...user})
-    setTechnicians(techList.data)
-  }
   useEffect(()=> {
+    const getTechs = async () => {
+      let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
+      let currentUser = techList.data.filter(tech => tech.technicianEmail === user.email)
+      console.log(currentUser)
+      setUserProfile({...currentUser, ...user})
+      setTechnicians(techList.data)
+    }
     let ignore = false;
     if (!ignore)  getTechs()
     return () => { ignore = true; }
-  }, []);
+  }, [user]);
+  
   return (
     <>
       <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit} userProfile={userProfile}/>
+      {!isAuthenticated ?
+      <Login/>
+      :
+      <>
       {show.addUnit &&
         <AddUnitForm setShow={setShow} show={show} units={units} setUnits={setUnits}/>
       }
@@ -117,6 +118,8 @@ function Main() {
       {show.techInfo &&
       <TechInfo selectedTech={selectedTech} setSelectedTech={setSelectedTech} show={show} setShow={setShow}/>
       }
+      </>
+    }
     </>
   );
 }

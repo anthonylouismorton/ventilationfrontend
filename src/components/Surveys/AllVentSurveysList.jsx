@@ -12,9 +12,6 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
@@ -196,10 +193,10 @@ export default function VentSurveyList(props) {
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
-  const [selected, setSelected] = useState([]);
+  const [selected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
+  // const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -225,10 +222,10 @@ export default function VentSurveyList(props) {
     });
   };
 
-  const handleDeleteClick = async (id) => {
-    await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
-    setShowDeleteWarning(!showDeleteWarning, null)
-  }
+  // const handleDeleteClick = async (id) => {
+  //   await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
+  //   setShowDeleteWarning(!showDeleteWarning, null)
+  // }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -249,7 +246,8 @@ export default function VentSurveyList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  const getVentSurveys = async () =>{
+  useEffect(()=> {
+    const getVentSurveys = async () =>{
       let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/ventSurvey`)
       ventSurveyList.data.map((survey) => {
         if(survey.ventMeasurements.length === 0){
@@ -260,18 +258,14 @@ export default function VentSurveyList(props) {
               ventSurveyId: survey.ventSurvey.ventSurveyId
           }]
         }
+        return survey
       })
       setRows(ventSurveyList.data)
       let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
-      // let refinedEquipment = equipmentList.data.map((equipment) => {
-      //   return {equipmentId: equipment.equipmentId, equipment: `${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}
-      // })
       props.setEquipment(equipmentList.data)
-  };
-  
-  useEffect(()=> {
+    };
     getVentSurveys();
-  }, []);
+  }, [props]);
   console.log(rows)
   return (
     <Box sx={{ width: '100%' }}>
