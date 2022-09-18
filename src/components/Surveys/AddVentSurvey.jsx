@@ -177,18 +177,18 @@ export default function AddVentSurveyForm(props) {
       addVentSurvey: false
     })
   };
-  const getEquipment = async () =>{
-    let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
-    props.setEquipment(equipmentList.data)
-    let surveyDate = new Date();
-    if(props.selectedVent.surveyFrequency === 'Quarterly'){
-      setFormValues({...formValues, expirationDate: new Date(surveyDate.setMonth(surveyDate.getMonth()+8)).toISOString().split('T')[0]})
-    }
-  };
   
   useEffect(()=> {
+    const getEquipment = async () =>{
+      let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
+      props.setEquipment(equipmentList.data)
+      let surveyDate = new Date();
+      if(props.selectedVent.surveyFrequency === 'Quarterly'){
+        setFormValues({...formValues, expirationDate: new Date(surveyDate.setMonth(surveyDate.getMonth()+8)).toISOString().split('T')[0]})
+      }
+    };
     getEquipment();
-  }, []);
+  }, [props.setEquipment, formValues]);
 
   return (
     <Box>

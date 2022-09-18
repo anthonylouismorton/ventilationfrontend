@@ -456,7 +456,6 @@ export default function ReviewSurveyForm(props) {
 		);
     props.selectedVentSurvey.ventMeasurements.map((ventFlow) => {
       if(ventFlow.ventMeasurementId === ''){
-        console.log('in the post', ventFlow)
         axios.post(
         `${process.env.REACT_APP_DATABASE}/ventSurveyMeasurements`,
         {distanceFromVent: ventFlow.distanceFromVent, ventMeasurement: ventFlow.ventMeasurement, ventSurveyId: ventFlow.ventSurveyId}
@@ -468,6 +467,7 @@ export default function ReviewSurveyForm(props) {
         ventFlow
         )
       }
+      return ventFlow
     });
     props.setShow({
       ...props.show,
@@ -481,87 +481,84 @@ export default function ReviewSurveyForm(props) {
     };
   };
   
-  const getEquipment = async () => {
-    let setArea = 0;
-    let ventMeasurements = props.selectedVentSurvey.ventMeasurements;
-    let average = '';
-    let airChanges = '';
-    let pass = '';
-
-    if (props.selectedVentSurvey.ventMeasurements.length === 0){
-      ventMeasurements = [{distanceFromVent: '', ventMeasurement: 0, ventMeasurementId: '', ventSurveyId: props.selectedVentSurvey.ventSurvey.ventSurveyId}]
-    };
-    if(props.selectedVentSurvey.ventSurvey.vent.ventShape === 'Square'){
-      let area = (props.selectedVentSurvey.ventSurvey.vent.ventDimension1 * props.selectedVentSurvey.ventSurvey.vent.ventDimension2)/144
-      setArea = Math.round((area + Number.EPSILON) * 100) / 100;
-    }
-    else if(props.selectedVentSurvey.ventSurvey.vent.ventShape === 'Circular'){
-      let area = props.selectedVentSurvey.ventSurvey.vent.ventDimension1/2 * props.selectedVentSurvey.ventSurvey.vent.ventDimension1/2 * Math.PI /144;
-      setArea = Math.round((area + Number.EPSILON) * 100) / 100;
-
-    };
-    let volume = Math.round((props.selectedVentSurvey.ventSurvey.vent.roomHeight * props.selectedVentSurvey.ventSurvey.vent.roomWidth * props.selectedVentSurvey.ventSurvey.vent.roomLength)/1728);
-    
-    if(ventMeasurements[0].ventMeasurementId !== ''){
-      const sum = props.selectedVentSurvey.ventMeasurements.reduce((prev, current) => {
-        return prev = prev + current.ventMeasurement
-      }, 0);
-      average = Math.round(sum/props.selectedVentSurvey.ventMeasurements.length);
-    }
-    else{
-      average = averageVentFlow
-    };
-    if(props.selectedVentSurvey.ventSurvey.vent.type === 'Battery Room'){
-      const airChangeCheck = checkAirChanges(volume, average, setArea);
-      airChanges = airChangeCheck.airChanges;
-      pass = airChangeCheck.pass;
-    }
-    else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood' || props.selectedVentSurvey.ventSurvey.vent.type === 'Paint Booth'){
-      let lowFlows = []
-      let failFlow = props.selectedVentSurvey.ventMeasurements.every(flow => flow.ventMeasurement >= 75)
-      for(let i = 0; props.selectedVentSurvey.ventMeasurements.length > i; i++){
-        if(props.selectedVentSurvey.ventMeasurements[i].ventMeasurement < 100){
-          lowFlows.push(props.selectedVentSurvey.ventMeasurements[i].ventMeasurement)
-        };
+  useEffect(()=> {
+    const getEquipment = async () => {
+      let setArea = 0;
+      let ventMeasurements = props.selectedVentSurvey.ventMeasurements;
+      let average = '';
+      let airChanges = '';
+      let pass = '';
+  
+      if (props.selectedVentSurvey.ventMeasurements.length === 0){
+        ventMeasurements = [{distanceFromVent: '', ventMeasurement: 0, ventMeasurementId: '', ventSurveyId: props.selectedVentSurvey.ventSurvey.ventSurveyId}]
       };
-      if(lowFlows.length < 2 && average > 99 && failFlow === true){
-        pass ='Pass'
+      if(props.selectedVentSurvey.ventSurvey.vent.ventShape === 'Square'){
+        let area = (props.selectedVentSurvey.ventSurvey.vent.ventDimension1 * props.selectedVentSurvey.ventSurvey.vent.ventDimension2)/144
+        setArea = Math.round((area + Number.EPSILON) * 100) / 100;
+      }
+      else if(props.selectedVentSurvey.ventSurvey.vent.ventShape === 'Circular'){
+        let area = props.selectedVentSurvey.ventSurvey.vent.ventDimension1/2 * props.selectedVentSurvey.ventSurvey.vent.ventDimension1/2 * Math.PI /144;
+        setArea = Math.round((area + Number.EPSILON) * 100) / 100;
+  
+      };
+      let volume = Math.round((props.selectedVentSurvey.ventSurvey.vent.roomHeight * props.selectedVentSurvey.ventSurvey.vent.roomWidth * props.selectedVentSurvey.ventSurvey.vent.roomLength)/1728);
+      
+      if(ventMeasurements[0].ventMeasurementId !== ''){
+        const sum = props.selectedVentSurvey.ventMeasurements.reduce((prev, current) => {
+          return prev = prev + current.ventMeasurement
+        }, 0);
+        average = Math.round(sum/props.selectedVentSurvey.ventMeasurements.length);
       }
       else{
-        pass ='Fail'
+        average = averageVentFlow
       };
-    }
-    else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Welding Hood'){
-      if(props.selectedVentSurvey.ventMeasurements[0].ventMeasurement < 100){
-        pass = 'Fail'
+      if(props.selectedVentSurvey.ventSurvey.vent.type === 'Battery Room'){
+        const airChangeCheck = checkAirChanges(volume, average, setArea);
+        airChanges = airChangeCheck.airChanges;
+        pass = airChangeCheck.pass;
       }
-      else if(props.selectedVentSurvey.ventMeasurements[0].ventMeasurement >= 100){
-        pass = 'Pass'
+      else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Fume Hood' || props.selectedVentSurvey.ventSurvey.vent.type === 'Paint Booth'){
+        let lowFlows = []
+        let failFlow = props.selectedVentSurvey.ventMeasurements.every(flow => flow.ventMeasurement >= 75)
+        for(let i = 0; props.selectedVentSurvey.ventMeasurements.length > i; i++){
+          if(props.selectedVentSurvey.ventMeasurements[i].ventMeasurement < 100){
+            lowFlows.push(props.selectedVentSurvey.ventMeasurements[i].ventMeasurement)
+          };
+        };
+        if(lowFlows.length < 2 && average > 99 && failFlow === true){
+          pass ='Pass'
+        }
+        else{
+          pass ='Fail'
+        };
       }
-    } 
-    setAverageVentFlow(average);
-    setRoomVolume(volume);
-    setVentArea(setArea);
-    props.setSelectedVentSurvey({
-      ventMeasurements: [
-        ...ventMeasurements
-      ],
-      ventSurvey: {
-        ...props.selectedVentSurvey.ventSurvey,
-        airChanges: airChanges.airChanges,
-        pass: pass,
-        completedBy: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`
-      }
-    })
-  };
-  
-  useEffect(()=> {
+      else if(props.selectedVentSurvey.ventSurvey.vent.type === 'Welding Hood'){
+        if(props.selectedVentSurvey.ventMeasurements[0].ventMeasurement < 100){
+          pass = 'Fail'
+        }
+        else if(props.selectedVentSurvey.ventMeasurements[0].ventMeasurement >= 100){
+          pass = 'Pass'
+        }
+      } 
+      setAverageVentFlow(average);
+      setRoomVolume(volume);
+      setVentArea(setArea);
+      props.setSelectedVentSurvey({
+        ventMeasurements: [
+          ...ventMeasurements
+        ],
+        ventSurvey: {
+          ...props.selectedVentSurvey.ventSurvey,
+          airChanges: airChanges.airChanges,
+          pass: pass,
+          completedBy: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`
+        }
+      })
+    };
     let ignore = false;
     if (!ignore)  getEquipment()
     return () => { ignore = true; }
-  }, [props.selectedVentSurvey.ventSurvey.vent, props.selectedVentSurvey.ventSurvey.technician, props.selectedVentSurvey.ventMeasurement, formValues]);
-  console.log(props.selectedVentSurvey)
-  console.log(formValues)
+  }, [props.selectedVentSurvey.ventSurvey.vent, props.selectedVentSurvey.ventSurvey.technician, props.selectedVentSurvey.ventMeasurement, formValues, averageVentFlow, checkAirChanges]);
   return (
     <Box>
       <Paper>

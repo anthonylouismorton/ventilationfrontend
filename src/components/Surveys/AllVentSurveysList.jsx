@@ -265,7 +265,7 @@ export default function VentSurveyList(props) {
       props.setEquipment(equipmentList.data)
     };
     getVentSurveys();
-  }, [props]);
+  }, [props.setEquipment]);
   console.log(rows)
   return (
     <Box sx={{ width: '100%' }}>
