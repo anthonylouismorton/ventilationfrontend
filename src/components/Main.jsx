@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import AddTechnicianForm from './Technicians/AddTechnicianForm';
+import AddTechnicianForm from './Technician/AddTechnicianForm';
 import AddUnitModalForm from './Units/AddUnitModalForm';
 import AddVentForm from './Vents/AddVentForm';
 import AddVentSurvey from './Surveys/AddVentSurvey';
@@ -8,7 +8,7 @@ import VentInfo from './Vents/VentInfo';
 import EquipmentList from './Equipment/EquipmentList';
 import AddEquipmentForm from './Equipment/AddEquipmentForm';
 import AllVentSurveysList from './Surveys/AllVentSurveysList';
-import TechnicianList from './Technicians/TechnicianList';
+import TechnicianList from './Technician/TechnicianList';
 import VentSurveyList from './Vents/VentSurveyList';
 import AssignSurveyForm from './Surveys/AssignSurveyForm';
 import CompleteVentSurvey from './Surveys/CompleteVentSurvey';
@@ -17,7 +17,7 @@ import AddUnitForm from './Units/AddUnitForm';
 import UnitInfo from './Units/UnitInfo';
 import UnitVentList from './Units/UnitVentList';
 import ReviewSurveyForm from './Surveys/ReviewSurveyForm';
-import TechInfo from './Technicians/TechInfo';
+import TechInfo from './Technician/TechnicianInfo';
 import EquipmentInfo from './Equipment/EquipmentInfo';
 import NavBar from './NavBar';
 import Login from './Login';
@@ -51,7 +51,7 @@ function Main() {
     if (!ignore)  getTechs()
     return () => { ignore = true; }
   }, [user]);
-  
+
   return (
     <>
       <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit} userProfile={userProfile}/>

@@ -13,7 +13,7 @@ import {
   MenuItem
 } from '@mui/material';
 
-export default function TechInfo(props) {
+export default function TechnicianInfo(props) {
 	const handleChange = (e) => {
 		const { name, value } = e.target;
     props.setSelectedTech({
