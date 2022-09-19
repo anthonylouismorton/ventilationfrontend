@@ -12,9 +12,6 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
@@ -191,10 +188,11 @@ export default function UnitVentList(props) {
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
-  const [selected, setSelected] = useState([]);
+  const [selected ] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
+  const { selectedUnit } = props;
+  // const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -218,10 +216,10 @@ export default function UnitVentList(props) {
     });
   };
 
-  const handleDeleteClick = async (id) => {
-    await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
-    setShowDeleteWarning(!showDeleteWarning, null)
-  }
+  // const handleDeleteClick = async (id) => {
+  //   await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
+  //   setShowDeleteWarning(!showDeleteWarning, null)
+  // }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -242,14 +240,13 @@ export default function UnitVentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  const getVents = async () =>{
-    let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVents/${props.selectedUnit.unitId}`)
-    setRows([...ventList.data])
-  };
-  
   useEffect(()=> {
+    const getVents = async () =>{
+      let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVents/${selectedUnit.unitId}`)
+      setRows([...ventList.data])
+    };
     getVents();
-  }, []);
+  }, [selectedUnit]);
 
   return (
     <Box sx={{ width: '100%' }}>
