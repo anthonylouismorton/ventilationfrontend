@@ -19,7 +19,7 @@ const settings = ['Logout'];
 const NavBar = (props) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const { logout } = useAuth0();
+  const { logout, isAuthenticated } = useAuth0();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -51,9 +51,13 @@ const NavBar = (props) => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
-    logout({ returnTo: window.location.origin })
 
   };
+  const handleProfileClick = (setting) => {
+    if(setting === 'Logout'){
+      logout({ returnTo: window.location.origin })
+    }
+  }
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -185,11 +189,12 @@ const NavBar = (props) => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="My Account">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
+            {isAuthenticated &&
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
@@ -207,11 +212,12 @@ const NavBar = (props) => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting}>
+                  <Typography onClick={() => handleProfileClick(setting)} textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
             </Menu>
+            }
           </Box>
         </Toolbar>
       </Container>

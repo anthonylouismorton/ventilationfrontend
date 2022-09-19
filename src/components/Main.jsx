@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import AddTechnicianForm from './Technician/AddTechnicianForm';
 import AddUnitModalForm from './Units/AddUnitModalForm';
 import AddVentForm from './Vents/AddVentForm';
-import AddVentSurvey from './Surveys/AddVentSurvey';
+// import AddVentSurvey from './Surveys/AddVentSurvey';
 import VentList from './Vents/VentList';
 import VentInfo from './Vents/VentInfo';
 import EquipmentList from './Equipment/EquipmentList';
@@ -32,7 +32,7 @@ function Main(props) {
   const [selectedUnit, setSelectedUnit] = useState({unitId: ''});
   const [selectedTech, setSelectedTech] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState([]);
-  const { user, isAuthenticated} = useAuth0();
+  const { isAuthenticated } = useAuth0();
 
   // useEffect(()=> {
   //   const getTechs = async () => {
@@ -45,19 +45,18 @@ function Main(props) {
   //   if (!ignore)  getTechs()
   //   return () => { ignore = true; }
   // }, [user]);
-
+  console.log(props.userProfile)
   return (
     <>
-      {/* <NavBar setShow={props.setShow} show={props.show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit} userProfile={userProfile}/> */}
       {!isAuthenticated ?
       <Login/>
       :
       <>
       {props.show.addUnit &&
-        <AddUnitForm setShow={props.setShow} show={props.show} units={units} setUnits={setUnits}/>
+      <AddUnitForm setShow={props.setShow} show={props.show} units={units} setUnits={setUnits}/>
       }
       {props.show.unitList &&
-        <UnitList setShow={props.setShow} show={props.show} units={units} setUnits={setUnits} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit}/>
+      <UnitList setShow={props.setShow} show={props.show} units={units} setUnits={setUnits} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit}/>
       }
       {props.show.unitInfo &&
       <>
@@ -75,9 +74,9 @@ function Main(props) {
       {props.show.technicianList &&
       <TechnicianList setShow={props.setShow} show={props.show} technicians={technicians} selectedTech={selectedTech} setSelectedTech={setSelectedTech}/>
       }
-      {props.show.addVentSurvey &&
+      {/* {props.show.addVentSurvey &&
       <AddVentSurvey selectedVent={selectedVent} show={props.show} setShow={props.setShow} equipment={equipment} setEquipment={setEquipment}/>
-      }
+      } */}
       <AddUnitModalForm open={open} setOpen={setOpen} units={units} setUnits={setUnits}/>
       {props.show.addVent &&
       <AddVentForm setShow={props.setShow} show={props.show} open={open} setOpen={setOpen} units={units} setUnits={setUnits} selectedUnit={selectedUnit}/>

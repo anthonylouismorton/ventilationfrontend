@@ -188,7 +188,7 @@ export default function AddVentSurveyForm(props) {
       }
     };
     getEquipment();
-  }, [props.setEquipment, formValues]);
+  }, [props.setEquipment, formValues, props.selectedVent.surveyFrequency, props]);
 
   return (
     <Box>

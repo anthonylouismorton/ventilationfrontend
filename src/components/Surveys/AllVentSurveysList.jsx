@@ -196,6 +196,7 @@ export default function VentSurveyList(props) {
   const [selected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const { setEquipment } = props
   // const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
 
   const handleRequestSort = (event, property) => {
@@ -262,11 +263,11 @@ export default function VentSurveyList(props) {
       })
       setRows(ventSurveyList.data)
       let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
-      props.setEquipment(equipmentList.data)
+      setEquipment(equipmentList.data)
     };
     getVentSurveys();
-  }, [props.setEquipment]);
-  console.log(rows)
+  }, [setEquipment]);
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>

@@ -108,7 +108,6 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-
   return (
     <TableHead>
       <TableRow>
@@ -159,7 +158,6 @@ EnhancedTableHead.propTypes = {
 
 const EnhancedTableToolbar = (props) => {
   const { numSelected } = props;
-
   return (
     <Toolbar
       sx={{
@@ -196,7 +194,7 @@ const EnhancedTableToolbar = (props) => {
           <AssignmentIndIcon />
         </IconButton>
       </Tooltip>
-      : numSelected === 1 && props.userProfile.technicianRole === 'Program Manager' || (numSelected === 1 && props.userProfile.technicianRole === 'Admin')?
+      : (numSelected === 1 && props.userProfile.technicianRole === 'Program Manager') || (numSelected === 1 && props.userProfile.technicianRole === 'Admin')?
       <Tooltip title="Review">
         <IconButton onClick={props.handleReview}>
           <ReviewsIcon />
@@ -230,7 +228,7 @@ export default function VentList(props) {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-
+  const { setEquipment, selectedVent } = props;
   const handleAssignSurvey = () =>{
     props.setShow({
       ...props.show,
@@ -285,28 +283,29 @@ export default function VentList(props) {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  
-  const getVentSurveys = async () =>{
-    let unitVentSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVentSurveys/${props.selectedVent.ventId}`)
-    unitVentSurveys.data.map((survey) => {
-      if(survey.ventMeasurements.length === 0){
-          survey.ventMeasurements = [{
-            distanceFromVent: '',
-            ventMeasurement: '',
-            ventMeasurementId: '',
-            ventSurveyId: survey.ventSurvey.ventSurveyId
-        }]
-      }
-    })
-    setRows(unitVentSurveys.data)
 
-    let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`);
-    props.setEquipment([...equipmentList.data]);
-  };
   
   useEffect(()=> {
+    console.log(selectedVent)
+    const getVentSurveys = async () =>{
+      let unitVentSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVentSurveys/${selectedVent.ventId}`)
+      unitVentSurveys.data.map((survey) => {
+        if(survey.ventMeasurements.length === 0){
+            survey.ventMeasurements = [{
+              distanceFromVent: '',
+              ventMeasurement: '',
+              ventMeasurementId: '',
+              ventSurveyId: survey.ventSurvey.ventSurveyId
+          }]
+        }
+        return survey
+      });
+      setRows(unitVentSurveys.data);
+      let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`);
+      setEquipment([...equipmentList.data]);
+    };
     getVentSurveys();
-  }, []);
+  }, [selectedVent, setEquipment]);
   console.log(props.userProfile)
   return (
     <Box sx={{ width: '100%' }}>
