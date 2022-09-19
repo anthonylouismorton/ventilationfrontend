@@ -194,10 +194,10 @@ export default function VentList(props) {
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
-  const [selected, setSelected] = useState([]);
+  const [selected ] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
+  // const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -221,10 +221,10 @@ export default function VentList(props) {
     });
   };
 
-  const handleDeleteClick = async (id) => {
-    await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
-    setShowDeleteWarning(!showDeleteWarning, null)
-  }
+  // const handleDeleteClick = async (id) => {
+  //   await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
+  //   setShowDeleteWarning(!showDeleteWarning, null)
+  // }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

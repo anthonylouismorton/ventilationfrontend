@@ -23,6 +23,7 @@ export default function AssignSurveyForm(props) {
   }
   const [formValues, setFormValues] = useState(defaultFormValues);
   const [coverages, setCoverages] = useState([]);
+  const { setTechnicians, selectedVent } = props
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -54,59 +55,6 @@ export default function AssignSurveyForm(props) {
       assignSurvey: false
     })
   };
-  const getTechs = async () =>{
-    let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
-    let currentCoverage = ''
-    if(props.selectedVent.surveyFrequency){
-      let coverage = []
-      let year = 22
-      let today = new Date()
-
-      for(let i = 0; 11 > i; i++){
-        let quarter = 1
-        let quarterString = 'Q'
-        let yearString = '20'
-        for(let j = 0; 4 > j; j++){
-          let coverString = quarterString + quarter + ' ' + yearString + year
-          quarter++
-          coverage.push(coverString)
-        }
-        year++
-      }
-      let currentQuarter = '';
-      coverage.forEach(x => {
-        if(today.getMonth() >= 0 && today.getMonth() <= 2){
-          currentQuarter = 'Q1'
-        }
-        else if(today.getMonth() >= 3 && today.getMonth() <= 5){
-          currentQuarter = 'Q2'
-        }
-        else if(today.getMonth() >= 6 && today.getMonth()<= 8){
-          currentQuarter = 'Q3'
-        }
-        else if(today.getMonth() >= 9 && today.getMonth() <= 11){
-          currentQuarter = 'Q4'
-        }
-        if(x.includes(today.getFullYear()) && x.includes(currentQuarter)){
-          currentCoverage = x
-        }
-      });
-      setCoverages([...coverage])
-    }
-    
-    // setFormValues({
-    //   ...formValues, 
-    //   assignedTechnician: `${techList.data[0].technicianRank} ${techList.data[0].lastName}, ${techList.data[0].firstName}`,
-    //   technicianId: techList.data[0].technicianId
-    // })
-    props.setTechnicians(techList.data)
-    setFormValues({
-      ...formValues,
-      coverageDate: currentCoverage,
-      technicianId: techList.data[0].technicianId,
-      assignedTechnician: `${techList.data[0].technicianRank} ${techList.data[0].lastName}, ${techList.data[0].firstName}`
-    });
-  };
 
   const handleTechSelect = async (tech) => {
     setFormValues({
@@ -123,9 +71,56 @@ export default function AssignSurveyForm(props) {
   }
   
   useEffect(()=> {
+    const getTechs = async () => {
+      let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`)
+      let currentCoverage = ''
+      if(selectedVent.surveyFrequency){
+        let coverage = []
+        let year = 22
+        let today = new Date()
+  
+        for(let i = 0; 11 > i; i++){
+          let quarter = 1
+          let quarterString = 'Q'
+          let yearString = '20'
+          for(let j = 0; 4 > j; j++){
+            let coverString = quarterString + quarter + ' ' + yearString + year
+            quarter++
+            coverage.push(coverString)
+          }
+          year++
+        }
+        let currentQuarter = '';
+        coverage.forEach(x => {
+          if(today.getMonth() >= 0 && today.getMonth() <= 2){
+            currentQuarter = 'Q1'
+          }
+          else if(today.getMonth() >= 3 && today.getMonth() <= 5){
+            currentQuarter = 'Q2'
+          }
+          else if(today.getMonth() >= 6 && today.getMonth()<= 8){
+            currentQuarter = 'Q3'
+          }
+          else if(today.getMonth() >= 9 && today.getMonth() <= 11){
+            currentQuarter = 'Q4'
+          }
+          if(x.includes(today.getFullYear()) && x.includes(currentQuarter)){
+            currentCoverage = x
+          }
+        });
+        setCoverages([...coverage])
+      }
+      
+      setTechnicians(techList.data)
+      setFormValues({
+        ...formValues,
+        coverageDate: currentCoverage,
+        technicianId: techList.data[0].technicianId,
+        assignedTechnician: `${techList.data[0].technicianRank} ${techList.data[0].lastName}, ${techList.data[0].firstName}`
+      });
+    };
     getTechs();
-  }, []);
-  console.log(formValues)
+  }, [formValues, selectedVent.surveyFrequency, setTechnicians]);
   return (
     <Box>
       <Paper>
