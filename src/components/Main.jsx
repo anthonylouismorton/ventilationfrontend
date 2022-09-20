@@ -34,18 +34,6 @@ function Main(props) {
   const [selectedEquipment, setSelectedEquipment] = useState([]);
   const { isAuthenticated } = useAuth0();
 
-  // useEffect(()=> {
-  //   const getTechs = async () => {
-  //     let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
-  //     let currentUser = techList.data.filter(tech => tech.technicianEmail === user.email)
-  //     setUserProfile({...currentUser, ...user})
-  //     setTechnicians(techList.data)
-  //   }
-  //   let ignore = false;
-  //   if (!ignore)  getTechs()
-  //   return () => { ignore = true; }
-  // }, [user]);
-  console.log(props.userProfile)
   return (
     <>
       {!isAuthenticated ?

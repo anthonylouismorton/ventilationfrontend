@@ -5,7 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import axios from 'axios';
 
 function App() {
-  const [userProfile, setUserProfile] = useState([]);
+  const [userProfile, setUserProfile] = useState('');
   const { user, isAuthenticated} = useAuth0();
   const [technicians, setTechnicians] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState({unitId: ''});
@@ -14,22 +14,27 @@ function App() {
   
   useEffect(()=> {
     const getTechs = async () => {
-      let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
-      if(isAuthenticated){
-        let currentUser = techList.data.filter(tech => tech.technicianEmail === user.email)
-        console.log(currentUser)
-        setUserProfile({...currentUser[0], user})
+      console.log(userProfile)
+      if(userProfile === ''){
+        console.log('in the if')
+        let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
+        if(isAuthenticated){
+          let currentUser = techList.data.filter(tech => tech.technicianEmail === user.email)
+          console.log(currentUser)
+          setUserProfile({...currentUser[0], user})
+        }
+        setTechnicians(techList.data)
       }
-      setTechnicians(techList.data)
     }
     let ignore = false;
     if (!ignore)  getTechs()
     return () => { ignore = true; }
-  }, [user, isAuthenticated]);
+
+  }, [isAuthenticated, user, userProfile]);
   console.log(userProfile)
   return (
     <>
-    <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit} userProfile={userProfile}/>
+    <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit} userProfile={userProfile} setTechnicians={setTechnicians}/>
     <Main setShow={setShow} show={show} defaultShow={defaultShow} userProfile={userProfile} technicians={technicians} selectedUnit={selectedUnit}/>
     </>
   );

@@ -306,7 +306,6 @@ export default function VentList(props) {
     };
     getVentSurveys();
   }, [selectedVent, setEquipment]);
-  console.log(props.userProfile)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -12,14 +12,16 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useAuth0 } from '@auth0/auth0-react';
+// import axios from 'axios'
 
 // const pages = ['Units', 'Vents', 'Surveys', 'Equipment', 'Technicians'];
 const settings = ['Logout'];
 
 const NavBar = (props) => {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
   const { logout, isAuthenticated } = useAuth0();
+  // const { setTechnicians, setUserProfile } = props
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -58,6 +60,20 @@ const NavBar = (props) => {
       logout({ returnTo: window.location.origin })
     }
   }
+  // useEffect(()=> {
+  //   const getTechs = async () => {
+  //       let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
+  //       if(isAuthenticated){
+  //         let currentUser = techList.data.filter(tech => tech.technicianEmail === user.email)
+  //         setUserProfile({...currentUser[0], user})
+  //       }
+  //       setTechnicians(techList.data)
+  //   }
+  //   let ignore = false;
+  //   if (!ignore)  getTechs()
+  //   return () => { ignore = true; }
+  //   // getTechs();
+  // }, [isAuthenticated, user, setTechnicians, setUserProfile]);
   return (
     <AppBar position="static">
       <Container maxWidth="xl">

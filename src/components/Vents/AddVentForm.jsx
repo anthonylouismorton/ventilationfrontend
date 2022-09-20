@@ -47,7 +47,6 @@ export default function AddVentForm(props) {
     });
   }
 
-
 	const handleCancel = () => {
 		setFormValues(defaultFormValues);
     if(props.selectedUnit.unitId){
@@ -92,22 +91,22 @@ export default function AddVentForm(props) {
 
   const handleOpen = () => props.setOpen({...props.open, addUnitModal: true });
 
-  useEffect(()=> {
-    const getUnits = async () => {
-      let unitList = await axios.get(
-        `${process.env.REACT_APP_DATABASE}/unit`,
-        formValues,
-        );
-      setUnits([...unitList.data]);
-      if(selectedUnit.unitId){
-        setFormValues({...formValues, unitId: selectedUnit.unitId, unitName: `${selectedUnit.WPID} ${selectedUnit.unitName}`})
-      }
-      else{
-        setFormValues({...formValues, unitId: unitList.data[0].unitId, unitName: `${unitList.data[0].WPID} ${unitList.data[0].unitName}`})
-      }
+  const getUnits = async () => {
+    let unitList = await axios.get(
+      `${process.env.REACT_APP_DATABASE}/unit`,
+      formValues,
+      );
+    setUnits([...unitList.data]);
+    if(selectedUnit.unitId){
+      setFormValues({...formValues, unitId: selectedUnit.unitId, unitName: `${selectedUnit.WPID} ${selectedUnit.unitName}`})
     }
+    else{
+      setFormValues({...formValues, unitId: unitList.data[0].unitId, unitName: `${unitList.data[0].WPID} ${unitList.data[0].unitName}`})
+    }
+  }
+  useEffect(()=> {
     getUnits();
-  },[formValues, selectedUnit.WPID, selectedUnit.unitId, selectedUnit.unitName, setUnits]);
+  }, []);
 	return (
 		<Box>
 			<Paper>
