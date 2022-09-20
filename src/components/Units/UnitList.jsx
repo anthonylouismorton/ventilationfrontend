@@ -232,7 +232,6 @@ export default function UnitList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-  useEffect(()=> {
     const getUnits = async () =>{
       if(units.length > 1){
         setRows(units)
@@ -242,8 +241,9 @@ export default function UnitList(props) {
         setRows(unitList.data)
       }
     };
+  useEffect(()=> {
     getUnits();
-  }, [units]);
+  }, []);
 
   return (
     <Box sx={{ width: '100%' }}>

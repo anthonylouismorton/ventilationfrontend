@@ -36,9 +36,9 @@ export default function EquipmentInfo(props) {
       equipment: true,
       equipmentInfo: false
     })
-    props.selectedEquipment([])
+    props.setSelectedEquipment([])
   };
-  console.log(props.selectedEquipment)
+
 	return (
 		<Box>
 			<Paper>

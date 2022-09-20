@@ -247,26 +247,26 @@ export default function VentSurveyList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
+  const getVentSurveys = async () =>{
+    let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/ventSurvey`)
+    ventSurveyList.data.map((survey) => {
+      if(survey.ventMeasurements.length === 0){
+          survey.ventMeasurements = [{
+            distanceFromVent: '',
+            ventMeasurement: '',
+            ventMeasurementId: '',
+            ventSurveyId: survey.ventSurvey.ventSurveyId
+        }]
+      }
+      return survey
+    })
+    setRows(ventSurveyList.data)
+    let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
+    setEquipment(equipmentList.data)
+  };
   useEffect(()=> {
-    const getVentSurveys = async () =>{
-      let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/ventSurvey`)
-      ventSurveyList.data.map((survey) => {
-        if(survey.ventMeasurements.length === 0){
-            survey.ventMeasurements = [{
-              distanceFromVent: '',
-              ventMeasurement: '',
-              ventMeasurementId: '',
-              ventSurveyId: survey.ventSurvey.ventSurveyId
-          }]
-        }
-        return survey
-      })
-      setRows(ventSurveyList.data)
-      let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
-      setEquipment(equipmentList.data)
-    };
     getVentSurveys();
-  }, [setEquipment]);
+  }, []);
 
   return (
     <Box sx={{ width: '100%' }}>
