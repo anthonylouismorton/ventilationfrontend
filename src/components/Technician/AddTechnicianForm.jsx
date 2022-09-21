@@ -12,6 +12,7 @@ import {
 	Select,
 	MenuItem
 } from '@mui/material';
+import { send } from '@emailjs/browser'
 
 export default function AddUnitForm(props) {
 	let defaultValues = {
@@ -24,6 +25,54 @@ export default function AddUnitForm(props) {
 	}
 	const [formValues, setFormValues] = useState(defaultValues);
 
+  // const handleSend = async () => {
+  //   console.log(props.guestSelected)
+  //   let toSend = {
+  //     to_name: '',
+  //     guest: '',
+  //     rsvp_code: '',
+  //     to_email: '',
+  //   }
+  //   const guests = props.guestSelected.map((invitee) => {
+  //     let sO;
+  //     let plusOne ='';
+  //     if(invitee.sO !== 'none'){
+  //       sO = ` & ${invitee.sO}`
+  //     }
+  //     else{
+  //       sO = ''
+  //     }
+  //     if(invitee.plusOne !== 'none'){
+  //       plusOne = ' and a guest'
+  //     }
+  //     toSend = {
+  //       to_name: `${invitee.name}${sO}`,
+  //       guest: plusOne,
+  //       rsvp_code: invitee.rsvpCode,
+  //       to_email: invitee.email
+  //     }
+  //     let updateGuest;
+  //     if(invitee.rsvpSend === "No"){
+  //       send(
+  //         'service_kpczsow',
+  //         'template_9g5vasq',
+  //         toSend,
+  //         'user_ae534oceyDw5ZzqpjncZ7'
+  //       )
+  //       .then((response) => {
+  //         console.log('SUCCESS!', response.status, response.text);
+  //       })
+  //       .catch((err) => {
+  //         console.log('FAILED...', err);
+  //       });
+  //       updateGuest = axios.put(`${process.env.REACT_APP_DATABASE}/invitee/send/${invitee.id}`)
+  //     }
+  //     return updateGuest;
+  //   })
+  //   await Promise.all(guests)
+  //   props.setGuestSelected([])
+  //   props.getGuests();
+  // }
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormValues({

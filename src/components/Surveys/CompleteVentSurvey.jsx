@@ -585,7 +585,6 @@ export default function CompleteSurveyForm(props) {
     })
   };
   useEffect(()=> {
-    console.log('use effect')
     getEquipment()
   }, []);
 
