@@ -26,7 +26,6 @@ export default function AddUnitForm(props) {
 	const [formValues, setFormValues] = useState(defaultValues);
 
   // const handleSend = async () => {
-  //   console.log(props.guestSelected)
   //   let toSend = {
   //     to_name: '',
   //     guest: '',
@@ -98,6 +97,22 @@ export default function AddUnitForm(props) {
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
+    let toSend = {
+      to_name: `${formValues.technicianRank} ${formValues.lastName}, ${formValues.firstName}`,
+      toemail: formValues.technicianEmail
+    }
+    send(
+      'service_kpczsow',
+      'template_xgodb66',
+      toSend,
+      'SyddjlnFwc3jnKKv3'
+    )
+    .then((response) => {
+      console.log('SUCCESS!', response.status, response.text);
+    })
+    .catch((err) => {
+      console.log('FAILED...', err);
+    });
 		await axios.post(
       `${process.env.REACT_APP_DATABASE}/technician`,
 			formValues,
@@ -107,6 +122,7 @@ export default function AddUnitForm(props) {
     let technicianList = 	await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
     props.setTechnicians([...technicianList.data])
 	};
+  console.log(formValues)
 	return (
 		<Box>
 			<Paper>

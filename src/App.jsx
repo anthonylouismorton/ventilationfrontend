@@ -14,7 +14,6 @@ function App() {
   
   useEffect(()=> {
     const getTechs = async () => {
-      console.log(userProfile)
       if(userProfile === ''){
         console.log('in the if')
         let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
@@ -31,7 +30,6 @@ function App() {
     return () => { ignore = true; }
 
   }, [isAuthenticated, user, userProfile]);
-  console.log(userProfile)
   return (
     <>
     <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit} userProfile={userProfile} setTechnicians={setTechnicians}/>
