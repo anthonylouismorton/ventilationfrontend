@@ -30,6 +30,7 @@ function App() {
     return () => { ignore = true; }
 
   }, [isAuthenticated, user, userProfile]);
+  console.log(technicians)
   return (
     <>
     <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit} userProfile={userProfile} setTechnicians={setTechnicians}/>

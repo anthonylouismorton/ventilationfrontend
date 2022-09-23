@@ -501,6 +501,7 @@ export default function CompleteSurveyForm(props) {
     let average = '';
     let airChanges = '';
     let pass = '';
+    let status = selectedVentSurvey.ventSurvey.status;
 
     if (selectedVentSurvey.ventMeasurements.length === 0){
       ventMeasurements = [{distanceFromVent: '', ventMeasurement: 0, ventMeasurementId: '', ventSurveyId: selectedVentSurvey.ventSurvey.ventSurveyId}]
@@ -562,13 +563,18 @@ export default function CompleteSurveyForm(props) {
         pass = 'Pass'
       }
     } 
+    if(selectedVentSurvey.ventSurvey.status === 'Rejected' || selectedVentSurvey.ventSurvey.status === 'Approved'){
+      status = 'In Progress'
+    }
+  
     setAverageVentFlow(average);
     setRoomVolume(volume);
     setVentArea(setArea);
     setFormValues({
         ...formValues,
         equipmentId: equipmentId,
-        equipment: setEquipment
+        equipment: setEquipment,
+        completedBy: props.selectedVentSurvey.ventSurvey.completedBy
     })
     setSelectedVentSurvey({
       ventMeasurements: [
@@ -576,6 +582,7 @@ export default function CompleteSurveyForm(props) {
       ],
       ventSurvey: {
         ...selectedVentSurvey.ventSurvey,
+        status: status,
         equipmentId: equipmentId,
         equipment: setEquipment,
         airChanges: airChanges.airChanges,
@@ -587,7 +594,8 @@ export default function CompleteSurveyForm(props) {
   useEffect(()=> {
     getEquipment()
   }, []);
-
+  console.log(`${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`)
+  console.log(props.technicians)
   return (
     <Box>
       <Paper>
