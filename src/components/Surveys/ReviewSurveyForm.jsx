@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { send } from '@emailjs/browser'
 
 export default function ReviewSurveyForm(props) {
   let [averageVentFlow, setAverageVentFlow] = useState(0);
@@ -447,6 +448,31 @@ export default function ReviewSurveyForm(props) {
     // new Date().toISOString().split('T')[0]
     try{
     e.preventDefault();
+    console.log(props.selectedVentSurvey.ventSurvey.technician.technicianEmail)
+    let toSend = {
+      to_name: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`,
+      to_email: props.selectedVentSurvey.ventSurvey.technician.technicianEmail,
+      message: ''
+    }
+    if(props.selectedVentSurvey.ventSurvey.status === 'Approved'){
+      toSend.message = 'Your Survey has been approved by the program manager. You may send the completed form to the ventilation system owner.'
+    }
+    else if(props.selectedVentSurvey.ventSurvey.status === 'Rejected'){
+      toSend.message = 'Your Survey has been rejected by the program manager. Please contact your program manager to determine what corrections are required.'
+    }
+    console.log(toSend)
+    send(
+      'service_kpczsow',
+      'template_e6g6pnr',
+      toSend,
+      'SyddjlnFwc3jnKKv3'
+    )
+    .then((response) => {
+      console.log('SUCCESS!', response.status, response.text);
+    })
+    .catch((err) => {
+      console.log('FAILED...', err);
+    });
 		await axios.put(
 			`${process.env.REACT_APP_DATABASE}/ventSurvey/${props.selectedVentSurvey.ventSurvey.ventSurveyId}`,
       props.selectedVentSurvey.ventSurvey
@@ -558,6 +584,7 @@ export default function ReviewSurveyForm(props) {
   useEffect(()=> {
     getEquipment()
   }, []);
+  console.log(props.selectedVentSurvey.ventSurvey.technician.lastName)
   return (
     <Box>
       <Paper>
@@ -793,7 +820,7 @@ export default function ReviewSurveyForm(props) {
                 </InputLabel>
                 <Select
                   name='completedBy'
-                  value={formValues.completedBy}
+                  value={selectedVentSurvey.ventSurvey.completedBy}
                 >
                 {props.technicians.map((technician) => (
                   <MenuItem onClick={()=> handleTechnicianSelect(technician)} key={technician.technicianId} value={`${technician.technicianRank} ${technician.lastName}, ${technician.firstName}`}>{`${technician.technicianRank} ${technician.lastName}, ${technician.firstName}`}</MenuItem>
@@ -812,8 +839,8 @@ export default function ReviewSurveyForm(props) {
                   onChange={handleChange}
                 >
                   <MenuItem value={'In Progress'}>In Progress</MenuItem>
-                  <MenuItem value={'Ready For QA'}>Ready For QA</MenuItem>
                   <MenuItem value={'Approved'}>Approved</MenuItem>
+                  <MenuItem value={'Rejected'}>Rejected</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

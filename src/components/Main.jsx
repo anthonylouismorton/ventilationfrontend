@@ -33,6 +33,7 @@ function Main(props) {
   const [selectedTech, setSelectedTech] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState([]);
   const { isAuthenticated } = useAuth0();
+  console.log(props.technicians)
 
   return (
     <>
@@ -88,13 +89,13 @@ function Main(props) {
       <EquipmentInfo setShow={props.setShow} show={props.show} selectedEquipment={selectedEquipment} setSelectedEquipment={setSelectedEquipment}/>
       }
       {props.show.assignSurvey &&
-      <AssignSurveyForm setTechnicians={setTechnicians} technicians={technicians} setShow={props.setShow} show={props.show} selectedVent={selectedVent} setSelectedVent={setSelectedVent}/>
+      <AssignSurveyForm setTechnicians={setTechnicians} technicians={props.technicians} setShow={props.setShow} show={props.show} selectedVent={selectedVent} setSelectedVent={setSelectedVent}/>
       }
       {props.show.completeSurvey &&
       <CompleteVentSurvey selectedVent={selectedVent} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} setShow={props.setShow} show={props.show} equipment={equipment} setEquipment={setEquipment} technicians={technicians} setTechnicians={setTechnicians}/>
       }
       {props.show.reviewSurvey &&
-      <ReviewSurveyForm setTechnicians={setTechnicians} technicians={technicians} setShow={props.setShow} show={props.show} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} equipment={equipment} setEquipment={setEquipment}/>
+      <ReviewSurveyForm setTechnicians={setTechnicians} technicians={props.technicians} setShow={props.setShow} show={props.show} selectedVentSurvey={selectedVentSurvey} setSelectedVentSurvey={setSelectedVentSurvey} equipment={equipment} setEquipment={setEquipment}/>
       }
       {props.show.techInfo &&
       <TechInfo selectedTech={selectedTech} setSelectedTech={setSelectedTech} show={props.show} setShow={props.setShow}/>
