@@ -18,6 +18,7 @@ import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -179,6 +180,7 @@ export default function UnitList(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { units } = props;
+  const navigate = useNavigate();
   // const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -187,12 +189,8 @@ export default function UnitList(props) {
   };
 
   const handleClick = (unit) => {
+    navigate(`UnitInfo/${unit.unitId}`)
     props.setSelectedUnit(unit);
-    props.setShow({
-      ...props.show,
-      unitList: false,
-      unitInfo: true 
-    });
   };
 
   const handleNewUnit = () => {

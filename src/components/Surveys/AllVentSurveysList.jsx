@@ -18,6 +18,7 @@ import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -176,11 +177,11 @@ const EnhancedTableToolbar = (props) => {
           Vent Surveys
         </Typography>
       )}
-        <Tooltip title="Add Survey">
+        {/* <Tooltip title="Add Survey">
           <IconButton onClick={props.handleNewVent}>
             <AddIcon />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
     </Toolbar>
   );
 };
@@ -190,13 +191,14 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function VentSurveyList(props) {
-  const [rows, setRows] = useState([])
+  const [rows, setRows] = useState([]);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { setEquipment } = props
+  const { setEquipment } = props;
+  const navigate = useNavigate();
   // const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
 
   const handleRequestSort = (event, property) => {
@@ -207,11 +209,8 @@ export default function VentSurveyList(props) {
 
   const handleClick = (ventSurvey) => {
     props.setSelectedVentSurvey(ventSurvey);
-    props.setShow({
-      ...props.show,
-      ventSurveyList: false,
-      completeSurvey: true,
-    });
+    console.log(ventSurvey.ventSurvey.ventSurveyId)
+    navigate(`/Surveys/CompleteVentSurvey/${ventSurvey.ventSurvey.ventSurveyId}`)
   };
 
   const handleNewVent = () => {

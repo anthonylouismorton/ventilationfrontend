@@ -9,6 +9,7 @@ import {
 	Box,
 	Typography
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddEquipmentForm(props) {
 	const defaultFormValues = {
@@ -21,7 +22,7 @@ export default function AddEquipmentForm(props) {
     calibrationLocation: ''
 	}
 	const [formValues, setFormValues] = useState(defaultFormValues);
-
+	const navigate = useNavigate();
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormValues({
@@ -39,12 +40,12 @@ export default function AddEquipmentForm(props) {
 		setFormValues({...defaultFormValues});
 		let equipmentList = await axios.get(
       `${process.env.REACT_APP_DATABASE}/equipment`);
-		props.setShow({...props.show, addEquipment: false, equipmentList: true})
     props.setEquipment([...equipmentList.data])
+		navigate('/Equipment')
 	};
 
 	const handleCancel= () => {
-    props.setShow({...props.show, addEquipment: false, equipmentList: true})
+		navigate('/Equipment')
 		setFormValues(defaultFormValues);
 	};
 	return (

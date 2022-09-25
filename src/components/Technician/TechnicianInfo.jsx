@@ -12,8 +12,10 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function TechnicianInfo(props) {
+  const navigate = useNavigate();
 	const handleChange = (e) => {
 		const { name, value } = e.target;
     props.setSelectedTech({
@@ -21,21 +23,10 @@ export default function TechnicianInfo(props) {
       [name]: value,
     });
 	};
-	const handleBack = () => {
-    props.setShow({
-      ...props.show,
-      technicianList: true,
-      techInfo: false
-    })
-  };
 
   const handleUpdate = async () => {
     await axios.put(`${process.env.REACT_APP_DATABASE}/technician/${props.selectedTech.technicianId}`, props.selectedTech);
-    props.setShow({
-      ...props.show,
-      technicianList: true,
-      techInfo: false
-    })
+    navigate('/Technicians')
     props.setSelectedTech([]);
   };
 
@@ -119,9 +110,6 @@ export default function TechnicianInfo(props) {
             <Grid>
 							<Button onClick={handleUpdate} variant='contained'>
 								Update
-							</Button>
-							<Button onClick={handleBack} variant='contained'>
-								Back
 							</Button>
             </Grid>
 					</form>

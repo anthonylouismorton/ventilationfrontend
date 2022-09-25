@@ -13,8 +13,9 @@ import {
 	MenuItem
 } from '@mui/material';
 import { send } from '@emailjs/browser'
+import { useNavigate} from 'react-router-dom'
 
-export default function AddUnitForm(props) {
+export default function AddTechnicianForm(props) {
 	let defaultValues = {
 		firstName: '',
 		middleName: '',
@@ -24,6 +25,7 @@ export default function AddUnitForm(props) {
 		technicianRole: 'Technician'
 	}
 	const [formValues, setFormValues] = useState(defaultValues);
+  const navigate = useNavigate();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -34,19 +36,19 @@ export default function AddUnitForm(props) {
 	};
 
 	const handleCancel = () => {
+    navigate('/Technicians')
 		setFormValues({...defaultValues});
-    props.setShow({...props.show, addTechnician: false})
   };
 
-  const handleAdd = async () => {
-    setFormValues({...defaultValues});
-		await axios.post(
-			`${process.env.REACT_APP_DATABASE}/technician`,
-			formValues,
-			);
-    let technicianList = 	await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
-    props.setTechnicians([...technicianList.data])
-  }
+  // const handleAdd = async () => {
+  //   setFormValues({...defaultValues});
+	// 	await axios.post(
+	// 		`${process.env.REACT_APP_DATABASE}/technician`,
+	// 		formValues,
+	// 		);
+  //   let technicianList = 	await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
+  //   props.setTechnicians([...technicianList.data])
+  // }
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
@@ -70,12 +72,12 @@ export default function AddUnitForm(props) {
       `${process.env.REACT_APP_DATABASE}/technician`,
 			formValues,
 		);
-    props.setShow({...props.show, addTechnician: false})
     setFormValues({...defaultValues});
     let technicianList = 	await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
     props.setTechnicians([...technicianList.data])
+    navigate('/Technicians')
 	};
-  console.log(formValues)
+
 	return (
 		<Box>
 			<Paper>
@@ -163,9 +165,6 @@ export default function AddUnitForm(props) {
             <Grid>
 							<Button type='submit' variant='contained'>
 								Submit
-							</Button>
-              <Button onClick={handleAdd} variant='contained'>
-								Add
 							</Button>
 							<Button onClick={handleCancel} color='error' variant='contained'>
 								Cancel

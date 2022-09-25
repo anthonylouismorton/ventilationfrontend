@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useAuth0 } from '@auth0/auth0-react';
+import { Link } from 'react-router-dom';
 // import axios from 'axios'
 
 // const pages = ['Units', 'Vents', 'Surveys', 'Equipment', 'Technicians'];
@@ -38,9 +39,6 @@ const NavBar = (props) => {
     }
     else if(page === 'Vents'){
       props.setShow({...props.defaultShow, ventList: true})
-    }
-    else if(page === 'Technicians'){
-      props.setShow({...props.defaultShow, technicianList: true})
     }
     else if(page === 'Surveys'){
       props.setShow({...props.defaultShow, ventSurveyList: true})
@@ -126,21 +124,31 @@ const NavBar = (props) => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              <MenuItem key={'Units'} onClick={()=> handleCloseNavMenu('Units')}>
-                <Typography textAlign="center">Units</Typography>
+              <MenuItem key={'Units'}>
+                <Link to = '/Units' style={{ textDecoration: 'none' }}>
+                  <Typography textAlign="center">Units</Typography>
+                </Link>
               </MenuItem>
               <MenuItem key={'Vents'} onClick={()=> handleCloseNavMenu('Vents')}>
-                <Typography textAlign="center">Vents</Typography>
+                <Link to = '/' style={{ textDecoration: 'none' }}>
+                  <Typography textAlign="center">Vents</Typography>
+                </Link>
               </MenuItem>
               <MenuItem key={'Surveys'} onClick={()=> handleCloseNavMenu('Surveys')}>
-                <Typography textAlign="center">Surveys</Typography>
+                <Link to = '/Surveys' style={{ textDecoration: 'none' }}>
+                  <Typography textAlign="center">Surveys</Typography>
+                </Link>
               </MenuItem>
-              <MenuItem key={'Equipment'} onClick={()=> handleCloseNavMenu('Equipment')}>
+              <MenuItem key={'Equipment'}>
+              <Link to = '/Equipment' style={{ textDecoration: 'none' }}>
                 <Typography textAlign="center">Equipment</Typography>
+              </Link>
               </MenuItem>
               {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manager' || props.userProfile.nickname === 'anthonymorton760') && (
-              <MenuItem key={'Technicians'} onClick={()=> handleCloseNavMenu('Technicians')}>
-                <Typography textAlign="center">Technicians</Typography>
+              <MenuItem key={'Technicians'}>
+                <Link to = '/Technicians' style={{ textDecoration: 'none' }}>
+                  <Typography textAlign="center">Technicians</Typography>
+                </Link>
               </MenuItem>
               )}
             </Menu>
@@ -165,13 +173,15 @@ const NavBar = (props) => {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Link to = '/Units' style={{ textDecoration: 'none' }}>
             <Button
               key={'Units'}
-              onClick={()=> handleCloseNavMenu('Units')}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
               Units
             </Button>
+          </Link>
+          <Link to = '/' style={{ textDecoration: 'none' }}>
             <Button
               key={'Vents'}
               onClick={()=> handleCloseNavMenu('Vents')}
@@ -179,31 +189,35 @@ const NavBar = (props) => {
             >
               Vents
             </Button>
-            <Button
-              key={'Surveys'}
-              onClick={()=> handleCloseNavMenu('Surveys')}
-              sx={{ my: 2, color: 'white', display: 'block' }}
-            >
-              Surveys
-            </Button>
-            <Button
-              key={'Equipment'}
-              onClick={()=> handleCloseNavMenu('Equipment')}
-              sx={{ my: 2, color: 'white', display: 'block' }}
-            >
-              Equipment
-            </Button>
+          </Link>
+            <Link to = '/Surveys' style={{ textDecoration: 'none' }}>
+              <Button
+                key={'Surveys'}
+                onClick={()=> handleCloseNavMenu('Surveys')}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Surveys
+              </Button>
+            </Link>
+            <Link to = '/Equipment' style={{ textDecoration: 'none' }}>
+              <Button
+                key={'Equipment'}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Equipment
+              </Button>
+            </Link>
             {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manager' || props.userProfile.nickname === 'anthonymorton760') && (
-            <Button
-              key={'Technicians'}
-              onClick={()=> handleCloseNavMenu('Technicians')}
-              sx={{ my: 2, color: 'white', display: 'block' }}
-            >
-              Technicians
-            </Button>
+            <Link to = '/Technicians' style={{ textDecoration: 'none' }}>
+              <Button
+                key={'Technicians'}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Technicians
+              </Button>
+            </Link>
             )}
           </Box>
-
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="My Account">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

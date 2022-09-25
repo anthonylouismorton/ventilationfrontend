@@ -18,6 +18,7 @@ import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -185,6 +186,7 @@ export default function EquipmentList(props) {
   const [selected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const navigate = useNavigate();
   // const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -193,19 +195,12 @@ export default function EquipmentList(props) {
   };
 
   const handleClick = (equipment) => {
+    navigate(`equipment/equipmentInfo/${equipment.equipmentId}`)
     props.setSelectedEquipment(equipment);
-    props.setShow({
-      ...props.show,
-      equipment: false,
-      equipmentInfo: true 
-    });
   };
 
   const handleNewEquipment = () => {
-    props.setShow({
-      ...props.show,
-      addEquipment: true,
-    });
+    navigate(`equipment/addEquipment`)
   };
 
   // const handleDeleteClick = async (id) => {
@@ -279,6 +274,7 @@ export default function EquipmentList(props) {
                       key={row.equipmentId}
                       selected={isItemSelected}
                       onClick={() => handleClick(row)}
+                      // onClick={() => {navigate(`equipment/equipmentInfo/${row.equipmentId}/`)}}
                     >
                       <TableCell align="center">{row.description}</TableCell>
                       <TableCell align="center">{row.manufacturer}</TableCell>
@@ -287,6 +283,25 @@ export default function EquipmentList(props) {
                       <TableCell align="center">{row.calibrationDate}</TableCell>
                       <TableCell align="center">{row.calibrationExpiration}</TableCell>
                     </TableRow>
+                    // <TableRow
+                    //   hover
+                    //   role="checkbox"
+                    //   aria-checked={isItemSelected}
+                    //   tabIndex={-1}
+                    //   key={row.equipmentId}
+                    //   selected={isItemSelected}
+                    //   component={Link}
+                    //   to={`/EquipmentInfo/${row.equipmentId}`}
+                    //   style={{ textDecoration: 'none' }}
+                    //   // onClick={() => handleClick(row)}
+                    // >
+                    //   <TableCell align="center">{row.description}</TableCell>
+                    //   <TableCell align="center">{row.manufacturer}</TableCell>
+                    //   <TableCell align="center">{row.model}</TableCell>
+                    //   <TableCell align="center">{row.serialNumber}</TableCell>
+                    //   <TableCell align="center">{row.calibrationDate}</TableCell>
+                    //   <TableCell align="center">{row.calibrationExpiration}</TableCell>
+                    // </TableRow>
                   );
                 })}
               {emptyRows > 0 && (
