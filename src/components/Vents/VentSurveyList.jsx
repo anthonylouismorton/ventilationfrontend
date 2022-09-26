@@ -228,7 +228,6 @@ export default function VentList(props) {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-  const { setEquipment, selectedVent } = props;
   const handleAssignSurvey = () =>{
     props.setShow({
       ...props.show,
@@ -284,7 +283,7 @@ export default function VentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   const getVentSurveys = async () => {
-    let unitVentSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVentSurveys/${selectedVent.ventId}`)
+    let unitVentSurveys = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVentSurveys/${props.selectedVent.ventId}`)
     unitVentSurveys.data.map((survey) => {
       if(survey.ventMeasurements.length === 0){
           survey.ventMeasurements = [{
@@ -298,12 +297,12 @@ export default function VentList(props) {
     });
     setRows(unitVentSurveys.data);
     let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`);
-    setEquipment([...equipmentList.data]);
+    props.setEquipment([...equipmentList.data]);
   };
   useEffect(()=> {
     console.log('in the useEffect')
     getVentSurveys();
-  }, [selectedVent]);
+  }, []);
   // selectedVent, setEquipment
   console.log(props)
   return (

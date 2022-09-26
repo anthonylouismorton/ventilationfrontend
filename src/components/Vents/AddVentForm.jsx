@@ -15,6 +15,8 @@ import {
   IconButton
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { useNavigate } from 'react-router-dom';
+import AddUnitModalForm from './AddUnitModalForm';
 
 export default function AddVentForm(props) {
   const defaultFormValues = {
@@ -31,6 +33,7 @@ export default function AddVentForm(props) {
   }
 	const [formValues, setFormValues] = useState(defaultFormValues);
   const { selectedUnit, setUnits } = props
+  const navigate = useNavigate();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -57,11 +60,7 @@ export default function AddVentForm(props) {
       });
     }
     else{
-      props.setShow({
-        ...props.show,
-        ventList: true,
-        addVent: false
-      });
+      navigate('/Vents')
     }
   };
 
@@ -80,11 +79,7 @@ export default function AddVentForm(props) {
       });
     }
     else{
-      props.setShow({
-        ...props.show,
-        ventList: true,
-        addVent: false
-      });
+      navigate('/Vents')
     }
 
 	};
@@ -96,7 +91,7 @@ export default function AddVentForm(props) {
       `${process.env.REACT_APP_DATABASE}/unit`,
       formValues,
       );
-    setUnits([...unitList.data]);
+    props.setUnits([...unitList.data]);
     if(selectedUnit.unitId){
       setFormValues({...formValues, unitId: selectedUnit.unitId, unitName: `${selectedUnit.WPID} ${selectedUnit.unitName}`})
     }
@@ -107,7 +102,9 @@ export default function AddVentForm(props) {
   useEffect(()=> {
     getUnits();
   }, []);
+
 	return (
+    <>
 		<Box>
 			<Paper>
 				<Typography>New Vent</Typography>
@@ -257,5 +254,7 @@ export default function AddVentForm(props) {
 				</Grid>
 			</Paper>
 		</Box>
+    <AddUnitModalForm open={props.open} setOpen={props.setOpen} units={props.units} setUnits={props.setUnits}/>
+    </>
 	);
 };

@@ -36,15 +36,15 @@ function Main(props) {
         />
         <Route
           path='/Technicians/*'
-          element={!isAuthenticated ? <Login/> : <Technician setShow={props.setShow} show={props.show} technicians={technicians} selectedTech={selectedTech} setSelectedTech={setSelectedTech}/>}
+          element={!isAuthenticated ? <Login/> : <Technician technicians={technicians} selectedTech={selectedTech} setSelectedTech={setSelectedTech}/>}
         />
         <Route
           path='/Units/*'
-          element={!isAuthenticated ? <Login/> : <Units setShow={props.setShow} show={props.show} units={units} setUnits={setUnits} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} selectedVent={selectedVent} setSelectedVent={setSelectedVent}/>}
+          element={!isAuthenticated ? <Login/> : <Units units={units} setUnits={setUnits} selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} selectedVent={selectedVent} setSelectedVent={setSelectedVent} equipment={equipment} setEquipment={setEquipment}/>}
         />
         <Route
           path='/Equipment/*'
-          element={!isAuthenticated ? <Login/> : <Equipment setShow={props.setShow} show={props.show} setEquipment={setEquipment} equipment={equipment} selectedEquipment={selectedEquipment} setSelectedEquipment={setSelectedEquipment}/>}
+          element={!isAuthenticated ? <Login/> : <Equipment setEquipment={setEquipment} equipment={equipment} selectedEquipment={selectedEquipment} setSelectedEquipment={setSelectedEquipment}/>}
         />
         <Route
           path='/Surveys/*'
@@ -52,7 +52,7 @@ function Main(props) {
         />
         <Route
           path='/Vents/*'
-          element={!isAuthenticated ? <Login/> : <Vents setShow={props.setShow} show={props.show} technicians={technicians} setTechnicians={setTechnicians} setSelectedVent={setSelectedVent} selectedUnit={selectedUnit} selectedVent={selectedVent}/>}
+          element={!isAuthenticated ? <Login/> : <Vents setShow={props.setShow} show={props.show} technicians={technicians} setTechnicians={setTechnicians} setSelectedVent={setSelectedVent} selectedUnit={selectedUnit} selectedVent={selectedVent} units={units} setUnits={setUnits} open={open} setOpen={setOpen}/>}
         />
       </Routes>
       // {/* {props.show.addUnit &&

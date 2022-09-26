@@ -44,10 +44,10 @@ export default function AddUnitModalForm(props) {
 		props.setOpen({...props.open, addUnitModal: false });
 		setFormValues(defaultFormValues);
 	};
-  console.log(props.open)
+
 	return (
 		<Modal
-			// open={props.open.addUnitModal}
+			open={props.open.addUnitModal}
 			onClose={handleClose}
 		>
 			<Box>

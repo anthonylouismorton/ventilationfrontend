@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import UnitList from './UnitList';
-import AddUnitForm from './AddUnitModalForm';
+import AddUnitForm from '../Vents/AddUnitModalForm';
 import UnitInfo from './UnitInfo';
 import UnitVentList from './UnitVentList';
-import AddUnitModalForm from './AddUnitModalForm';
+import AddUnitModalForm from '../Vents/AddUnitModalForm';
+import VentInfo from '../Vents/VentInfo';
+import VentSurveyList from '../Vents/VentSurveyList';
 import { Routes, Route } from 'react-router-dom';
 
 export default function Units(props) {
@@ -21,6 +23,10 @@ export default function Units(props) {
     <Route
       path={'/'}
       element={<UnitList setShow={props.setShow} show={props.show} units={props.units} setUnits={props.setUnits} selectedUnit={props.selectedUnit} setSelectedUnit={props.setSelectedUnit}/>}
+    />
+    <Route
+      path={`/Unit/${props.selectedUnit.unitId}/Vent/${props.selectedVent.ventId}`}
+      element={<><VentInfo selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent} technicians={props.technicians} show={props.show} setShow={props.setShow}/><VentSurveyList selectedVent={props.selectedVent} setShow={props.setShow} show={props.show} selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey} equipment={props.equipment} setEquipment={props.setEquipment} userProfile={props.userProfile}/></>}
     />
   </Routes>
 	);
