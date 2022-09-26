@@ -18,6 +18,7 @@ import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -192,6 +193,7 @@ export default function UnitVentList(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { selectedUnit } = props;
+  const navigate = useNavigate();
   // const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -201,10 +203,7 @@ export default function UnitVentList(props) {
 
   const handleClick = (vent) => {
     props.setSelectedVent(vent);
-    props.setShow({
-      ...props.defaultShow,
-      ventInfo: true 
-    });
+    navigate(`Vent/${vent.ventId}`)
   };
 
   const handleNewVent = () => {
@@ -240,11 +239,11 @@ export default function UnitVentList(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
+  const getVents = async () =>{
+    let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVents/${selectedUnit.unitId}`)
+    setRows([...ventList.data])
+  };
   useEffect(()=> {
-    const getVents = async () =>{
-      let ventList = await axios.get(`${process.env.REACT_APP_DATABASE}/unitVents/${selectedUnit.unitId}`)
-      setRows([...ventList.data])
-    };
     getVents();
   }, [selectedUnit]);
 

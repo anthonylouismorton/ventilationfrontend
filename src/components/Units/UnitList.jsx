@@ -189,7 +189,7 @@ export default function UnitList(props) {
   };
 
   const handleClick = (unit) => {
-    navigate(`UnitInfo/${unit.unitId}`)
+    navigate(`Unit/${unit.unitId}`)
     props.setSelectedUnit(unit);
   };
 

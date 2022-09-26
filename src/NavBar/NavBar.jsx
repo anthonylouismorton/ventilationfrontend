@@ -130,7 +130,7 @@ const NavBar = (props) => {
                 </Link>
               </MenuItem>
               <MenuItem key={'Vents'} onClick={()=> handleCloseNavMenu('Vents')}>
-                <Link to = '/' style={{ textDecoration: 'none' }}>
+                <Link to = '/Vents' style={{ textDecoration: 'none' }}>
                   <Typography textAlign="center">Vents</Typography>
                 </Link>
               </MenuItem>
@@ -181,7 +181,7 @@ const NavBar = (props) => {
               Units
             </Button>
           </Link>
-          <Link to = '/' style={{ textDecoration: 'none' }}>
+          <Link to = '/Vents' style={{ textDecoration: 'none' }}>
             <Button
               key={'Vents'}
               onClick={()=> handleCloseNavMenu('Vents')}

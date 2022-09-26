@@ -18,6 +18,7 @@ import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -197,6 +198,7 @@ export default function VentList(props) {
   const [selected ] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const navigate = useNavigate();
   // const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -206,10 +208,7 @@ export default function VentList(props) {
 
   const handleClick = (vent) => {
     props.setSelectedVent(vent);
-    props.setShow({
-      ...props.defaultShow,
-      ventInfo: true 
-    });
+    navigate(`Vent/${vent.ventId}`)
   };
 
   const handleNewVent = () => {
