@@ -5,7 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import axios from 'axios';
 
 function App() {
-  const [userProfile, setUserProfile] = useState('');
+  const [userProfile, setUserProfile] = useState({user: {nickName: ''}});
   const { user, isAuthenticated} = useAuth0();
   const [technicians, setTechnicians] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState({unitId: ''});
@@ -14,23 +14,21 @@ function App() {
   
   useEffect(()=> {
     const getTechs = async () => {
-      if(userProfile === ''){
-        console.log('in the if')
+      if(userProfile.user.nickName === ''){
         let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
         if(isAuthenticated){
           let currentUser = techList.data.filter(tech => tech.technicianEmail === user.email)
-          console.log(currentUser)
           setUserProfile({...currentUser[0], user})
         }
         setTechnicians(techList.data)
       }
     }
-    let ignore = false;
-    if (!ignore)  getTechs()
-    return () => { ignore = true; }
-
+    // let ignore = false;
+    // if (!ignore)  getTechs()
+    // return () => { ignore = true; }
+    getTechs();
   }, [isAuthenticated, user, userProfile]);
-  console.log(technicians)
+
   return (
     <>
     <NavBar setShow={setShow} show={show} defaultShow={defaultShow} setSelectedUnit={setSelectedUnit} userProfile={userProfile} setTechnicians={setTechnicians}/>

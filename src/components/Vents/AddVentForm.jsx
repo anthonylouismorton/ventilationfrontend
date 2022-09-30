@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-import AddUnitModalForm from './AddUnitModalForm';
+// import AddUnitModalForm from './AddUnitModalForm';
 
 export default function AddVentForm(props) {
   const defaultFormValues = {
@@ -102,7 +102,7 @@ export default function AddVentForm(props) {
   useEffect(()=> {
     getUnits();
   }, []);
-
+  console.log(props)
 	return (
     <>
 		<Box>
@@ -254,7 +254,7 @@ export default function AddVentForm(props) {
 				</Grid>
 			</Paper>
 		</Box>
-    <AddUnitModalForm open={props.open} setOpen={props.setOpen} units={props.units} setUnits={props.setUnits}/>
+    {/* <AddUnitModalForm open={props.open} setOpen={props.setOpen} units={props.units} setUnits={props.setUnits}/> */}
     </>
 	);
 };

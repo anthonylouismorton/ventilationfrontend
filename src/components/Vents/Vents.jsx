@@ -6,6 +6,7 @@ import AddVentForm from './AddVentForm';
 import { Routes, Route } from 'react-router-dom';
 
 export default function Vents(props) {
+  console.log(props)
 	return (
 	<Routes>
     <Route

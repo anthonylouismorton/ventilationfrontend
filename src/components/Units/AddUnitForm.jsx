@@ -33,11 +33,6 @@ export default function AddUnitForm(props) {
 
   const handleCancel = () => {
 		setFormValues(defaultFormValues);
-    props.setShow({
-      ...props.show,
-      unitList: true,
-      addUnit: false,
-    })
   };
 
 	const handleSubmit = async (e) => {
@@ -50,11 +45,6 @@ export default function AddUnitForm(props) {
 		let unitList = await axios.get(
 			`${process.env.REACT_APP_DATABASE}/unit`);
 		props.setUnits([...unitList.data])
-    props.setShow({
-      ...props.show,
-      unitList: true,
-      addUnit: false,
-    })
 	};
   
 	return (

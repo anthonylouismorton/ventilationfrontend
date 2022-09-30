@@ -5,7 +5,6 @@ import AddTechnicianForm from './AddTechnicianForm'
 import { Routes, Route } from 'react-router-dom';
 
 export default function Technician(props) {
-  console.log(props.selectedTech.technicianId)
 	return (
 		<Routes>
       <Route

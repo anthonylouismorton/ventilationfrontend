@@ -36,7 +36,7 @@ function Main(props) {
         />
         <Route
           path='/Technicians/*'
-          element={!isAuthenticated ? <Login/> : <Technician technicians={technicians} selectedTech={selectedTech} setSelectedTech={setSelectedTech}/>}
+          element={!isAuthenticated ? <Login/> : <Technician technicians={technicians} setTechnicians={setTechnicians} selectedTech={selectedTech} setSelectedTech={setSelectedTech}/>}
         />
         <Route
           path='/Units/*'

@@ -72,6 +72,7 @@ const NavBar = (props) => {
   //   return () => { ignore = true; }
   //   // getTechs();
   // }, [isAuthenticated, user, setTechnicians, setUserProfile]);
+  console.log(props.userProfile.user)
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -144,7 +145,7 @@ const NavBar = (props) => {
                 <Typography textAlign="center">Equipment</Typography>
               </Link>
               </MenuItem>
-              {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manager' || props.userProfile.nickname === 'anthonymorton760') && (
+              {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manager' || props.userProfile.user.nickname === 'anthonymorton760') && (
               <MenuItem key={'Technicians'}>
                 <Link to = '/Technicians' style={{ textDecoration: 'none' }}>
                   <Typography textAlign="center">Technicians</Typography>
@@ -207,7 +208,7 @@ const NavBar = (props) => {
                 Equipment
               </Button>
             </Link>
-            {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manager' || props.userProfile.nickname === 'anthonymorton760') && (
+            {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manager' || props.userProfile.user.nickname === 'anthonymorton760') && (
             <Link to = '/Technicians' style={{ textDecoration: 'none' }}>
               <Button
                 key={'Technicians'}

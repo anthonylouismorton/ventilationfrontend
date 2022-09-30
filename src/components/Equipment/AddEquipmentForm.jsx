@@ -95,7 +95,7 @@ export default function AddEquipmentForm(props) {
 									<TextField
 										name='calibrationDate'
 										id='outlined-multiline-static'
-                    placeholder='yyy-mm-dd'
+                    placeholder='yyyy-mm-dd'
 										label='Calibration Date'
 										rows={1}
 										onChange={handleChange}
@@ -106,7 +106,7 @@ export default function AddEquipmentForm(props) {
 										name='calibrationExpiration'
 										id='outlined-multiline-static'
 										label='Calibration Expiration'
-                    placeholder='yyy-mm-dd'
+                    placeholder='yyyy-mm-dd'
 										rows={1}
 										onChange={handleChange}
 									/>

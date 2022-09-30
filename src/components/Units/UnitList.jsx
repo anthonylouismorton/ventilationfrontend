@@ -194,11 +194,7 @@ export default function UnitList(props) {
   };
 
   const handleNewUnit = () => {
-    props.setShow({
-      ...props.show,
-      addUnit: true,
-      unitList: false
-    });
+    navigate(`AddUnit`)
   };
   // const handleTechSelect = async (tech, vent) => {
   //   let updatedVent = {...vent, technicianId: tech.technicianId}

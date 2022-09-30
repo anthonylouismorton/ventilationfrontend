@@ -1,15 +1,13 @@
-import { useState } from 'react';
 import UnitList from './UnitList';
 import AddUnitForm from '../Vents/AddUnitModalForm';
 import UnitInfo from './UnitInfo';
 import UnitVentList from './UnitVentList';
-import AddUnitModalForm from '../Vents/AddUnitModalForm';
 import VentInfo from '../Vents/VentInfo';
 import VentSurveyList from '../Vents/VentSurveyList';
 import { Routes, Route } from 'react-router-dom';
 
 export default function Units(props) {
-  const [open, setOpen] = useState({'addUnitModal': false, 'addTechnician': false});
+  // const [open, setOpen] = useState({'addUnitModal': false, 'addTechnician': false});
 	return (
 	<Routes>
     <Route
