@@ -12,6 +12,7 @@ import {
   MenuItem,
   InputLabel
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function AssignSurveyForm(props) {
   const defaultFormValues = {
@@ -24,9 +25,9 @@ export default function AssignSurveyForm(props) {
   const [formValues, setFormValues] = useState(defaultFormValues);
   const [coverages, setCoverages] = useState([]);
   const { setTechnicians, selectedVent } = props
+  const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormValues({
       ...formValues,
       [name]: value,
@@ -35,11 +36,7 @@ export default function AssignSurveyForm(props) {
 
   const handleCancel = () => {
     setFormValues({...defaultFormValues});
-    props.setShow({
-      ...props.show,
-      ventInfo: true,
-      assignSurvey: false
-    })
+    navigate(-1)
   };
 
   const onSubmit = async (e) => {
@@ -49,11 +46,7 @@ export default function AssignSurveyForm(props) {
 			formValues,
 			);
     setFormValues({...defaultFormValues});
-    props.setShow({
-      ...props.show,
-      ventInfo: true,
-      assignSurvey: false
-    })
+    navigate(-1)
   };
 
   const handleTechSelect = async (tech) => {

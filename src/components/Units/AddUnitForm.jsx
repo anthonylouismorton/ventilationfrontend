@@ -9,6 +9,7 @@ import {
 	Box,
 	Typography,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddUnitForm(props) {
 	const defaultFormValues = {
@@ -22,6 +23,7 @@ export default function AddUnitForm(props) {
 		altPhone: ''
 	}
 	const [formValues, setFormValues] = useState(defaultFormValues);
+	const navigate = useNavigate();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -33,6 +35,7 @@ export default function AddUnitForm(props) {
 
   const handleCancel = () => {
 		setFormValues(defaultFormValues);
+		navigate('/Units')
   };
 
 	const handleSubmit = async (e) => {
@@ -45,6 +48,7 @@ export default function AddUnitForm(props) {
 		let unitList = await axios.get(
 			`${process.env.REACT_APP_DATABASE}/unit`);
 		props.setUnits([...unitList.data])
+		navigate('/Units')
 	};
   
 	return (

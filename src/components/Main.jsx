@@ -27,9 +27,10 @@ function Main(props) {
       return navigate('/Vents')
     }
   },[isAuthenticated ])
-
+  
+  console.log(props)
   return (
-      <Routes>
+    <Routes>
         <Route
           path='/'
           element={<Login/>}
@@ -52,7 +53,7 @@ function Main(props) {
         />
         <Route
           path='/Vents/*'
-          element={!isAuthenticated ? <Login/> : <Vents setShow={props.setShow} show={props.show} technicians={technicians} setTechnicians={setTechnicians} setSelectedVent={setSelectedVent} selectedUnit={selectedUnit} selectedVent={selectedVent} units={units} setUnits={setUnits} open={open} setOpen={setOpen}/>}
+          element={!isAuthenticated ? <Login/> : <Vents setShow={props.setShow} show={props.show} technicians={technicians} setTechnicians={setTechnicians} setSelectedVent={setSelectedVent} selectedUnit={selectedUnit} selectedVent={selectedVent} units={units} setUnits={setUnits} open={open} setOpen={setOpen} userProfile={props.userProfile}/>}
         />
       </Routes>
       // {/* {props.show.addUnit &&

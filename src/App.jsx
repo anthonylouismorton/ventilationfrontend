@@ -1,6 +1,6 @@
 import Main from './components/Main';
 import NavBar from './NavBar/NavBar';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from 'axios';
 
@@ -11,7 +11,6 @@ function App() {
   const [selectedUnit, setSelectedUnit] = useState({unitId: ''});
   const defaultShow = {'ventList': false, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false, unitInfo: false, reviewSurvey: false, techInfo: false, equipmentInfo: false };
   const [show, setShow] = useState({'ventList': true, 'addTechnician': false, 'addVent': false, 'addVentSurvey': false, 'addUnit': false, 'ventInfo': false, 'equipment': false, 'addEquipment': false, 'technicianList': false, 'ventSurveyList': false, 'assignSurvey': false, 'completeSurvey': false, unitList: false, unitInfo: false, reviewSurvey: false, techInfo: false, equipmentInfo: false });
-  
   useEffect(()=> {
     const getTechs = async () => {
       if(userProfile.user.nickName === ''){

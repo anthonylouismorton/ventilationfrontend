@@ -1,17 +1,16 @@
-import { useState } from 'react';
 import VentList from './VentList';
 import VentInfo from './VentInfo';
 import VentSurveyList from './VentSurveyList';
 import AddVentForm from './AddVentForm';
+import AssignSurveyForm from './AssignSurveyForm';
 import { Routes, Route } from 'react-router-dom';
 
 export default function Vents(props) {
-  console.log(props)
 	return (
 	<Routes>
     <Route
       path={`/Vent/${props.selectedVent.ventId}`}
-      element={<><VentInfo selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent} technicians={props.technicians} show={props.show} setShow={props.setShow}/><VentSurveyList selectedVent={props.selectedVent} setShow={props.setShow} show={props.show} selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey} equipment={props.equipment} setEquipment={props.setEquipment} userProfile={props.userProfile}/></>}
+      element={<><VentInfo selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent} technicians={props.technicians} show={props.show} setShow={props.setShow}/><VentSurveyList selectedVent={props.selectedVent} selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey} equipment={props.equipment} setEquipment={props.setEquipment} userProfile={props.userProfile}/></>}
     />
     <Route
       path={'/AddVent'}
@@ -19,7 +18,11 @@ export default function Vents(props) {
     />
     <Route
       path={'/'}
-      element={<VentList setShow={props.setShow} show={props.show} technicians={props.technicians} setTechnicians={props.setTechnicians} setSelectedVent={props.setSelectedVent} selectedUnit={props.selectedUnit}/>}
+      element={<VentList technicians={props.technicians} setTechnicians={props.setTechnicians} setSelectedVent={props.setSelectedVent} selectedUnit={props.selectedUnit}/>}
+    />
+    <Route
+      path={'/AssignSurvey'}
+      element={<AssignSurveyForm setTechnicians={props.setTechnicians} technicians={props.technicians} selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent}/>}
     />
   </Routes>
 	);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -21,6 +21,8 @@ import { visuallyHidden } from '@mui/utils';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import axios from 'axios';
+import { UserContext } from '../../context/user';
+import { useNavigate } from 'react-router-dom'
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -188,13 +190,13 @@ const EnhancedTableToolbar = (props) => {
           Vent Surveys
         </Typography>
       )}
-      {(numSelected === 0 && props.userProfile.technicianRole === 'Program Manager') || (numSelected === 0 && props.userProfile.technicianRole === 'Admin') ?
+      {(numSelected === 0 && props.user.technicianRole === 'Program Manager') || (numSelected === 0 && props.user.technicianRole === 'Admin') ?
       <Tooltip title="Assign Survey">
         <IconButton onClick={props.handleAssignSurvey}>
           <AssignmentIndIcon />
         </IconButton>
       </Tooltip>
-      : (numSelected === 1 && props.userProfile.technicianRole === 'Program Manager') || (numSelected === 1 && props.userProfile.technicianRole === 'Admin')?
+      : (numSelected === 1 && props.user.technicianRole === 'Program Manager') || (numSelected === 1 && props.user.technicianRole === 'Admin')?
       <Tooltip title="Review">
         <IconButton onClick={props.handleReview}>
           <ReviewsIcon />
@@ -215,25 +217,22 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function VentList(props) {
-  
+export default function VentSurveyList(props) {
+  const user = useContext(UserContext);
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const navigate = useNavigate();
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
   const handleAssignSurvey = () =>{
-    props.setShow({
-      ...props.show,
-      ventInfo: false,
-      assignSurvey: true
-    });
+    navigate('/Vents/AssignSurvey')
   };
   const handleReview = () =>{
     props.setShow({
@@ -296,19 +295,17 @@ export default function VentList(props) {
       return survey
     });
     setRows(unitVentSurveys.data);
-    let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`);
-    props.setEquipment([...equipmentList.data]);
+    // let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`);
+    // props.setEquipment([...equipmentList.data]);
   };
   useEffect(()=> {
-    console.log('in the useEffect')
     getVentSurveys();
   }, []);
   // selectedVent, setEquipment
-  console.log(props)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleAssignSurvey={handleAssignSurvey} handleReview={handleReview} userProfile={props.userProfile}/>
+        <EnhancedTableToolbar numSelected={selected.length} handleAssignSurvey={handleAssignSurvey} handleReview={handleReview} user={user}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}

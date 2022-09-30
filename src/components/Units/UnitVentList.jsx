@@ -207,12 +207,7 @@ export default function UnitVentList(props) {
   };
 
   const handleNewVent = () => {
-    props.setShow({
-      ...props.show,
-      ventList: false,
-      addVent: true,
-      unitInfo: false
-    });
+    navigate('/Vents/AddVent')
   };
 
   // const handleDeleteClick = async (id) => {

@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from "@auth0/auth0-react";
 import { BrowserRouter as Router } from 'react-router-dom';
+import UserProvider from './context/user';
 // import Auth0ProviderWithHistory from './context/auth0-provider-with-history';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -15,9 +16,13 @@ root.render(
         domain={`${process.env.REACT_APP_DOMAIN}`}
         clientId={`${process.env.REACT_APP_CLIENTID}`}
         redirectUri={window.location.origin}
+        useRefreshTokens={true}
+        cacheLocation="localstorage"
       >
       {/* <Auth0ProviderWithHistory> */}
+      <UserProvider>
         <App />
+      </UserProvider>
       {/* </Auth0ProviderWithHistory> */}
       </Auth0Provider>
     </Router>

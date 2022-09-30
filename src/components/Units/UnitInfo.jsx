@@ -18,17 +18,10 @@ export default function UnitInfo(props) {
       [name]: value,
     });
 	};
-	const handleBack = () => {
-    props.setShow({
-      ...props.show,
-      unitList: true,
-      unitInfo: false
-    })
-  };
-
   const handleUpdate = async () => {
     await axios.put(`${process.env.REACT_APP_DATABASE}/unit/${props.selectedUnit.unitId}`, props.selectedUnit);
   };
+
 	return (
 		<Box>
 			<Paper>
@@ -139,9 +132,6 @@ export default function UnitInfo(props) {
             <Grid>
 							<Button onClick={handleUpdate} variant='contained'>
 								Update
-							</Button>
-							<Button onClick={handleBack} variant='contained'>
-								Back
 							</Button>
             </Grid>
 					</form>

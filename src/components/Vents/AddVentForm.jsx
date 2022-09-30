@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-// import AddUnitModalForm from './AddUnitModalForm';
+import AddUnitModalForm from './AddUnitModalForm';
 
 export default function AddVentForm(props) {
   const defaultFormValues = {
@@ -52,16 +52,8 @@ export default function AddVentForm(props) {
 
 	const handleCancel = () => {
 		setFormValues(defaultFormValues);
-    if(props.selectedUnit.unitId){
-      props.setShow({
-        ...props.show,
-        addVent: false,
-        unitInfo: true
-      });
-    }
-    else{
-      navigate('/Vents')
-    }
+    navigate(-1)
+
   };
 
 	const onSubmit = async (e) => {
@@ -71,21 +63,10 @@ export default function AddVentForm(props) {
       formValues,
     )
     setFormValues(defaultFormValues);
-    if(props.selectedUnit.unitId){
-      props.setShow({
-        ...props.show,
-        addVent: false,
-        unitInfo: true
-      });
-    }
-    else{
-      navigate('/Vents')
-    }
+    navigate(-1)
 
 	};
-
   const handleOpen = () => props.setOpen({...props.open, addUnitModal: true });
-
   const getUnits = async () => {
     let unitList = await axios.get(
       `${process.env.REACT_APP_DATABASE}/unit`,
@@ -102,7 +83,7 @@ export default function AddVentForm(props) {
   useEffect(()=> {
     getUnits();
   }, []);
-  console.log(props)
+
 	return (
     <>
 		<Box>
@@ -224,23 +205,21 @@ export default function AddVentForm(props) {
               </Grid>
 						</Grid>
             <Grid>
-              {!props.selectedUnit.unitId &&
-							<Grid item>
-                <Select
-                  name='unitName'
-                  value={formValues.unitName}
-                >
-                  {props.units.map((unit) =>(
-                    <MenuItem key={unit.unitId} onClick={() => handleUnit(unit)} value={`${unit.WPID} ${unit.unitName}`}>{`${unit.WPID} ${unit.unitName}`}</MenuItem>
-                  ))}
-                </Select>
-                <Tooltip title="Add New Unit">
-                  <IconButton onClick={handleOpen}>
-                    <AddIcon />
-                  </IconButton>
-                </Tooltip>
-							</Grid>
-              }
+            <Grid item>
+              <Select
+                name='unitName'
+                value={formValues.unitName}
+              >
+                {props.units.map((unit) =>(
+                  <MenuItem key={unit.unitId} onClick={() => handleUnit(unit)} value={`${unit.WPID} ${unit.unitName}`}>{`${unit.WPID} ${unit.unitName}`}</MenuItem>
+                ))}
+              </Select>
+              <Tooltip title="Add New Unit">
+                <IconButton onClick={handleOpen}>
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+            </Grid>
 						</Grid>
 						<Grid item>
 							<Button type='submit' variant='contained'>
@@ -254,7 +233,7 @@ export default function AddVentForm(props) {
 				</Grid>
 			</Paper>
 		</Box>
-    {/* <AddUnitModalForm open={props.open} setOpen={props.setOpen} units={props.units} setUnits={props.setUnits}/> */}
+    <AddUnitModalForm open={props.open} setOpen={props.setOpen} units={props.units} setUnits={props.setUnits}/>
     </>
 	);
 };
