@@ -25,7 +25,6 @@ export default function CompleteVentSurvey(props) {
   const defaultFormValues = {
     equipmentId: props.equipment[0].equipmentId,
     equipment: `${props.equipment[0].manufacturer} ${props.equipment[0].model} ${props.equipment[0].serialNumber}`,
-    completedBy: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`,
     weldingHoodMeasurement: {
       distanceFromVent: props.selectedVentSurvey.ventMeasurements[0].distanceFromVent, 
       ventMeasurement: props.selectedVentSurvey.ventMeasurements[0].ventMeasurement, 
@@ -252,7 +251,6 @@ export default function CompleteVentSurvey(props) {
     setFormValues({
       ...formValues,
       technicianId: technician.technicianId,
-      completedBy: `${technician.technicianRank} ${technician.lastName}, ${technician.firstName}`
     });
   };
   //This is for the actual vent flow and not the dimensions of the vent
@@ -446,7 +444,6 @@ export default function CompleteVentSurvey(props) {
   };
 
   const handleCancel = () => {
-    // props.setSelectedVentSurvey([]);
     navigate('/Surveys');
   };
 
@@ -565,7 +562,6 @@ export default function CompleteVentSurvey(props) {
         ...formValues,
         equipmentId: equipmentId,
         equipment: setEquipment,
-        completedBy: props.selectedVentSurvey.ventSurvey.completedBy
     });
     setSelectedVentSurvey({
       ventMeasurements: [
@@ -578,13 +574,15 @@ export default function CompleteVentSurvey(props) {
         equipment: setEquipment,
         airChanges: airChanges.airChanges,
         pass: pass,
-        completedBy: `${selectedVentSurvey.ventSurvey.technician.technicianRank} ${selectedVentSurvey.ventSurvey.technician.lastName}, ${selectedVentSurvey.ventSurvey.technician.firstName}`
       }
     });
   };
   useEffect(()=> {
     getEquipment();
   }, []);
+  console.log(selectedVentSurvey)
+  console.log(formValues)
+  console.log(props.equipment)
 
   return (
     <Box>
@@ -812,21 +810,6 @@ export default function CompleteVentSurvey(props) {
                   value={props.selectedVentSurvey.ventSurvey.pass}
                   rows={1}
                 />
-              </FormControl>
-            </Grid>
-            <Grid item>
-            <FormControl>
-                <InputLabel id='demo-simple-select-label'>
-                  Completed By
-                </InputLabel>
-                <Select
-                  name='completedBy'
-                  value={formValues.completedBy}
-                >
-                {props.technicians.map((technician) => (
-                  <MenuItem onClick={()=> handleTechnicianSelect(technician)} key={technician.technicianId} value={`${technician.technicianRank} ${technician.lastName}, ${technician.firstName}`}>{`${technician.technicianRank} ${technician.lastName}, ${technician.firstName}`}</MenuItem>
-                ))}
-                </Select>
               </FormControl>
             </Grid>
             <Grid item>

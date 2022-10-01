@@ -228,7 +228,7 @@ export default function EquipmentList(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
   
-    useEffect(()=> {
+  useEffect(()=> {
     const getEquipment = async () =>{
       if(!props.equipment){
         setRows(props.equipment)

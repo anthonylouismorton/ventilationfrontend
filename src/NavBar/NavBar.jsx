@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
-// import axios from 'axios'
+import { ProgramContext } from '../context/program';
 
 // const pages = ['Units', 'Vents', 'Surveys', 'Equipment', 'Technicians'];
 const settings = ['Logout'];
@@ -22,7 +22,7 @@ const NavBar = (props) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { logout, isAuthenticated } = useAuth0();
-  // const { setTechnicians, setUserProfile } = props
+  const user = useContext(ProgramContext);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -58,21 +58,7 @@ const NavBar = (props) => {
       logout({ returnTo: window.location.origin })
     }
   }
-  // useEffect(()=> {
-  //   const getTechs = async () => {
-  //       let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
-  //       if(isAuthenticated){
-  //         let currentUser = techList.data.filter(tech => tech.technicianEmail === user.email)
-  //         setUserProfile({...currentUser[0], user})
-  //       }
-  //       setTechnicians(techList.data)
-  //   }
-  //   let ignore = false;
-  //   if (!ignore)  getTechs()
-  //   return () => { ignore = true; }
-  //   // getTechs();
-  // }, [isAuthenticated, user, setTechnicians, setUserProfile]);
-  console.log(props.userProfile.user)
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -145,7 +131,7 @@ const NavBar = (props) => {
                 <Typography textAlign="center">Equipment</Typography>
               </Link>
               </MenuItem>
-              {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manager' || props.userProfile.user.nickname === 'anthonymorton760') && (
+              {(user.userProfile.technicianRole === 'Admin' ||  user.userProfile.technicianRole === 'Program Manager' || user.userProfile.user.nickname === 'anthonymorton760') && (
               <MenuItem key={'Technicians'}>
                 <Link to = '/Technicians' style={{ textDecoration: 'none' }}>
                   <Typography textAlign="center">Technicians</Typography>
@@ -208,7 +194,7 @@ const NavBar = (props) => {
                 Equipment
               </Button>
             </Link>
-            {(props.userProfile.technicianRole === 'Admin' ||  props.userProfile.technicianRole === 'Program Manager' || props.userProfile.user.nickname === 'anthonymorton760') && (
+            {(user.userProfile.technicianRole === 'Admin' ||  user.userProfile.technicianRole === 'Program Manager' || user.userProfile.user.nickname === 'anthonymorton760') && (
             <Link to = '/Technicians' style={{ textDecoration: 'none' }}>
               <Button
                 key={'Technicians'}

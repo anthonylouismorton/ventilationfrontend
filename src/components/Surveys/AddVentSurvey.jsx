@@ -156,11 +156,6 @@ export default function AddVentSurveyForm(props) {
 
   const handleCancel = () => {
     setFormValues(defaultFormValues);
-    props.setShow({
-      ...props.show,
-      ventInfo: true,
-      addVentSurvey: false
-    });
   };
 
   const onSubmit = async (e) => {
@@ -171,11 +166,6 @@ export default function AddVentSurveyForm(props) {
 			formValues,
 			);
     setFormValues(defaultFormValues);
-    props.setShow({
-      ...props.show,
-      ventInfo: true,
-      addVentSurvey: false
-    })
   };
   
   const getEquipment = async () =>{

@@ -8,6 +8,7 @@ import { Routes, Route } from 'react-router-dom';
 
 export default function Units(props) {
   // const [open, setOpen] = useState({'addUnitModal': false, 'addTechnician': false});
+  console.log(props)
 	return (
 	<Routes>
     <Route
@@ -24,7 +25,7 @@ export default function Units(props) {
     />
     <Route
       path={`/Unit/${props.selectedUnit.unitId}/Vent/${props.selectedVent.ventId}`}
-      element={<><VentInfo selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent} technicians={props.technicians} show={props.show} setShow={props.setShow}/><VentSurveyList selectedVent={props.selectedVent} setShow={props.setShow} show={props.show} selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey} equipment={props.equipment} setEquipment={props.setEquipment} userProfile={props.userProfile}/></>}
+      element={<><VentInfo selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent} technicians={props.technicians} show={props.show} setShow={props.setShow}/><VentSurveyList selectedVent={props.selectedVent} setShow={props.setShow} show={props.show} selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey}/></>}
     />
   </Routes>
 	);

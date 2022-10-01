@@ -9,11 +9,11 @@ export default function Surveys(props) {
 		<Routes>
       <Route
         path={'/'}
-        element={<AllVentSurveysList selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey} equipment={props.equipment} setEquipment={props.setEquipment}/>}
+        element={<AllVentSurveysList selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey}/>}
       />
       <Route
         path={'/AddVent'}
-        element={<AddVentSurvey selectedVent={props.selectedVent} show={props.show} setShow={props.setShow} equipment={props.equipment} setEquipment={props.setEquipment}/>}
+        element={<AddVentSurvey selectedVent={props.selectedVent}/>}
       />
       <Route
         path={`/CompleteVentSurvey/${props.selectedVentSurvey.ventSurvey.ventSurveyId}`}

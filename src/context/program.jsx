@@ -1,12 +1,18 @@
 import React, {useState, useEffect} from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from 'axios';
-export const UserContext = React.createContext();
+export const ProgramContext = React.createContext();
 
 function UserProvider({children}){
-  console.log('hitting this')
   const [userProfile, setUserProfile] = useState({user: {nickName: ''}});
   const { user, isAuthenticated} = useAuth0();
+  const [equipment, setEquipment] = useState('');
+
+  const getEquipment = async () => {
+    let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
+    setEquipment(equipmentList.data)
+  };
+
   const getTechs = async () => {
     if(userProfile.user.nickName === ''){
       let techList= await axios.get(`${process.env.REACT_APP_DATABASE}/technician`);
@@ -18,12 +24,18 @@ function UserProvider({children}){
   }
   useEffect(()=> {
     getTechs();
+    getEquipment();
   }, [isAuthenticated, user, userProfile]);
 
+  let values = {
+    userProfile,
+    equipment
+  }
+
   return (
-    <UserContext.Provider value={userProfile}>
+    <ProgramContext.Provider value={values}>
       {children}
-    </UserContext.Provider>
+    </ProgramContext.Provider>
   );
   
 }

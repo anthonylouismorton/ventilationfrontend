@@ -87,12 +87,6 @@ const headCells = [
     label: 'Assigned Technician',
   },
   {
-    id: 'completedBy',
-    numeric: false,
-    disablePadding: false,
-    label: 'Completed By',
-  },
-  {
     id: 'status',
     numeric: false,
     disablePadding: false,
@@ -209,18 +203,12 @@ export default function VentSurveyList(props) {
 
   const handleClick = (ventSurvey) => {
     props.setSelectedVentSurvey(ventSurvey);
-    console.log(ventSurvey.ventSurvey.ventSurveyId)
     navigate(`/Surveys/CompleteVentSurvey/${ventSurvey.ventSurvey.ventSurveyId}`)
   };
 
-  const handleNewVent = () => {
-    props.setShow({
-      ...props.show,
-      ventList: false,
-      addVent: true,
-      buttons: false 
-    });
-  };
+  // const handleNewVent = () => {
+
+  // };
 
   // const handleDeleteClick = async (id) => {
   //   await axios.delete(`${process.env.REACT_APP_DATABASE}/employee/${id}`);
@@ -260,8 +248,6 @@ export default function VentSurveyList(props) {
       return survey
     })
     setRows(ventSurveyList.data)
-    let equipmentList= await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`)
-    setEquipment(equipmentList.data)
   };
   useEffect(()=> {
     getVentSurveys();
@@ -270,7 +256,7 @@ export default function VentSurveyList(props) {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleNewVent={handleNewVent}/>
+        <EnhancedTableToolbar numSelected={selected.length}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -308,7 +294,6 @@ export default function VentSurveyList(props) {
                       <TableCell align="center">{row.ventSurvey.dueByDate}</TableCell>
                       <TableCell align="center">{row.ventSurvey.pass}</TableCell>
                       <TableCell align="center">{`${row.ventSurvey.technician.technicianRank} ${row.ventSurvey.technician.lastName}, ${row.ventSurvey.technician.firstName}`}</TableCell>
-                      <TableCell align="center">{row.ventSurvey.completedBy}</TableCell>
                       <TableCell align="center">{row.ventSurvey.status}</TableCell>
                     </TableRow>
                   );

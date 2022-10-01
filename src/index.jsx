@@ -5,7 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from "@auth0/auth0-react";
 import { BrowserRouter as Router } from 'react-router-dom';
-import UserProvider from './context/user';
+import ProgramProvider from './context/program';
 // import Auth0ProviderWithHistory from './context/auth0-provider-with-history';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -20,9 +20,9 @@ root.render(
         cacheLocation="localstorage"
       >
       {/* <Auth0ProviderWithHistory> */}
-      <UserProvider>
+      <ProgramProvider>
         <App />
-      </UserProvider>
+      </ProgramProvider>
       {/* </Auth0ProviderWithHistory> */}
       </Auth0Provider>
     </Router>

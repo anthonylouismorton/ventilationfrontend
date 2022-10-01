@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import {
   TextField,
@@ -17,30 +17,33 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { send } from '@emailjs/browser'
+import { ProgramContext } from '../../context/program';
+import { useNavigate } from 'react-router-dom';
 
 export default function ReviewSurveyForm(props) {
+  let equipment = useContext(ProgramContext);
+  const navigate = useNavigate();
   let [averageVentFlow, setAverageVentFlow] = useState(0);
   let [roomVolume, setRoomVolume] = useState('');
   let [ventArea, setVentArea] = useState('');
   const defaultFormValues = {
     equipmentId: props.selectedVentSurvey.ventSurvey.equipmentId,
-    equipment: `${props.equipment[0].manufacturer} ${props.equipment[0].model} ${props.equipment[0].serialNumber}`,
-    completedBy: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`,
+    equipment: `${equipment.equipment[0].manufacturer} ${equipment.equipment[0].model} ${equipment.equipment[0].serialNumber}`,
     weldingHoodMeasurement: {
       distanceFromVent: props.selectedVentSurvey.ventMeasurements[0].distanceFromVent, 
       ventMeasurement: props.selectedVentSurvey.ventMeasurements[0].ventMeasurement, 
       ventMeasurementId: props.selectedVentSurvey.ventMeasurements[0].ventMeasurementId, 
       ventSurveyId: props.selectedVentSurvey.ventSurvey.ventSurveyId}
-  }
+  };
   const [formValues, setFormValues] = useState(defaultFormValues);
-  const { setSelectedVentSurvey, selectedVentSurvey } = props
+  const { setSelectedVentSurvey, selectedVentSurvey } = props;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    var regEx = /^\d{4}-\d{2}-\d{2}$/
+    var regEx = /^\d{4}-\d{2}-\d{2}$/;
     let expirationDate = props.selectedVentSurvey.ventSurvey.expirationDate;
     let surveyDate = props.selectedVentSurvey.ventSurvey.surveyDate;
-    let status = props.selectedVentSurvey.ventSurvey.status
+    let status = props.selectedVentSurvey.ventSurvey.status;
     let ventShape = props.selectedVentSurvey.ventSurvey.vent.ventShape;
     if(name === 'surveyDate' && value.match(regEx)){
       let from = value.split('-')
@@ -105,7 +108,6 @@ export default function ReviewSurveyForm(props) {
     else if(name === 'distanceFromVent'){
       newVentMeasurements[0].distanceFromVent = parseInt(value)
     }
-    console.log(newVentMeasurements)
     props.setSelectedVentSurvey({
       ventMeasurements: [
         ...newVentMeasurements
@@ -239,7 +241,6 @@ export default function ReviewSurveyForm(props) {
     setFormValues({
       ...formValues,
       technicianId: technician.technicianId,
-      completedBy: `${technician.technicianRank} ${technician.lastName}, ${technician.firstName}`
     })
   }
   //This is for the actual vent flow and not the dimensions of the vent
@@ -435,20 +436,15 @@ export default function ReviewSurveyForm(props) {
   }
 
   const handleCancel = () => {
-    setFormValues(defaultFormValues);
-    props.setShow({
-      ...props.show,
-      ventInfo: true,
-      reviewSurvey: false,
-    });
-    props.selectedVentSurvey([]);
+    // setFormValues(defaultFormValues);
+    navigate(-1)
+    // props.selectedVentSurvey();
   };
 
   const onSubmit = async (e) => {
     // new Date().toISOString().split('T')[0]
     try{
     e.preventDefault();
-    console.log(props.selectedVentSurvey.ventSurvey.technician.technicianEmail)
     let toSend = {
       to_name: `${props.selectedVentSurvey.ventSurvey.technician.technicianRank} ${props.selectedVentSurvey.ventSurvey.technician.lastName}, ${props.selectedVentSurvey.ventSurvey.technician.firstName}`,
       to_email: props.selectedVentSurvey.ventSurvey.technician.technicianEmail,
@@ -460,7 +456,6 @@ export default function ReviewSurveyForm(props) {
     else if(props.selectedVentSurvey.ventSurvey.status === 'Rejected'){
       toSend.message = 'Your Survey has been rejected by the program manager. Please contact your program manager to determine what corrections are required.'
     }
-    console.log(toSend)
     send(
       'service_kpczsow',
       'template_e6g6pnr',
@@ -496,12 +491,7 @@ export default function ReviewSurveyForm(props) {
       }
       return ventFlow
     });
-    props.setShow({
-      ...props.show,
-      ventInfo: true,
-      reviewSurvey: false,
-    });
-    props.setSelectedVentSurvey([]);
+    navigate(-1)
     }
     catch(e){
       console.log(e)
@@ -577,14 +567,13 @@ export default function ReviewSurveyForm(props) {
         ...selectedVentSurvey.ventSurvey,
         airChanges: airChanges.airChanges,
         pass: pass,
-        completedBy: `${selectedVentSurvey.ventSurvey.technician.technicianRank} ${selectedVentSurvey.ventSurvey.technician.lastName}, ${selectedVentSurvey.ventSurvey.technician.firstName}`
       }
-    })
+    });
   };
   useEffect(()=> {
     getEquipment()
   }, []);
-  console.log(props.selectedVentSurvey.ventSurvey.technician.lastName)
+  console.log(props)
   return (
     <Box>
       <Paper>
@@ -602,7 +591,7 @@ export default function ReviewSurveyForm(props) {
                   value={formValues.equipment}
                   placeholder={'Select Equipment'}
                   >
-                {props.equipment.map((equipment) => (
+                {equipment.equipment.map((equipment) => (
                   <MenuItem onClick={()=> handleEquipmentSelect(equipment)} key={equipment.equipmentId} value={`${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}>{`${equipment.manufacturer} ${equipment.model} ${equipment.serialNumber}`}</MenuItem>
                 ))}
                 </Select>
@@ -814,21 +803,6 @@ export default function ReviewSurveyForm(props) {
               </FormControl>
             </Grid>
             <Grid item>
-            <FormControl>
-                <InputLabel id='demo-simple-select-label'>
-                  Completed By
-                </InputLabel>
-                <Select
-                  name='completedBy'
-                  value={selectedVentSurvey.ventSurvey.completedBy}
-                >
-                {props.technicians.map((technician) => (
-                  <MenuItem onClick={()=> handleTechnicianSelect(technician)} key={technician.technicianId} value={`${technician.technicianRank} ${technician.lastName}, ${technician.firstName}`}>{`${technician.technicianRank} ${technician.lastName}, ${technician.firstName}`}</MenuItem>
-                ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item>
               <FormControl>
                 <InputLabel id='demo-simple-select-label'>
                   Status
@@ -839,6 +813,7 @@ export default function ReviewSurveyForm(props) {
                   onChange={handleChange}
                 >
                   <MenuItem value={'In Progress'}>In Progress</MenuItem>
+                  <MenuItem value={'Ready For QA'}>Ready For QA</MenuItem>
                   <MenuItem value={'Approved'}>Approved</MenuItem>
                   <MenuItem value={'Rejected'}>Rejected</MenuItem>
                 </Select>

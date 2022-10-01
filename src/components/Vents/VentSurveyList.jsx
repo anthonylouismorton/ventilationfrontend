@@ -21,7 +21,7 @@ import { visuallyHidden } from '@mui/utils';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import axios from 'axios';
-import { UserContext } from '../../context/user';
+import { ProgramContext } from '../../context/program';
 import { useNavigate } from 'react-router-dom'
 
 function descendingComparator(a, b, orderBy) {
@@ -91,12 +91,6 @@ const headCells = [
     label: 'Assigned Technician',
   },
   {
-    id: 'completedBy',
-    numeric: false,
-    disablePadding: false,
-    label: 'Completed By',
-  },
-  {
     id: 'status',
     numeric: false,
     disablePadding: false,
@@ -160,6 +154,7 @@ EnhancedTableHead.propTypes = {
 
 const EnhancedTableToolbar = (props) => {
   const { numSelected } = props;
+  console.log(props)
   return (
     <Toolbar
       sx={{
@@ -190,13 +185,13 @@ const EnhancedTableToolbar = (props) => {
           Vent Surveys
         </Typography>
       )}
-      {(numSelected === 0 && props.user.technicianRole === 'Program Manager') || (numSelected === 0 && props.user.technicianRole === 'Admin') ?
+      {(numSelected === 0 && props.user.userProfile.technicianRole === 'Program Manager') || (numSelected === 0 && props.user.userProfile.technicianRole === 'Admin') ?
       <Tooltip title="Assign Survey">
         <IconButton onClick={props.handleAssignSurvey}>
           <AssignmentIndIcon />
         </IconButton>
       </Tooltip>
-      : (numSelected === 1 && props.user.technicianRole === 'Program Manager') || (numSelected === 1 && props.user.technicianRole === 'Admin')?
+      : (numSelected === 1 && props.user.userProfile.technicianRole === 'Program Manager') || (numSelected === 1 && props.user.userProfile.technicianRole === 'Admin')?
       <Tooltip title="Review">
         <IconButton onClick={props.handleReview}>
           <ReviewsIcon />
@@ -218,7 +213,7 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function VentSurveyList(props) {
-  const user = useContext(UserContext);
+  const user = useContext(ProgramContext);
   const [rows, setRows] = useState([])
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
@@ -232,21 +227,16 @@ export default function VentSurveyList(props) {
     setOrderBy(property);
   };
   const handleAssignSurvey = () =>{
-    navigate('/Vents/AssignSurvey')
+    navigate('/Vents/AssignSurvey');
   };
+  console.log(props)
   const handleReview = () =>{
-    props.setShow({
-      ...props.show,
-      ventInfo: false,
-      reviewSurvey: true
-    });
+    navigate(`/Vents/ReviewSurvey/${props.selectedVentSurvey.ventSurvey.ventSurveyId}`);
   };
 
   const handleClick = (event, survey) => {
-    console.log(survey.ventSurvey)
     const selectedIndex = selected.indexOf(survey.ventSurvey.ventSurveyId);
     let newSelected = [];
-
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, survey.ventSurvey.ventSurveyId);
     } else if (selectedIndex === 0) {
@@ -295,13 +285,11 @@ export default function VentSurveyList(props) {
       return survey
     });
     setRows(unitVentSurveys.data);
-    // let equipmentList = await axios.get(`${process.env.REACT_APP_DATABASE}/equipment`);
-    // props.setEquipment([...equipmentList.data]);
   };
   useEffect(()=> {
     getVentSurveys();
   }, []);
-  // selectedVent, setEquipment
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -352,7 +340,6 @@ export default function VentSurveyList(props) {
                       <TableCell align="center">{row.ventSurvey.dueByDate}</TableCell>
                       <TableCell align="center">{row.ventSurvey.pass}</TableCell>
                       <TableCell align="center">{`${row.ventSurvey.technician.technicianRank} ${row.ventSurvey.technician.lastName}, ${row.ventSurvey.technician.firstName}`}</TableCell>
-                      <TableCell align="center">{row.ventSurvey.completedBy}</TableCell>
                       <TableCell align="center">{row.ventSurvey.status}</TableCell>
                     </TableRow>
                   );
