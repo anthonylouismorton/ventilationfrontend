@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -19,6 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { ProgramContext } from '../../context/program';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -191,8 +192,8 @@ export default function VentSurveyList(props) {
   const [selected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { setEquipment } = props;
   const navigate = useNavigate();
+  const user = useContext(ProgramContext);
   // const [showDeleteWarning, setShowDeleteWarning] = useState([false, null]);
 
   const handleRequestSort = (event, property) => {
@@ -236,7 +237,8 @@ export default function VentSurveyList(props) {
   
   const getVentSurveys = async () =>{
     let ventSurveyList = await axios.get(`${process.env.REACT_APP_DATABASE}/ventSurvey`)
-    ventSurveyList.data.map((survey) => {
+    let ventSurveys = []
+    ventSurveys = ventSurveyList.data.map((survey) => {
       if(survey.ventMeasurements.length === 0){
           survey.ventMeasurements = [{
             distanceFromVent: '',
@@ -247,12 +249,15 @@ export default function VentSurveyList(props) {
       }
       return survey
     })
-    setRows(ventSurveyList.data)
+    if(user.userProfile.technicianRole === 'Technician'){
+      ventSurveys = ventSurveys.filter(survey => survey.ventSurvey.technician.technicianEmail === user.userProfile.technicianEmail)
+    }
+    setRows(ventSurveys)
   };
   useEffect(()=> {
     getVentSurveys();
   }, []);
-
+  console.log(user.userProfile)
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>

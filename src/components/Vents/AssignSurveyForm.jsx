@@ -12,6 +12,7 @@ import {
   MenuItem,
   InputLabel
 } from '@mui/material';
+import { send } from '@emailjs/browser'
 import { useNavigate } from 'react-router-dom';
 
 export default function AssignSurveyForm(props) {
@@ -20,7 +21,8 @@ export default function AssignSurveyForm(props) {
     ventId: props.selectedVent.ventId,
     technicianId: 0,
     assignedTechnician: '',
-    coverageDate: ''
+    coverageDate: '',
+    assignedTechnicianEmail: ''
   }
   const [formValues, setFormValues] = useState(defaultFormValues);
   const [coverages, setCoverages] = useState([]);
@@ -41,19 +43,46 @@ export default function AssignSurveyForm(props) {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-		await axios.post(
-			`${process.env.REACT_APP_DATABASE}/ventSurvey`,
+		let newVentSurvey = await axios.post(
+      `${process.env.REACT_APP_DATABASE}/ventSurvey`,
 			formValues,
 			);
+      let toSend = {
+        to_name: formValues.assignedTechnician,
+        to_email: formValues.assignedTechnicianEmail,
+        message: `You have been assigned the ${formValues.coverageDate} ventilation survey for ${props.selectedUnit.WPID} ${props.selectedUnit.unitName} due by ${formValues.dueByDate}. Contact your program mananager if you have any questions.`,
+        ventInfo: `Vent Information:`,
+        ventSerialNumber: `Serial Number: ${props.selectedVent.serialNumber}`,
+        ventDescription: `Vent Type: ${props.selectedVent.description}`,
+        ventType: `Vent Type: ${props.selectedVent.type}`,
+        ventManufacturerModel: `Manufacturer: ${props.selectedVent.manufacturer} Model: ${props.selectedVent.model}`,
+        poc: `POC: ${props.selectedUnit.poc}, Phone: ${props.selectedUnit.phone}`,
+        link: `http://localhost:3000/Surveys`
+      }
+      send(
+        'service_kpczsow',
+        'template_e6g6pnr',
+        toSend,
+        'SyddjlnFwc3jnKKv3'
+      )
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+      })
+      .catch((err) => {
+        console.log('FAILED...', err);
+      });
+      console.log(newVentSurvey)
     setFormValues({...defaultFormValues});
     navigate(-1)
   };
 
   const handleTechSelect = async (tech) => {
+    console.log(tech)
     setFormValues({
       ...formValues, 
       technicianId: tech.technicianId, 
       assignedTechnician: `${tech.technicianRank} ${tech.lastName}, ${tech.firstName}`,
+      assignedTechnicianEmail: tech.technicianEmail
     })
   }
   const handleCoverage = async (coverage) => {
@@ -107,12 +136,16 @@ export default function AssignSurveyForm(props) {
       ...formValues,
       coverageDate: currentCoverage,
       technicianId: techList.data[0].technicianId,
-      assignedTechnician: `${techList.data[0].technicianRank} ${techList.data[0].lastName}, ${techList.data[0].firstName}`
+      assignedTechnician: `${techList.data[0].technicianRank} ${techList.data[0].lastName}, ${techList.data[0].firstName}`,
+      assignedTechnicianEmail: techList.data[0].technicianEmail
     });
   };
   useEffect(()=> {
     getTechs();
   }, []);
+  console.log(formValues)
+  console.log(props.selectedVent)
+  console.log(props.selectedUnit)
   return (
     <Box>
       <Paper>

@@ -582,7 +582,7 @@ export default function CompleteVentSurvey(props) {
   }, []);
   console.log(selectedVentSurvey)
   console.log(formValues)
-  console.log(props.equipment)
+  console.log(formValues.weldingHoodMeasurement)
 
   return (
     <Box>

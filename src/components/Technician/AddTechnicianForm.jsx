@@ -13,7 +13,7 @@ import {
 	MenuItem
 } from '@mui/material';
 import { send } from '@emailjs/browser'
-import { useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export default function AddTechnicianForm(props) {
 	let defaultValues = {
@@ -54,7 +54,7 @@ export default function AddTechnicianForm(props) {
 		e.preventDefault();
     let toSend = {
       to_name: `${formValues.technicianRank} ${formValues.lastName}, ${formValues.firstName}`,
-      toemail: formValues.technicianEmail
+      to_email: formValues.technicianEmail
     }
     send(
       'service_kpczsow',
@@ -77,7 +77,7 @@ export default function AddTechnicianForm(props) {
     props.setTechnicians([...technicianList.data])
     navigate('/Technicians')
 	};
-
+  console.log(formValues)
 	return (
 		<Box>
 			<Paper>

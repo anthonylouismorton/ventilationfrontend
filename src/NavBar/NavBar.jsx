@@ -33,19 +33,6 @@ const NavBar = (props) => {
 
   const handleCloseNavMenu = (page) => {
     setAnchorElNav(null);
-
-    if(page === 'Equipment'){
-      props.setShow({...props.defaultShow, equipment: true})
-    }
-    else if(page === 'Vents'){
-      props.setShow({...props.defaultShow, ventList: true})
-    }
-    else if(page === 'Surveys'){
-      props.setShow({...props.defaultShow, ventSurveyList: true})
-    }
-    else if(page === 'Units'){
-      props.setShow({...props.defaultShow, unitList: true})
-    }
     props.setSelectedUnit({unitId: ''})
   };
 

@@ -13,19 +13,19 @@ export default function Units(props) {
 	<Routes>
     <Route
       path={`/Unit/${props.selectedUnit.unitId}`}
-      element={<><UnitInfo setShow={props.setShow} show={props.show} units={props.units} setUnits={props.setUnits} selectedUnit={props.selectedUnit} setSelectedUnit={props.setSelectedUnit}/><UnitVentList setShow={props.setShow} show={props.show} technicians={props.technicians} setTechnicians={props.setTechnicians} setSelectedVent={props.setSelectedVent} selectedUnit={props.selectedUnit}/> </>}
+      element={<><UnitInfo units={props.units} setUnits={props.setUnits} selectedUnit={props.selectedUnit} setSelectedUnit={props.setSelectedUnit}/><UnitVentList technicians={props.technicians} setTechnicians={props.setTechnicians} setSelectedVent={props.setSelectedVent} selectedUnit={props.selectedUnit}/> </>}
     />
     <Route
       path={'/AddUnit'}
-      element={<AddUnitForm setShow={props.setShow} show={props.show} units={props.units} setUnits={props.setUnits}/>}
+      element={<AddUnitForm units={props.units} setUnits={props.setUnits}/>}
     />
     <Route
       path={'/'}
-      element={<UnitList setShow={props.setShow} show={props.show} units={props.units} setUnits={props.setUnits} selectedUnit={props.selectedUnit} setSelectedUnit={props.setSelectedUnit}/>}
+      element={<UnitList units={props.units} setUnits={props.setUnits} selectedUnit={props.selectedUnit} setSelectedUnit={props.setSelectedUnit}/>}
     />
     <Route
       path={`/Unit/${props.selectedUnit.unitId}/Vent/${props.selectedVent.ventId}`}
-      element={<><VentInfo selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent} technicians={props.technicians} show={props.show} setShow={props.setShow}/><VentSurveyList selectedVent={props.selectedVent} setShow={props.setShow} show={props.show} selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey}/></>}
+      element={<><VentInfo selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent} technicians={props.technicians} show={props.show} setShow={props.setShow}/><VentSurveyList selectedVent={props.selectedVent} selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey}/></>}
     />
   </Routes>
 	);

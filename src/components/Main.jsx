@@ -7,7 +7,8 @@ import Surveys from './Surveys/Surveys';
 import Equipment from './Equipment/Equipment';
 import Login from './Logging/Login';
 import { useAuth0 } from "@auth0/auth0-react";
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 function Main(props) {
   const [open, setOpen] = useState({'addUnitModal': false, 'addTechnician': false});
@@ -21,12 +22,22 @@ function Main(props) {
   const [selectedEquipment, setSelectedEquipment] = useState([]);
   const { isAuthenticated } = useAuth0();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const getEquipment = async () => {
+    let equipmentList = await axios.get(
+      `${process.env.REACT_APP_DATABASE}/equipment`)
+      setEquipment(equipmentList.data)
+  }
   
   useEffect(() => {
-    if(isAuthenticated){
+    console.log(location.pathname)
+    if(isAuthenticated && location.pathname === '/'){
       return navigate('/Vents')
     }
-  },[isAuthenticated ])
+    getEquipment();
+    console.log(location.pathname)
+  },[isAuthenticated])
   
   return (
     <Routes>

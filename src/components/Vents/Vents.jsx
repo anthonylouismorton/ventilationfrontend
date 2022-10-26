@@ -23,11 +23,11 @@ export default function Vents(props) {
     />
     <Route
       path={'/AssignSurvey'}
-      element={<AssignSurveyForm setTechnicians={props.setTechnicians} technicians={props.technicians} selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent}/>}
+      element={<AssignSurveyForm setTechnicians={props.setTechnicians} technicians={props.technicians} selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent} selectedUnit={props.selectedUnit}/>}
     />
     <Route
       path={`/ReviewSurvey/${props.selectedVentSurvey.ventSurvey.ventSurveyId}`}
-      element={<ReviewSurveyForm setTechnicians={props.setTechnicians} technicians={props.technicians} selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent} selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey} equipment={props.equipment} selectedEquipment={props.selectedEquipment}/>}
+      element={<ReviewSurveyForm setTechnicians={props.setTechnicians} technicians={props.technicians} selectedVent={props.selectedVent} setSelectedVent={props.setSelectedVent} selectedVentSurvey={props.selectedVentSurvey} setSelectedVentSurvey={props.setSelectedVentSurvey} selectedEquipment={props.selectedEquipment}/>}
     />
   </Routes>
 	);
